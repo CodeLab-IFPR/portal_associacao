@@ -1,0 +1,92 @@
+{
+  "resources/css/adminlte.css": {
+    "file": "assets/adminlte-BpYBaeUb.css",
+    "src": "resources/css/adminlte.css",
+    "isEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-CK2E84K9.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/datatables.min.css": {
+    "file": "assets/datatables-B_-5l-at.css",
+    "src": "resources/css/datatables.min.css",
+    "isEntry": true
+  },
+  "resources/css/libs.bundle.css": {
+    "file": "assets/libs-BAzYkbjt.css",
+    "src": "resources/css/libs.bundle.css",
+    "isEntry": true
+  },
+  "resources/css/styleLogin.css": {
+    "file": "assets/styleLogin-xwh2B2Xc.css",
+    "src": "resources/css/styleLogin.css",
+    "isEntry": true
+  },
+  "resources/css/theme.bundle.css": {
+    "file": "assets/theme-BGdtyQqr.css",
+    "src": "resources/css/theme.bundle.css",
+    "isEntry": true
+  },
+  "resources/fonts/Metropolis-Black.woff": {
+    "file": "assets/Metropolis-Black-GjlKygmi.woff",
+    "src": "resources/fonts/Metropolis-Black.woff"
+  },
+  "resources/fonts/Metropolis-Bold.woff": {
+    "file": "assets/Metropolis-Bold-DkmpsX1S.woff",
+    "src": "resources/fonts/Metropolis-Bold.woff"
+  },
+  "resources/fonts/Metropolis-Medium.woff": {
+    "file": "assets/Metropolis-Medium-DxBi40p1.woff",
+    "src": "resources/fonts/Metropolis-Medium.woff"
+  },
+  "resources/fonts/Metropolis-Regular.woff": {
+    "file": "assets/Metropolis-Regular-CQL1l97W.woff",
+    "src": "resources/fonts/Metropolis-Regular.woff"
+  },
+  "resources/fonts/Metropolis-SemiBold.woff": {
+    "file": "assets/Metropolis-SemiBold-CCsJ_uBM.woff",
+    "src": "resources/fonts/Metropolis-SemiBold.woff"
+  },
+  "resources/fonts/remixicon.woff": {
+    "file": "assets/remixicon-ChM2DbYV.woff",
+    "src": "resources/fonts/remixicon.woff"
+  },
+  "resources/js/adminlte.js": {
+    "file": "assets/adminlte-D0Sgv0da.js",
+    "name": "adminlte",
+    "src": "resources/js/adminlte.js",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CH09qwMe.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/datatables.min.js": {
+    "file": "assets/datatables.min-BPbWntxx.js",
+    "name": "datatables.min",
+    "src": "resources/js/datatables.min.js",
+    "isEntry": true
+  },
+  "resources/js/menu.js": {
+    "file": "assets/menu-l0sNRNKZ.js",
+    "name": "menu",
+    "src": "resources/js/menu.js",
+    "isEntry": true
+  },
+  "resources/js/theme.bundle.js": {
+    "file": "assets/theme.bundle-D5gd64jp.js",
+    "name": "theme.bundle",
+    "src": "resources/js/theme.bundle.js",
+    "isEntry": true
+  },
+  "resources/js/vendor.bundle.js": {
+    "file": "assets/vendor.bundle-CvSMtKji.js",
+    "name": "vendor.bundle",
+    "src": "resources/js/vendor.bundle.js",
+    "isEntry": true
+  }
+}
