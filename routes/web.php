@@ -9,6 +9,7 @@ use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\NoticiasController;
+use App\Http\Controllers\AtaController;
 use App\Http\Controllers\ParceiroController;
 use App\Http\Controllers\PermissaoController;
 use App\Http\Controllers\SubmissionController;
@@ -18,12 +19,18 @@ use App\Http\Controllers\Admin\FraseInicioController;
 use App\Http\Controllers\LancamentoServicoController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
+use App\Http\Controllers\MemberRegistrationController;
+
 // Rotas Públicas
 Route::get('/', function () {
     $noticias = (new NoticiasController)->home()->getData()['noticias'];
-    $projetos = (new ProjetoController)->home()->getData()['projetos'];
-    return view('home', compact('noticias', 'projetos'));
+    $fraseInicio = \App\Models\FraseInicio::first();
+    return view('home', compact('noticias', 'fraseInicio'));
 })->name('home');
+
+// Rotas de registro de membro
+Route::get('/register-member', [MemberRegistrationController::class, 'showRegistrationForm'])->name('member.register.form');
+Route::post('/register-member', [MemberRegistrationController::class, 'register'])->name('member.register');
 Route::get('/sobre', function () { return view('about'); })->name('about');
 Route::get('/contato', function () { return view('contact'); })->name('contact');
 Route::get('/submission', function () { return view('submission'); })->name('submission');
@@ -89,6 +96,13 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     // Rotas de certificados (admin)
     Route::resource('certificados', CertificadoController::class)->except(['show']);
     Route::post('/certificados/generate', [CertificadoController::class, 'generateFromTasks'])->name('certificados.generate');
+
+    // Rotas de documentos
+    Route::resource('documentos', \App\Http\Controllers\DocumentoController::class);
+    Route::get('/documentos/{documento}/download', [\App\Http\Controllers\DocumentoController::class, 'download'])->name('documentos.download');
+    Route::patch('/documentos/{documento}/aprovar', [\App\Http\Controllers\DocumentoController::class, 'aprovar'])->name('documentos.aprovar');
+    Route::patch('/documentos/{documento}/rejeitar', [\App\Http\Controllers\DocumentoController::class, 'rejeitar'])->name('documentos.rejeitar');
+    Route::get('/documentos/usuario/{user}', [\App\Http\Controllers\DocumentoController::class, 'porUsuario'])->name('documentos.usuario');
 
     // Rotas de usuários
     Route::resource('users', RegisteredUserController::class);
@@ -173,6 +187,18 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
             'update' => 'galeria.update',
             'destroy' => 'galeria.destroy'
         ]);
+
+        // ATAs routes
+        Route::resource('atas', AtaController::class)->names([
+            'index' => 'admin.atas.index',
+            'create' => 'admin.atas.create',
+            'store' => 'admin.atas.store',
+            'show' => 'admin.atas.show',
+            'edit' => 'admin.atas.edit',
+            'update' => 'admin.atas.update',
+            'destroy' => 'admin.atas.destroy'
+        ]);
+        Route::get('atas/{ata}/download', [AtaController::class, 'download'])->name('admin.atas.download');
     });
 
     // Rotas de perfil

@@ -30,47 +30,58 @@
                     @endif
                 </td>
                 <td>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-                            id="dropdownMenuButton{{ $user->id }}" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="bi bi-gear"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $user->id }}">
-                            <li>
-                                <a class="dropdown-item d-flex align-items-center"
-                                    href="{{ route('users.show', $user->id) }}">
-                                    <i class="bi bi-eye text-secondary me-2"></i> Visualizar
-                                </a>
-                            </li>
-                            <li>
-                                @can('Editar Membro')
-                                <a class="dropdown-item d-flex align-items-center"
-                                    href="{{ route('users.edit', $user->id) }}">
-                                    <i class="bi bi-pencil-square text-warning me-2"></i> Editar
-                                </a>
-                                @endcan
-                            </li>
-                            <li>
-                                @can('Deletar Membro')
-                                <a href="#" class="dropdown-item d-flex align-items-center btn-delete"
+                    <div class="d-flex flex-column gap-1" role="group" aria-label="Ações do usuário">
+                        <!-- Primeira linha -->
+                        <div class="d-flex gap-1 justify-content-center">
+                            <!-- Visualizar -->
+                            <a href="{{ route('users.show', $user->id) }}" 
+                               class="btn btn-outline-secondary btn-sm px-2" 
+                               title="Visualizar">
+                                <i class="bi bi-eye"></i>
+                            </a>
+
+                            <!-- Documentos -->
+                            @can('Visualizar Documento')
+                            <a href="{{ route('documentos.usuario', $user->id) }}" 
+                               class="btn btn-outline-info btn-sm px-2" 
+                               title="Documentos">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </a>
+                            @endcan
+                        </div>
+
+                        <!-- Segunda linha -->
+                        <div class="d-flex gap-1 justify-content-center">
+                            <!-- Editar -->
+                            @can('Editar Membro')
+                            <a href="{{ route('users.edit', $user->id) }}" 
+                               class="btn btn-outline-warning btn-sm px-2" 
+                               title="Editar">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            @endcan
+
+                            <!-- Deletar -->
+                            @can('Deletar Membro')
+                            <button type="button" 
+                                    class="btn btn-outline-danger btn-sm px-2 btn-delete" 
+                                    title="Deletar"
                                     data-url="{{ route('users.destroy', $user->id) }}"
                                     data-name="{{ $user->name }}"
                                     data-cpf="{{ $user->cpf }}"
                                     data-cargo="{{ $user->cargo }}"
                                     data-imagem="/imagens/users/{{ $user->imagem }}"
                                     data-alt="{{ $user->alt }}">
-                                    <i class="bi bi-trash text-danger me-2"></i> Deletar
-                                </a>
-                                @endcan
-                            </li>
-                        </ul>
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            @endcan
+                        </div>
                     </div>
                 </td>
             </tr>
         @empty
             <tr>
-                <td colspan="7">
+                <td colspan="8">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                         <a class="btn btn-outline-success btn-sm"
                             href="{{ route('users.create') }}">

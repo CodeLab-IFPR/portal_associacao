@@ -27,17 +27,49 @@ Editar Frases
             @method('PUT')
 
             <div class="mb-3">
-                <label for="frase_inicio" class="form-label"><strong>Frase Tela Inicial:</strong></label>
-                <textarea name="frase_inicio" id="frase_inicio" class="form-control @error('frase_inicio') is-invalid @enderror" rows="6" required>{{ old('frase_inicio', $fraseInicio->frase ?? '') }}</textarea>
+                <label for="titulo" class="form-label"><strong>Título Principal:</strong></label>
+                <input type="text" name="titulo" id="titulo" class="form-control @error('titulo') is-invalid @enderror" value="{{ old('titulo', $fraseInicio->titulo ?? 'AMAER') }}" required>
+                @error('titulo')
+                    <div class="form-text text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="subtitulo" class="form-label"><strong>Subtítulo:</strong></label>
+                <input type="text" name="subtitulo" id="subtitulo" class="form-control @error('subtitulo') is-invalid @enderror" value="{{ old('subtitulo', $fraseInicio->subtitulo ?? 'Associação de Aeromodelismo e Automodelismo') }}" required>
+                @error('subtitulo')
+                    <div class="form-text text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="localizacao" class="form-label"><strong>Localização:</strong></label>
+                <input type="text" name="localizacao" id="localizacao" class="form-control @error('localizacao') is-invalid @enderror" value="{{ old('localizacao', $fraseInicio->localizacao ?? 'Paranavaí - PR') }}" required>
+                @error('localizacao')
+                    <div class="form-text text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="frase_inicio" class="form-label"><strong>Frase de Boas-vindas:</strong></label>
+                <textarea name="frase_inicio" id="frase_inicio" class="form-control @error('frase_inicio') is-invalid @enderror" rows="3" required>{{ old('frase_inicio', $fraseInicio->frase ?? '') }}</textarea>
                 @error('frase_inicio')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
             </div>
 
             <div class="mb-3">
-                <label for="frase_sobre" class="form-label"><strong>Frase Sobre Nós:</strong></label>
-                <textarea name="frase_sobre" id="frase_sobre" class="form-control @error('frase_sobre') is-invalid @enderror" rows="6" required>{{ old('frase_sobre', $fraseSobre->frase ?? '') }}</textarea>
-                @error('frase_sobre')
+                <label for="descricao" class="form-label"><strong>Descrição da Associação:</strong></label>
+                <textarea name="descricao" id="descricao" class="form-control @error('descricao') is-invalid @enderror" rows="4" required>{{ old('descricao', $fraseInicio->descricao ?? 'Uma associação dedicada aos amantes do aeromodelismo e automodelismo') }}</textarea>
+                @error('descricao')
+                    <div class="form-text text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="como_associar_se" class="form-label"><strong>Como Associar-se:</strong></label>
+                <textarea name="como_associar_se" id="como_associar_se" class="form-control @error('como_associar_se') is-invalid @enderror" rows="4" placeholder="Descreva o processo para se tornar um membro da associação...">{{ old('como_associar_se', $fraseInicio->como_associar_se ?? '') }}</textarea>
+                @error('como_associar_se')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
             </div>

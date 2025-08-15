@@ -29,7 +29,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
         content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS.">
     <meta name="keywords"
         content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard">
-    <link rel="icon" href="{{ asset('/img/codelab-logo-ico.png') }}" type="image/png">
+    <link rel="icon" href="{{ asset('/img/amaer-ico.png') }}" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
         integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.3.0/styles/overlayscrollbars.min.css"
@@ -224,9 +224,10 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu"
                         data-accordion="false">
 
-                        <li
-                            class="nav-item {{ request()->routeIs('funcoes.index') || request()->routeIs('funcoes.create') || request()->routeIs('permissoes.create') || request()->routeIs('permissoes.index') ? 'menu-open' : '' }}">
-                            <a href="#" class="nav-link ">
+                        <!-- Funções e Permissões (Apenas Admins) -->
+                        @if(auth()->user()->hasRole('Admin'))
+                        <li class="nav-item {{ request()->routeIs('funcoes.index') || request()->routeIs('funcoes.create') || request()->routeIs('permissoes.create') || request()->routeIs('permissoes.index') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link">
                                 <i class="nav-icon bi bi-shield-lock"></i>
                                 <p>
                                     Funções e Permissões
@@ -238,8 +239,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                                     @can('Criar Função')
                                     <a href="{{ route('funcoes.create') }}"
                                         class="nav-link {{ request()->routeIs('funcoes.create') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('funcoes.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <i class="nav-icon bi {{ request()->routeIs('funcoes.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
                                         <p>Criar Função</p>
                                     </a>
                                     @endcan
@@ -248,8 +248,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                                     @can('Visualizar Função')
                                     <a href="{{ route('funcoes.index') }}"
                                         class="nav-link {{ request()->routeIs('funcoes.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('funcoes.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <i class="nav-icon bi {{ request()->routeIs('funcoes.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
                                         <p>Listar Funções</p>
                                     </a>
                                     @endcan
@@ -258,8 +257,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                                     @can('Criar Permissão')
                                     <a href="{{ route('permissoes.create') }}"
                                         class="nav-link {{ request()->routeIs('permissoes.create') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('permissoes.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <i class="nav-icon bi {{ request()->routeIs('permissoes.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
                                         <p>Criar Permissão</p>
                                     </a>
                                     @endcan
@@ -268,20 +266,22 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                                     @can('Visualizar Permissão')
                                     <a href="{{ route('permissoes.index') }}"
                                         class="nav-link {{ request()->routeIs('permissoes.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('permissoes.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <i class="nav-icon bi {{ request()->routeIs('permissoes.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
                                         <p>Listar Permissões</p>
                                     </a>
                                     @endcan
                                 </li>
                             </ul>
                         </li>
-                        <li
-                            class="nav-item {{ request()->routeIs('noticias.create') || request()->routeIs('users.create') || request()->routeIs('parceiros.create') || request()->routeIs('galeria.create') ? 'menu-open' : '' }}">
+                        @endif
+
+                        <!-- Notícias (Apenas Admins) -->
+                        @if(auth()->user()->hasRole('Admin'))
+                        <li class="nav-item {{ request()->routeIs('noticias.create') || request()->routeIs('noticias.index') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-journal-plus"></i>
+                                <i class="nav-icon bi bi-newspaper"></i>
                                 <p>
-                                    Cadastro
+                                    Notícias
                                     <i class="nav-arrow bi bi-chevron-right"></i>
                                 </p>
                             </a>
@@ -290,82 +290,74 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                                     @can('Criar Notícia')
                                     <a href="{{ route('noticias.create') }}"
                                         class="nav-link {{ request()->routeIs('noticias.create') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('noticias.create') ? 'bi-play-fill' : 'bi-play' }}"></i>
-                                        <p>Nova Notícia</p>
+                                        <i class="nav-icon bi {{ request()->routeIs('noticias.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Nova</p>
                                     </a>
                                     @endcan
                                 </li>
                                 <li class="nav-item">
-                                    @can('Criar Membro')
-                                    <a href="{{ route('users.create') }}"
-                                        class="nav-link  {{ request()->routeIs('users.create') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('users.create') ? 'bi-play-fill' : 'bi-play' }}"></i>
-                                        <p>Novo Membro</p>
-                                    </a>
-                                    @endcan
-                                </li>
-                                <li class="nav-item">
-                                    @can('Criar Parceiro')
-                                    <a href="{{ route('parceiros.create') }}"
-                                        class="nav-link  {{ request()->routeIs('parceiros.create') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('parceiros.create') ? 'bi-play-fill' : 'bi-play' }}"></i>
-                                        <p>Novo Parceiro</p>
-                                    </a>
-                                    @endcan
-                                </li>
-                                <li class="nav-item">
-                                    @can('Criar Galeria')
-                                    <a href="{{ route('galeria.create') }}"
-                                        class="nav-link  {{ request()->routeIs('galeria.create') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('galeria.create') ? 'bi-play-fill' : 'bi-play' }}"></i>
-                                        <p>Galeria - Nova Mídia</p>
+                                    @can('Visualizar Notícia')
+                                    <a href="{{ route('noticias.index') }}"
+                                        class="nav-link {{ request()->routeIs('noticias.index') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('noticias.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Listagem</p>
                                     </a>
                                     @endcan
                                 </li>
                             </ul>
                         </li>
+                        @endif
 
-                        <li
-                            class="nav-item {{ request()->routeIs('noticias.index') || request()->routeIs('users.index') || request()->routeIs('parceiros.index') || request()->routeIs('galeria.indexAdmin') ? 'menu-open' : '' }}">
+                        <!-- Membros (Apenas Admins) -->
+                        @if(auth()->user()->hasRole('Admin'))
+                        <li class="nav-item {{ request()->routeIs('users.create') || request()->routeIs('users.index') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-journal-text"></i>
+                                <i class="nav-icon bi bi-people"></i>
                                 <p>
-                                    Lista
+                                    Membros
                                     <i class="nav-arrow bi bi-chevron-right"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    @can('Visualizar Notícia')
-                                    <a href="{{ route('noticias.index') }}"
-                                        class="nav-link {{ request()->routeIs('noticias.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('noticias.index') ? 'bi-play-fill' : 'bi-play' }}"></i>
-                                        <p>Noticias</p>
+                                    @can('Criar Membro')
+                                    <a href="{{ route('users.create') }}"
+                                        class="nav-link {{ request()->routeIs('users.create') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('users.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Novo</p>
                                     </a>
                                     @endcan
                                 </li>
                                 <li class="nav-item">
                                     @can('Visualizar Membro')
                                     <a href="{{ route('users.index') }}"
-                                        class="nav-link  {{ request()->routeIs('users.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('users.index') ? 'bi-play-fill' : 'bi-play' }}"></i>
-                                        <p>Membro</p>
+                                        class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('users.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Listagem</p>
                                     </a>
                                     @endcan
                                 </li>
+                            </ul>
+                        </li>
+                        @endif
+
+                        <!-- Galeria (Apenas Admins) -->
+                        @if(auth()->user()->hasRole('Admin'))
+                        <li class="nav-item {{ request()->routeIs('galeria.create') || request()->routeIs('galeria.indexAdmin') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon bi bi-images"></i>
+                                <p>
+                                    Galeria
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    @can('Visualizar Parceiro')
-                                    <a href="{{ route('parceiros.index') }}"
-                                        class="nav-link {{ request()->routeIs('parceiros.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('parceiros.index') ? 'bi-play-fill' : 'bi-play' }} "></i>
-                                        <p>Parceiro</p>
+                                    @can('Criar Galeria')
+                                    <a href="{{ route('galeria.create') }}"
+                                        class="nav-link {{ request()->routeIs('galeria.create') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('galeria.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Nova Mídia</p>
                                     </a>
                                     @endcan
                                 </li>
@@ -373,47 +365,45 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                                     @can('Visualizar Galeria')
                                     <a href="{{ route('galeria.indexAdmin') }}"
                                         class="nav-link {{ request()->routeIs('galeria.indexAdmin') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('galeria.indexAdmin') ? 'bi-play-fill' : 'bi-play' }} "></i>
-                                        <p>Galeria</p>
+                                        <i class="nav-icon bi {{ request()->routeIs('galeria.indexAdmin') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Listagem</p>
                                     </a>
                                     @endcan
                                 </li>
                             </ul>
                         </li>
-                        <li
-                            class="nav-item {{ request()->routeIs('certificados.index') || request()->routeIs('certificados.create') ? 'menu-open' : '' }}">
+                        @endif
+
+                        <!-- ATA -->
+                        <li class="nav-item {{ request()->routeIs('admin.atas.create') || request()->routeIs('admin.atas.index') || request()->routeIs('admin.atas.*') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-award"></i>
+                                <i class="nav-icon bi bi-file-earmark-text"></i>
                                 <p>
-                                    Certificado
+                                    ATA
                                     <i class="nav-arrow bi bi-chevron-right"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    @can('Criar Certificado')
-                                    <a href="{{ route('certificados.create') }}"
-                                        class="nav-link {{ request()->routeIs('certificados.create') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('certificados.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
-                                        <p>Novo Certificado</p>
+                                    @if(auth()->user()->hasRole('Admin'))
+                                    <a href="{{ route('admin.atas.create') }}"
+                                        class="nav-link {{ request()->routeIs('admin.atas.create') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('admin.atas.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Nova</p>
                                     </a>
-                                    @endcan
+                                    @endif
                                 </li>
-                            </ul>
-                            <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    @can('Visualizar Certificado')
-                                    <a href="{{ route('certificados.index') }}"
-                                        class="nav-link {{ request()->routeIs('certificados.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('certificados.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
-                                        <p>Todos Certificados</p>
+                                    <a href="{{ route('admin.atas.index') }}"
+                                        class="nav-link {{ request()->routeIs('admin.atas.index') || request()->routeIs('admin.atas.show') || request()->routeIs('admin.atas.edit') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('admin.atas.index') || request()->routeIs('admin.atas.show') || request()->routeIs('admin.atas.edit') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Listagem</p>
                                     </a>
-                                    @endcan
                                 </li>
                             </ul>
+                        </li>
+
+                        <!-- Editar Páginas -->
                         <li class="nav-item">
                             @can('Criar Frase')
                             <a href="{{ route('admin.frase_inicio.editar') }}"
@@ -423,130 +413,54 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                             </a>
                             @endcan
                         </li>
+
+                        <!-- Documentos -->
+                        <li class="nav-item {{ request()->routeIs('documentos.create') || request()->routeIs('documentos.index') || request()->routeIs('documentos.*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon bi bi-file-earmark-pdf"></i>
+                                <p>
+                                    Documentos
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('documentos.create') }}"
+                                        class="nav-link {{ request()->routeIs('documentos.create') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('documentos.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Novo</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('documentos.index') }}"
+                                        class="nav-link {{ request()->routeIs('documentos.index') || request()->routeIs('documentos.show') || request()->routeIs('documentos.edit') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('documentos.index') || request()->routeIs('documentos.show') || request()->routeIs('documentos.edit') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Listagem</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
+
+                        <!-- Contato -->
                         <li class="nav-item">
                             @can('Visualizar Mensagem')
-                            <a href="{{ route('mensagens.index') }}" class="nav-link">
+                            <a href="{{ route('mensagens.index') }}" 
+                               class="nav-link {{ request()->routeIs('mensagens.*') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-envelope"></i>
                                 <p>Contato</p>
                             </a>
                             @endcan
                         </li>
-                        <li class="nav-item">
-                            @can('Visualizar Submissão')
-                            <a href="{{ route('submissions.index') }}" class="nav-link">
-                                <i class="nav-icon bi bi-file-earmark-text"></i>
-                                <p>Submissões</p>
-                            </a>
-                            @endcan
-                        </li>
-                        <li
-                            class="nav-item {{ request()->routeIs('projetos.index') || request()->routeIs('projetos.create') ? 'menu-open' : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-folder"></i>
-                                <p>
-                                    Projetos
-                                    <i class="nav-arrow bi bi-chevron-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    @can('Criar Projeto')
-                                    <a href="{{ route('projetos.create') }}"
-                                        class="nav-link  {{ request()->routeIs('projetos.create') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('projetos.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
-                                        <p>Criar Projeto</p>
-                                    </a>
-                                    @endcan
-                                </li>
-                                <li class="nav-item">
-                                    @can('Visualizar Projeto')
-                                    <a href="{{ route('projetos.index') }}"
-                                        class="nav-link {{ request()->routeIs('projetos.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('projetos.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
-                                        <p>Listar Projetos</p>
-                                    </a>
-                                    @endcan
-                                </li>
-                                <li class="nav-item">
-                                    @can('Criar Projeto')
-                                    <a href="{{ route('tags.index') }}"
-                                        class="nav-link {{ request()->routeIs('tags.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('tags.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
-                                        <p>Tags</p>
-                                    </a>
-                                    @endcan
-                                </li>
-                            </ul>
-                        </li>
-                        <li
-                            class="nav-item {{ request()->routeIs('servicos.index') || request()->routeIs('servicos.create') ? 'menu-open' : '' }}">
 
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-briefcase"></i>
-                                <p>
-                                    Serviços
-                                    <i class="nav-arrow bi bi-chevron-right"></i>
-                                </p>
+                        <!-- Editar Perfil (Todos os usuários) -->
+                        <li class="nav-item">
+                            <a href="{{ route('profile.edit') }}" 
+                               class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-person-gear"></i>
+                                <p>Editar Perfil</p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                @can('Criar Serviço')
-                                <a href="{{ route('servicos.create') }}"
-                                    class="nav-link {{ request()->routeIs('servicos.create') ? 'active' : '' }}">
-                                    <i
-                                        class="nav-icon bi {{ request()->routeIs('servicos.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
-                                    <p>Criar Serviço</p>
-                                </a>
-                                @endcan
-                                </li>
-                                <li class="nav-item">
-                                    @can('Visualizar Serviço')
-                                    <a href="{{ route('servicos.index') }}"
-                                        class="nav-link {{ request()->routeIs('servicos.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('servicos.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
-                                        <p>Listar Serviços</p>
-                                    </a>
-                                    @endcan
-                                </li>
-                            </ul>
                         </li>
-                        <li
-                            class="nav-item {{ request()->routeIs('lancamentos.index') || request()->routeIs('lancamentos.create') ? 'menu-open' : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-calendar-event"></i>
-                                <p>
-                                    Lançamentos
-                                    <i class="nav-arrow bi bi-chevron-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    @can('Criar Lançamento')
-                                    <a href="{{ route('lancamentos.create') }}"
-                                        class="nav-link {{ request()->routeIs('lancamentos.create') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('lancamentos.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
-                                        <p>Criar Lançamento</p>
-                                    </a>
-                                    @endcan
-                                </li>
-                                <li class="nav-item">
-                                    @can('Visualizar Lançamento')
-                                    <a href="{{ route('lancamentos.index') }}"
-                                        class="nav-link {{ request()->routeIs('lancamentos.index') ? 'active' : '' }}">
-                                        <i
-                                            class="nav-icon bi {{ request()->routeIs('lancamentos.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
-                                        <p>Listar Lançamentos</p>
-                                    </a>
-                                    @endcan
-                                </li>
-                            </ul>
-                        </li>
+
                     </ul>
                 </nav>
             </div>
@@ -702,8 +616,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                     });
                 });
 
-                <
-                script >
+                <script >
                     const cardHeaders = document.querySelectorAll(
                         ".connectedSortable .card-header",
                     );

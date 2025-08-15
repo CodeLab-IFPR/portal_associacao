@@ -29,7 +29,25 @@ class User extends Authenticatable implements MustVerifyEmail
         'linkedin',
         'github',
         'alt',
-        'imagem'
+        'imagem',
+        // Novos campos
+        'modalidade_principal',
+        'nome',
+        'sobrenome',
+        'data_nascimento',
+        'rg',
+        'telefone_celular',
+        'celular_whatsapp',
+        'telefone_residencial',
+        'telefone_comercial',
+        'email_alternativo',
+        'senha',
+        'cep',
+        'logradouro',
+        'numero',
+        'bairro',
+        'estado',
+        'cidade'
     ];
 
     /**
@@ -63,5 +81,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function tarefas()
     {
         return $this->hasMany(Tarefa::class);
+    }
+
+    public function documentos()
+    {
+        return $this->hasMany(Documento::class);
     }
 }

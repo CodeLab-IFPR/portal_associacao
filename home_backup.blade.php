@@ -14,8 +14,8 @@ AMAER
 
         <!-- Hero Text-->
         <div class="col-12 position-relative z-index-20 text-center" data-aos="fade-in">
-            <div class="banner-container mb-4" style="border-radius: 0.5rem; overflow: hidden;">
-                <img class="img-fluid w-100" src="{{ asset('img/banner_amaer.png') }}?v={{ time() }}" alt="Banner AMAER" style="height: auto; max-height: 300px; object-fit: contain;">
+            <div class="banner-container mb-4" style="max-height: 300px; overflow: hidden; border-radius: 0.5rem;">
+                <img class="img-fluid w-100" src="{{ asset('img/banner_amaer.png') }}?v={{ time() }}" alt="Banner AMAER" style="object-fit: cover; height: 300px;">
             </div>
         </div>
 
@@ -24,14 +24,43 @@ AMAER
             <h2 class="fs-5 fs-md-4 fw-bold mb-3">{{ $fraseInicio->subtitulo ?? 'Associação de Aeromodelismo e Automodelismo' }}</h2>
             <p class="fs-6 fs-md-5 fw-medium mb-4">{{ $fraseInicio->localizacao ?? 'Paranavaí - PR' }}</p>
             <p class="text-muted mb-5">{{ $fraseInicio->descricao ?? 'Uma associação dedicada aos amantes do aeromodelismo e automodelismo' }}</p>
+            <!-- <a href="#" class="text-decoration-none text-primary fw-bolder d-flex fs-7 justify-content-center justify-content-lg-start" data-bs-toggle="modal"
+                        data-bs-target="#videoIframeModal"
+                        data-pixr-video-iframe="https://player.vimeo.com/video/307721664?autoplay=1&amp;loop=false&amp;byline=false&amp;portrait=false&amp;title=false&amp;speed=true&amp;transparent=0&amp;gesture=media"
+                        role="button"><i class="ri-play-circle-line align-bottom me-1"></i> Como funciona</a> -->
 
             <div class="mt-4 pt-1 d-flex flex-column flex-md-row justify-content-center">
-                <a href="{{ route('member.register.form') }}" class="btn btn-success" role="button">Seja Membro</a>
+                <a href="{{ route('projeto.indexPublic') }}" class="btn btn-success" role="button">Ver Projetos</a>
                 <a href="{{ route('contact') }}" class="btn btn-link text-decoration-none text-muted ms-2 bg-light-hover"
                     role="button">Entre em Contato</a>
             </div>
+            <!-- <ul class="list-unstyled d-none d-md-flex align-items-center small text-muted mt-3 pt-1 fw-medium fs-9 justify-content-center justify-content-lg-start">
+                        <li class="me-4 d-flex align-items-center"><i
+                                class="ri-checkbox-circle-fill text-success ri-lg me-1"></i> Sem necessidade de cartão de crédito
+                        </li>
+                        <li class="me-4 d-flex align-items-center"><i
+                                class="ri-checkbox-circle-fill text-success ri-lg me-1"></i> Cancelamento a qualquer momento</li>
+                        <li class="me-4 d-flex align-items-center"><i
+                                class="ri-checkbox-circle-fill text-success ri-lg me-1"></i> 30 dias de teste gratuito</li>
+                    </ul> -->
         </div>
         <!-- / Hero Text-->
+
+        <!-- Hero Graphic-->
+        <!-- <div class="col-12 col-lg-6 mt-5 mt-lg-0 align-self-stretch position-relative z-index-20" data-aos="fade-in">
+                    <div class="d-flex h-100 bg-dark rounded-3 shadow-lg card">
+                        <div class="card-header border-white-10 border-1 py-4 d-flex align-items-center">
+                            <span class="f-w-2 f-h-2 block bg-danger rounded-circle me-2"></span>
+                            <span class="f-w-2 f-h-2 block bg-warning rounded-circle me-2"></span>
+                            <span class="f-w-2 f-h-2 block bg-info rounded-circle"></span>
+                        </div>
+                        <div class="card-body" style="min-height: 300px;">
+                            <code class="highlight fs-8"
+                                data-typed='{"backSpeed":2, "strings": ["$&nbsp;git&nbsp;clone&nbsp;https://github.com/ifpr-paranavai/portal-cdt.git<br/><span class=\"text-success\">Repositório&nbsp;clonado&nbsp;com&nbsp;sucesso 👍</span><br/><br/>$&nbsp;cd&nbsp;portal-cdt<br/><span class=\"text-success\">Diretório&nbsp;alterado&nbsp;para&nbsp;portal-cdt</span><br/><br/>$&nbsp;composer&nbsp;install<br/><span class=\"text-success\">Dependências&nbsp;instaladas&nbsp;com&nbsp;sucesso...</span><br/><br/>$&nbsp;php&nbsp;artisan&nbsp;serve<br/><span class=\"text-success\">Servidor&nbsp;iniciado&nbsp;em&nbsp;http://localhost:8000 🚀</span><br/><br/>$&nbsp;npm&nbsp;install<br/><span class=\"text-success\">Pacotes&nbsp;NPM&nbsp;instalados&nbsp;com&nbsp;sucesso...</span><br/><br/>$&nbsp;npm&nbsp;run&nbsp;dev<br/><span class=\"text-success\">Vite&nbsp;executando&nbsp;em&nbsp;modo&nbsp;de&nbsp;desenvolvimento...</span>"]}'></code>
+                        </div>
+                    </div>
+                </div> -->
+        <!-- / Hero Graphic-->
 
     </div>
 
@@ -72,6 +101,151 @@ AMAER
     <!-- / Bottom left shapes-->
 </div>
 <!-- /hero Content-->
+
+<!-- Logo Showcase-->
+<!-- <div class="bg-primary py-8" data-aos="fade-in">
+            <p class="mb-0 text-center small fw-bolder tracking-wider text-uppercase text-white opacity-75">Trusted by
+                thousands of companies worldwide</p>
+            <div class="mt-5">
+                <section class="marquee marquee-hover-pause">
+                    <div class="marquee-body">
+                        <div class="marquee-section animation-marquee-90">
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Bosch">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-1.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Smeg">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-2.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Sony">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-3.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Siemens">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-4.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Coca Cola">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-5.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Philips">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-6.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Samsung">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-7.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Netflix">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-8.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="marquee-section animation-marquee-90">
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Bosch">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-1.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Smeg">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-2.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Sony">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-3.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Siemens">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-4.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Coca Cola">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-5.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Philips">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-6.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Samsung">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-7.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                            <div class="mx-5 f-w-24">
+                                <a class="d-block" href="#" data-bs-toggle="tooltip" data-bs-placement="top" title="Netflix">
+                                    <picture>
+                                        <img class="img-fluid d-table mx-auto" src="{{ asset('img/logos/logo-8.svg') }}" alt="">
+                                    </picture>
+                                    </picture>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div> -->
+<!-- Logo Showcase-->
 
 <div id="noticias" class="bg-primary py-8" data-aos="fade-in">
     <div class="container">
@@ -248,6 +422,8 @@ AMAER
     </div>
 </section>
 
+
+
 <!-- Localização-->
 <div class="bg-dark py-8" data-aos="fade-in">
     <div class="container py-4">
@@ -345,80 +521,51 @@ AMAER
                     <div class="tab-content">
 
                         <!-- Aeromodelismo -->
-                        <div id="tab-aero" class="tab-pane fade show active" role="tabpanel" aria-labelledby="tab-aero-btn">
-                            <div class="row g-4">
-                                <div class="col-12 col-lg-8">
-                                    <div class="steps-container">
-                                        <div class="step-item mb-4" data-aos="fade-up" data-aos-delay="100">
-                                            <div class="step-number">1</div>
-                                            <div class="step-content">
-                                                <h4 class="fw-bold mb-3">Segurança primeiro</h4>
-                                                <p class="text-muted">Voe apenas em áreas autorizadas do clube; mantenha distância de pessoas e veículos; use óculos de proteção; não voe sobre vias públicas.</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="step-item mb-4" data-aos="fade-up" data-aos-delay="200">
-                                            <div class="step-number">2</div>
-                                            <div class="step-content">
-                                                <h4 class="fw-bold mb-3">Comece com um treinador</h4>
-                                                <p class="text-muted">Prefira avião de espuma (EPO/EPP) do tipo "treinador"/asa alta, com trem de pouso robusto e, se possível, estabilização (gyro) para facilitar.</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="step-item mb-4" data-aos="fade-up" data-aos-delay="300">
-                                            <div class="step-number">3</div>
-                                            <div class="step-content">
-                                                <h4 class="fw-bold mb-3">Kit inicial recomendado</h4>
-                                                <ul class="list-unstyled">
-                                                    <li class="mb-2"><i class="ri-check-line text-success me-2"></i>Rádio 2.4 GHz (≥6 canais)</li>
-                                                    <li class="mb-2"><i class="ri-check-line text-success me-2"></i>Bateria LiPo 3S (ex.: 2200 mAh) + carregador balanceador</li>
-                                                    <li class="mb-2"><i class="ri-check-line text-success me-2"></i>Hélice/patins sobressalentes, fita de reparo</li>
-                                                    <li class="mb-2"><i class="ri-check-line text-success me-2"></i>Simulador de voo para treinar decolagem, circuitos e pouso</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <div class="step-item mb-4" data-aos="fade-up" data-aos-delay="400">
-                                            <div class="step-number">4</div>
-                                            <div class="step-content">
-                                                <h4 class="fw-bold mb-3">Onde praticar e regras básicas</h4>
-                                                <p class="text-muted">Use a pista/área do clube; observe limite de altura local e sentido de tráfego; cheque vento antes de decolar; faça checklist pré-voo.</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="step-item mb-4" data-aos="fade-up" data-aos-delay="500">
-                                            <div class="step-number">5</div>
-                                            <div class="step-content">
-                                                <h4 class="fw-bold mb-3">Próximos passos</h4>
-                                                <p class="text-muted">Agende mentoria com instrutor; participe das oficinas do clube; registre seus progressos (toques, arremetidas, pousos completos).</p>
-                                            </div>
-                                        </div>
+                <div id="tab-aero" class="tab-pane fade show active" role="tabpanel" aria-labelledby="tab-aero-btn">
+                    <div class="row g-4">
+                        <div class="col-12 col-lg-8">
+                            <div class="steps-container">
+                                <div class="step-item mb-4" data-aos="fade-up" data-aos-delay="100">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h4 class="fw-bold mb-3">Segurança primeiro</h4>
+                                        <p class="text-muted">Voe apenas em áreas autorizadas do clube; mantenha distância de pessoas e veículos; use óculos de proteção; não voe sobre vias públicas.</p>
                                     </div>
                                 </div>
+                        <li>
+                            <h3>2) Comece com um treinador</h3>
+                            <p>Prefira avião de espuma (EPO/EPP) do tipo “treinador”/asa alta, com trem de pouso robusto e, se possível, estabilização (gyro) para facilitar.</p>
+                        </li>
+                        <li>
+                            <h3>3) Kit inicial recomendado</h3>
+                            <ul class="bullets">
+                                <li>Rádio 2.4 GHz (≥6 canais)</li>
+                                <li>Bateria LiPo 3S (ex.: 2200 mAh) + carregador balanceador</li>
+                                <li>Hélice/patins sobressalentes, fita de reparo</li>
+                                <li>Simulador de voo para treinar decolagem, circuitos e pouso</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h3>4) Onde praticar e regras básicas</h3>
+                            <p>Use a pista/área do clube; observe limite de altura local e sentido de tráfego; cheque vento antes de decolar; faça checklist pré-voo.</p>
+                        </li>
+                        <li>
+                            <h3>5) Próximos passos</h3>
+                            <p>Agende mentoria com instrutor; participe das oficinas do clube; registre seus progressos (toques, arremetidas, pousos completos).</p>
+                        </li>
+                    </ol>
 
-                                <div class="col-12 col-lg-4">
-                                    <!-- Checklist Card -->
-                                    <div class="card border-0 shadow-sm mb-4" data-aos="fade-left" data-aos-delay="300">
-                                        <div class="card-header bg-primary text-white">
-                                            <h5 class="mb-0"><i class="ri-clipboard-line me-2"></i>Checklist pré-voo</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <ul class="list-unstyled mb-0">
-                                                <li class="mb-2"><i class="ri-check-line text-success me-2"></i>Bateria carregada e íntegra</li>
-                                                <li class="mb-2"><i class="ri-check-line text-success me-2"></i>Hélices sem danos e bem fixadas</li>
-                                                <li class="mb-2"><i class="ri-check-line text-success me-2"></i>Comandos no sentido correto e failsafe configurado</li>
-                                                <li class="mb-0"><i class="ri-check-line text-success me-2"></i>Vento dentro do seu limite; área de operação livre</li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                    <div class="card">
+                        <h4>Checklist pré-voo</h4>
+                        <ul class="checks">
+                            <li>Bateria carregada e íntegra</li>
+                            <li>Hélices sem danos e bem fixadas</li>
+                            <li>Comandos no sentido correto e failsafe configurado</li>
+                            <li>Vento dentro do seu limite; área de operação livre</li>
+                        </ul>
+                    </div>
 
-                                    <!-- Tip Card -->
-                                    <div class="alert alert-info" role="alert" data-aos="fade-left" data-aos-delay="400">
-                                        <i class="ri-lightbulb-line me-2"></i>
-                                        <strong>Dica:</strong> Domine decolagem reta → circuitos → toques e arremetidas → pouso. Use o simulador para "gravar" memória muscular.
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="tip">Dica: Domine decolagem reta → circuitos → toques e arremetidas → pouso. Use o simulador para “gravar” memória muscular.</div>
                         </div>
 
                         <!-- Automodelismo Tab -->
@@ -497,7 +644,6 @@ AMAER
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </section>
 
                 <!-- FAQ Section -->
@@ -806,133 +952,251 @@ AMAER
             previsaoGrid: document.getElementById('previsao-grid')
         };
 
+        // —— Helpers
         function setStatus(msg) {
-            el.status.textContent = msg;
+            el.status.textContent = msg || '';
         }
 
-        function formatDate(d) {
-            const local = new Date(d.getTime() - (d.getTimezoneOffset() * 60000));
-            return local.toLocaleString('pt-BR');
+        function clampDeg(x) {
+            x = x % 360;
+            return x < 0 ? x + 360 : x;
         }
 
-        function formatDateTime(isoStr) {
-            if (!isoStr) return '—';
-            try {
-                const d = new Date(isoStr);
-                return formatDate(d);
-            } catch {
-                return '—';
+        function degDiff(a, b) {
+            let d = Math.abs(clampDeg(a) - clampDeg(b));
+            return d > 180 ? 360 - d : d;
+        }
+
+        function toBadge(elm, level) {
+            elm.classList.remove('bom', 'atencao', 'desf');
+            if (level === 'bom') {
+                elm.classList.add('bom');
+                elm.textContent = 'Bom';
+            } else if (level === 'atencao') {
+                elm.classList.add('atencao');
+                elm.textContent = 'Atenção';
+            } else {
+                elm.classList.add('desf');
+                elm.textContent = 'Desfavorável';
             }
         }
 
-        function windDir(deg) {
-            if (deg === null || deg === undefined || isNaN(deg)) return '—';
-            const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-            const i = Math.round(deg / 22.5) % 16;
-            return dirs[i] || '—';
+        function fmtDateISOtoBR(iso) {
+            const d = new Date(iso + 'T00:00:00-03:00');
+            return d.toLocaleDateString('pt-BR', {
+                weekday: 'short',
+                day: '2-digit',
+                month: '2-digit'
+            });
         }
 
-        function getCondition(wind, gust, temp, rain, cloud) {
-            if (rain > 0.1 || cloud > 80) return { badge: 'desf', msg: 'Condições desfavoráveis' };
-            if (wind > 20 || gust > 30 || temp < 5 || temp > 35) return { badge: 'atencao', msg: 'Atenção - condições marginais' };
-            return { badge: 'bom', msg: 'Condições favoráveis' };
+        // —— Regras de avaliação
+        function avaliarAereo({
+            wind,
+            gust,
+            rain,
+            uv,
+            cross
+        }) {
+            let level = 'bom';
+            let msg = [];
+            if (wind > 25 || gust > 35 || rain > 1 || uv > 9 || cross > 20) {
+                level = 'desf';
+            } else if (wind > 15 || gust > 25 || rain > 0 || uv > 7 || cross > 12) {
+                level = 'atencao';
+            }
+            if (wind > 25 || gust > 35) msg.push('Vento/rajada fortes');
+            if (cross > 20) msg.push('Crosswind alto');
+            else if (cross > 12) msg.push('Crosswind moderado');
+            if (rain > 0) msg.push('Chuva presente');
+            if (uv > 7) msg.push('UV elevado');
+            return {
+                level,
+                msg: msg.length ? msg.join('; ') : 'Condições adequadas.'
+            };
         }
 
-        function windComponents(windSpeed, windDir, runwayHdg) {
-            if (!windSpeed || !windDir || !runwayHdg) return { headtail: 0, cross: 0 };
-            const radDiff = ((windDir - runwayHdg) % 360) * Math.PI / 180;
-            const headtail = windSpeed * Math.cos(radDiff);
-            const cross = Math.abs(windSpeed * Math.sin(radDiff));
-            return { headtail: Math.round(headtail), cross: Math.round(cross) };
+        function avaliarPista({
+            rainNow,
+            rainDay,
+            umid
+        }) {
+            let level = 'bom';
+            let msg = [];
+            if (rainDay > 2 || rainNow > 0 || umid > 95) {
+                level = 'desf';
+            } else if (rainDay > 0 || umid > 85) {
+                level = 'atencao';
+            }
+            if (rainNow > 0) msg.push('Pista molhada');
+            if (rainDay > 2) msg.push('Chuva significativa no dia');
+            if (umid > 85) msg.push('Umidade alta');
+            return {
+                level,
+                msg: msg.length ? msg.join('; ') : 'Condições adequadas.'
+            };
         }
 
+        function compVento(vel, dir, runway) {
+            if (!runway && runway !== 0) return {
+                headtail: null,
+                cross: null
+            };
+            const delta = degDiff(dir, runway) * Math.PI / 180;
+            const head = vel * Math.cos(delta);
+            const cross = Math.abs(vel * Math.sin(delta));
+            return {
+                headtail: Math.round(head),
+                cross: Math.round(cross)
+            };
+        }
+
+        // —— Fetch
+        async function fetchMeteo(lat, lon) {
+            const url = new URL('https://api.open-meteo.com/v1/forecast');
+            url.searchParams.set('latitude', lat);
+            url.searchParams.set('longitude', lon);
+            url.searchParams.set('timezone', 'America/Sao_Paulo');
+            url.searchParams.set('current', [
+                'temperature_2m', 'relative_humidity_2m', 'wind_speed_10m', 'wind_gusts_10m',
+                'wind_direction_10m', 'precipitation', 'uv_index', 'cloud_cover'
+            ].join(','));
+            url.searchParams.set('daily', [
+                'temperature_2m_max', 'temperature_2m_min', 'wind_speed_10m_max', 'wind_gusts_10m_max',
+                'wind_direction_10m_dominant', 'precipitation_sum', 'precipitation_probability_max', 'uv_index_max'
+            ].join(','));
+            url.searchParams.set('forecast_days', '6'); // hoje + 5
+
+            const res = await fetch(url.toString(), {
+                cache: 'no-store'
+            });
+            if (!res.ok) throw new Error('Falha ao obter dados meteorológicos');
+            return res.json();
+        }
+
+        // —— Render
         function renderAgora(data, runwayHdg) {
-            if (!data || !data.current) return;
             const c = data.current;
+            const wind = Math.round(c.wind_speed_10m ?? 0);
+            const gust = Math.round(c.wind_gusts_10m ?? 0);
+            const dir = Math.round(c.wind_direction_10m ?? 0);
+            const rain = +(c.precipitation ?? 0); // mm/h
+            const uv = Math.round(c.uv_index ?? 0);
+            const umid = Math.round(c.relative_humidity_2m ?? 0);
+            const cloud = Math.round(c.cloud_cover ?? 0);
 
-            el.lastUpdate.textContent = formatDateTime(c.time);
-            el.nowTemp.textContent = c.temperature_2m || '—';
-            el.nowUmid.textContent = c.relative_humidity_2m || '—';
-            el.nowWind.textContent = c.wind_speed_10m || '—';
-            el.nowGust.textContent = c.wind_gusts_10m || '—';
-            el.nowDir.textContent = c.wind_direction_10m ? `${c.wind_direction_10m}° ${windDir(c.wind_direction_10m)}` : '—';
-            el.nowRain.textContent = c.rain || '0';
-            el.nowCloud.textContent = c.cloud_cover || '—';
-            el.nowUV.textContent = c.uv_index || '—';
+            el.nowTemp.textContent = Math.round(c.temperature_2m ?? 0);
+            el.nowUmid.textContent = umid;
+            el.nowWind.textContent = wind;
+            el.nowGust.textContent = gust;
+            el.nowDir.textContent = dir;
+            el.nowRain.textContent = rain.toFixed(1);
+            el.nowCloud.textContent = cloud;
+            el.nowUV.textContent = uv;
 
-            if (runwayHdg && c.wind_speed_10m && c.wind_direction_10m) {
-                const comp = windComponents(c.wind_speed_10m, c.wind_direction_10m, runwayHdg);
-                el.runwayHdg.textContent = runwayHdg;
-                el.nowHeadTail.textContent = comp.headtail > 0 ? `+${comp.headtail}` : comp.headtail;
-                el.nowCross.textContent = comp.cross;
+            el.lastUpdate.textContent = new Date().toLocaleString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            // Componentes de vento
+            if (runwayHdg !== '' && runwayHdg != null && !Number.isNaN(+runwayHdg)) {
                 el.runwayBlock.hidden = false;
+                el.runwayHdg.textContent = clampDeg(+runwayHdg);
+                const comp = compVento(wind, dir, +runwayHdg);
+                el.nowHeadTail.textContent = comp.headtail ?? '—';
+                el.nowCross.textContent = comp.cross ?? '—';
+
+                const avA = avaliarAereo({
+                    wind,
+                    gust,
+                    rain,
+                    uv,
+                    cross: comp.cross ?? 0
+                });
+                toBadge(el.badgeAereo, avA.level);
+                el.msgAereo.textContent = avA.msg;
             } else {
                 el.runwayBlock.hidden = true;
+                const avA = avaliarAereo({
+                    wind,
+                    gust,
+                    rain,
+                    uv,
+                    cross: 0
+                });
+                toBadge(el.badgeAereo, avA.level);
+                el.msgAereo.textContent = avA.msg + ' (informe cabeceio para crosswind).';
             }
 
-            const aeroCondition = getCondition(c.wind_speed_10m, c.wind_gusts_10m, c.temperature_2m, c.rain, c.cloud_cover);
-            el.badgeAereo.className = `badge ${aeroCondition.badge}`;
-            el.badgeAereo.textContent = aeroCondition.badge.toUpperCase();
-            el.msgAereo.textContent = aeroCondition.msg;
-
-            const pistaCondition = c.rain > 0.1 ? 
-                { badge: 'desf', msg: 'Pista molhada - não recomendado' } : 
-                { badge: 'bom', msg: 'Pista seca - condições adequadas' };
-            el.badgePista.className = `badge ${pistaCondition.badge}`;
-            el.badgePista.textContent = pistaCondition.badge.toUpperCase();
-            el.msgPista.textContent = pistaCondition.msg;
+            const avP = avaliarPista({
+                rainNow: rain,
+                rainDay: data.daily.precipitation_sum?.[0] ?? 0,
+                umid
+            });
+            toBadge(el.badgePista, avP.level);
+            el.msgPista.textContent = avP.msg;
 
             el.agora.hidden = false;
         }
 
-        function renderPrevisao(data) {
-            if (!data || !data.daily) return;
-            const daily = data.daily;
-            
-            el.previsaoGrid.innerHTML = '';
-            
-            for (let i = 0; i < Math.min(5, daily.time.length); i++) {
-                const div = document.createElement('div');
-                div.className = 'day';
-                
-                const date = new Date(daily.time[i]);
-                const dayName = date.toLocaleDateString('pt-BR', { weekday: 'short' });
-                const dayNum = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-                
-                div.innerHTML = `
-                    <h5>${dayName} ${dayNum}</h5>
-                    <div class="meta">Temp: <strong>${daily.temperature_2m_min[i]}°C - ${daily.temperature_2m_max[i]}°C</strong></div>
-                    <div class="meta">Vento: <strong>${daily.wind_speed_10m_max[i]} km/h</strong></div>
-                    <div class="meta">Chuva: <strong>${daily.rain_sum[i] || 0} mm</strong></div>
-                `;
-                
-                el.previsaoGrid.appendChild(div);
-            }
-            
+        function iconHint({
+            rain,
+            uv,
+            cloud
+        }) {
+            if (rain > 0.2) return '🌧️';
+            if (cloud > 70) return '☁️';
+            if (uv >= 8) return '☀️';
+            return '⛅';
+        }
+
+        function renderPrevisao(d) {
+            const days = d.daily.time.slice(1, 6).map((dateIso, i) => {
+                const tmax = Math.round(d.daily.temperature_2m_max[i + 1] ?? 0);
+                const tmin = Math.round(d.daily.temperature_2m_min[i + 1] ?? 0);
+                const wmax = Math.round(d.daily.wind_speed_10m_max[i + 1] ?? 0);
+                const gmax = Math.round(d.daily.wind_gusts_10m_max[i + 1] ?? 0);
+                const pSum = +(d.daily.precipitation_sum[i + 1] ?? 0);
+                const pProb = Math.round(d.daily.precipitation_probability_max?.[i + 1] ?? 0);
+                const uv = Math.round(d.daily.uv_index_max?.[i + 1] ?? 0);
+                const cloud = 50; // daily cloud cover not present → heurística
+                const icon = iconHint({
+                    rain: pSum,
+                    uv,
+                    cloud
+                });
+                return {
+                    dateIso,
+                    tmax,
+                    tmin,
+                    wmax,
+                    gmax,
+                    pSum,
+                    pProb,
+                    uv,
+                    icon
+                };
+            });
+
+            el.previsaoGrid.innerHTML = days.map(dy => `
+      <div class="day" aria-label="Previsão para ${fmtDateISOtoBR(dy.dateIso)}">
+        <h5>${fmtDateISOtoBR(dy.dateIso)} ${dy.icon}</h5>
+        <div class="meta">Max/Min: <strong>${dy.tmax}°C</strong> / ${dy.tmin}°C</div>
+        <div class="meta">Vento máx: <strong>${dy.wmax} km/h</strong></div>
+        <div class="meta">Rajada máx: ${dy.gmax} km/h</div>
+        <div class="meta">Chuva: ${dy.pSum.toFixed(1)} mm (prob. ${dy.pProb}%)</div>
+        <div class="meta">UV máx: ${dy.uv}</div>
+      </div>
+    `).join('');
             el.previsao.hidden = false;
         }
 
-        async function carregar(lat, lon, runway) {
-            setStatus('Carregando dados meteorológicos...');
-            el.agora.hidden = true;
-            el.previsao.hidden = true;
-
+        // —— Fluxo
+        async function carregar(lat, lon, runwayHdg) {
+            setStatus('Carregando condições meteorológicas...');
             try {
-                const params = new URLSearchParams({
-                    latitude: lat,
-                    longitude: lon,
-                    current: 'temperature_2m,relative_humidity_2m,rain,cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index',
-                    daily: 'temperature_2m_max,temperature_2m_min,rain_sum,wind_speed_10m_max',
-                    timezone: 'America/Sao_Paulo',
-                    forecast_days: 5
-                });
-
-                const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
-                if (!response.ok) throw new Error('Erro na API');
-                
-                const data = await response.json();
-                const runwayHdg = runway !== '' && !isNaN(runway) ? parseFloat(runway) : null;
-                
+                const data = await fetchMeteo(lat, lon);
                 renderAgora(data, runwayHdg);
                 renderPrevisao(data);
                 setStatus('');
@@ -1041,29 +1305,6 @@ AMAER
 
         #fallback-map {
             height: 400px !important;
-        }
-
-        /* Banner responsivo */
-        .banner-container {
-            position: relative;
-            width: 100%;
-        }
-
-        .banner-container img {
-            display: block;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 576px) {
-            .banner-container {
-                max-height: 200px;
-            }
-            
-            .banner-container img {
-                max-height: 200px;
-                width: auto !important;
-                object-fit: contain !important;
-            }
         }
     }
 </style>

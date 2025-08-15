@@ -279,6 +279,48 @@
                     </div>
                 </div>
 
+                <!-- Informações Adicionais -->
+                <div class="mb-4">
+                    <h5 class="text-primary"><strong>Informações Adicionais:</strong></h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="linkedin" class="form-label"><strong>LinkedIn:</strong></label>
+                                <input type="url" name="linkedin" class="form-control @error('linkedin') is-invalid @enderror" id="linkedin" value="{{ old('linkedin', $user->linkedin) }}">
+                                @error('linkedin')
+                                    <div class="form-text text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="github" class="form-label"><strong>GitHub:</strong></label>
+                                <input type="url" name="github" class="form-control @error('github') is-invalid @enderror" id="github" value="{{ old('github', $user->github) }}">
+                                @error('github')
+                                    <div class="form-text text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="biografia" class="form-label"><strong>Biografia:</strong></label>
+                        <textarea name="biografia" class="form-control @error('biografia') is-invalid @enderror" id="biografia" rows="4">{{ old('biografia', $user->biografia) }}</textarea>
+                        @error('biografia')
+                            <div class="form-text text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="alt" class="form-label"><strong>Alt:</strong></label>
+                        <input type="text" name="alt" class="form-control @error('alt') is-invalid @enderror" id="alt" value="{{ old('alt', $user->alt) }}">
+                        @error('alt')
+                            <div class="form-text text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button type="submit" class="btn btn-outline-success btn-flat">
                         <i class="fas fa-plus"></i> {{ __('Save') }}

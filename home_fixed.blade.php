@@ -14,8 +14,8 @@ AMAER
 
         <!-- Hero Text-->
         <div class="col-12 position-relative z-index-20 text-center" data-aos="fade-in">
-            <div class="banner-container mb-4" style="border-radius: 0.5rem; overflow: hidden;">
-                <img class="img-fluid w-100" src="{{ asset('img/banner_amaer.png') }}?v={{ time() }}" alt="Banner AMAER" style="height: auto; max-height: 300px; object-fit: contain;">
+            <div class="banner-container mb-4" style="max-height: 300px; overflow: hidden; border-radius: 0.5rem;">
+                <img class="img-fluid w-100" src="{{ asset('img/banner_amaer.png') }}?v={{ time() }}" alt="Banner AMAER" style="object-fit: cover; height: 300px;">
             </div>
         </div>
 
@@ -26,7 +26,7 @@ AMAER
             <p class="text-muted mb-5">{{ $fraseInicio->descricao ?? 'Uma associação dedicada aos amantes do aeromodelismo e automodelismo' }}</p>
 
             <div class="mt-4 pt-1 d-flex flex-column flex-md-row justify-content-center">
-                <a href="{{ route('member.register.form') }}" class="btn btn-success" role="button">Seja Membro</a>
+                <a href="{{ route('projeto.indexPublic') }}" class="btn btn-success" role="button">Ver Projetos</a>
                 <a href="{{ route('contact') }}" class="btn btn-link text-decoration-none text-muted ms-2 bg-light-hover"
                     role="button">Entre em Contato</a>
             </div>
@@ -1041,29 +1041,6 @@ AMAER
 
         #fallback-map {
             height: 400px !important;
-        }
-
-        /* Banner responsivo */
-        .banner-container {
-            position: relative;
-            width: 100%;
-        }
-
-        .banner-container img {
-            display: block;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 576px) {
-            .banner-container {
-                max-height: 200px;
-            }
-            
-            .banner-container img {
-                max-height: 200px;
-                width: auto !important;
-                object-fit: contain !important;
-            }
         }
     }
 </style>

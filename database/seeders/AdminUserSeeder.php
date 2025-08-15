@@ -14,26 +14,36 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         $user = User::create([
-            'name' => 'CDT user',
-            'email' => 'cdt.projetos@gmail.com',
+            'name' => 'Frank',
+            'sobrenome' => 'Administrador',
+            'email' => 'admin@amaer.com.br',
             'email_verified_at' => now(),
             'password' => Hash::make('admin123'),
-            'cargo' => 'Desenvolvedor',
+            'modalidade_principal' => 'aeromodelismo',
+            'data_nascimento' => '1990-01-01',
             'cpf' => '12345678901',
+            'rg' => '123456789',
+            'telefone_celular' => '44999999999',
+            'celular_whatsapp' => true,
+            'telefone_residencial' => '4432221111',
+            'logradouro' => 'Rua Principal',
+            'numero' => '123',
+            'bairro' => 'Centro',
+            'cidade' => 'Paranavaí',
+            'estado' => 'PR',
+            'cep' => '87700000',
             'ativo' => true,
-            'biografia' => 'CDT user é um usuário administrador do sistema.',
-            'alt' => 'CDT user alt text',
             'imagem' => 'default.png',
-            'linkedin' => 'https://linkedin.com/in/',
-            'github' => 'https://github.com/',
             'passwordGoogle' => null,
             'remember_token' => null,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        $role = Role::firstOrCreate(['name' => 'Admin']);
+        // Criar roles se não existirem
+        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+        $userRole = Role::firstOrCreate(['name' => 'User']);
 
-        $user->assignRole($role);
+        $user->assignRole($adminRole);
     }
 }

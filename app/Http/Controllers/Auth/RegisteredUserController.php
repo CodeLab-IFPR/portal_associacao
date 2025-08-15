@@ -50,39 +50,51 @@ class RegisteredUserController extends Controller implements HasMiddleware
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|min:3|max:255',
-            'cargo' => 'nullable|min:5|max:100',
+            // Modalidade
+            'modalidade_principal' => 'nullable|in:aeromodelismo,automodelismo',
+            
+            // Dados pessoais
+            'nome' => 'nullable|min:2|max:255',
+            'sobrenome' => 'nullable|min:2|max:255',
+            'data_nascimento' => 'nullable|date|before:today',
             'cpf' => 'required|unique:users,cpf',
-            'biografia' => 'nullable|min:10',
-            'linkedin' => 'nullable|url',
-            'github' => 'nullable|url',
-            'alt' => 'nullable|min:5|max:255',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'rg' => 'nullable|string|max:20',
+            
+            // Contato
+            'telefone_celular' => 'nullable|string|max:20',
+            'celular_whatsapp' => 'nullable|boolean',
+            'telefone_residencial' => 'nullable|string|max:20',
+            'telefone_comercial' => 'nullable|string|max:20',
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email_alternativo' => 'nullable|email|max:255',
+            'senha' => 'nullable|string|max:255',
+            
+            // Endereço
+            'cep' => 'nullable|string|max:10',
+            'logradouro' => 'nullable|string|max:255',
+            'numero' => 'nullable|string|max:10',
+            'bairro' => 'nullable|string|max:100',
+            'estado' => 'nullable|string|max:50',
+            'cidade' => 'nullable|string|max:100',
+            
+            // Campos originais - removidos: cargo, biografia, linkedin, github, alt, imagem
         ]);
     
         $entrada = $request->all();
         $entrada['ativo'] = $request->has('ativo') ? $request->ativo : false;
         $password = $request->input('generated_password');
         $entrada['password'] = Hash::make($password);
-        $entrada['imagem'] = $request->has('cropped_image') && $request->cropped_image ? $entrada['imagem'] : 'default.png';
-    
-        if ($request->has('cropped_image') && $request->cropped_image) {
-            $image_parts = explode(";base64,", $request->cropped_image);
-            $image_type_aux = explode("image/", $image_parts[0]);
-            $image_type = $image_type_aux[1];
-            $image_base64 = base64_decode($image_parts[1]);
-            $imageName = uniqid() . '.png';
-            $imageFullPath = sys_get_temp_dir() . '/' . $imageName;
-            file_put_contents($imageFullPath, $image_base64);
-    
-            $uploader = new ImageUploader();
-            $uploader->setCompression(30);
-            $uploader->setResolution(160);
-            $uploader->setDestinationPath('users/');
-            $entrada['imagem'] = $uploader->upload(new \Illuminate\Http\File($imageFullPath));
+        
+        // Combinar nome e sobrenome no campo name para compatibilidade, se existirem
+        if ($request->filled('nome') && $request->filled('sobrenome')) {
+            $entrada['name'] = $entrada['nome'] . ' ' . $entrada['sobrenome'];
+        } elseif (!$request->filled('name') && ($request->filled('nome') || $request->filled('sobrenome'))) {
+            $entrada['name'] = ($entrada['nome'] ?? '') . ' ' . ($entrada['sobrenome'] ?? '');
         }
-    
+        
+        // Converter checkbox para boolean
+        $entrada['celular_whatsapp'] = $request->has('celular_whatsapp') ? true : false;
+
         $user = User::create($entrada);
         $user->syncRoles($request->roles);
     
@@ -145,53 +157,56 @@ class RegisteredUserController extends Controller implements HasMiddleware
     public function update(Request $request, User $user): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|min:3|max:255',
-            'cargo' => 'nullable|min:5|max:100',
+            // Modalidade
+            'modalidade_principal' => 'nullable|in:aeromodelismo,automodelismo',
+            
+            // Dados pessoais
+            'nome' => 'nullable|min:2|max:255',
+            'sobrenome' => 'nullable|min:2|max:255',
+            'data_nascimento' => 'nullable|date|before:today',
             'cpf' => 'required|unique:users,cpf,' . $user->id,
-            'biografia' => 'nullable|min:10',
-            'linkedin' => 'nullable|url',
-            'github' => 'nullable|url',
-            'alt' => 'nullable|min:5|max:255',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'rg' => 'nullable|string|max:20',
+            
+            // Contato
+            'telefone_celular' => 'nullable|string|max:20',
+            'celular_whatsapp' => 'nullable|boolean',
+            'telefone_residencial' => 'nullable|string|max:20',
+            'telefone_comercial' => 'nullable|string|max:20',
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email_alternativo' => 'nullable|email|max:255',
+            'senha' => 'nullable|string|max:255',
+            
+            // Endereço
+            'cep' => 'nullable|string|max:10',
+            'logradouro' => 'nullable|string|max:255',
+            'numero' => 'nullable|string|max:10',
+            'bairro' => 'nullable|string|max:100',
+            'estado' => 'nullable|string|max:50',
+            'cidade' => 'nullable|string|max:100',
+            
+            // Campos originais - removidos: cargo, biografia, linkedin, github, alt, imagem
         ], [
             'cpf.unique' => 'CPF já cadastrado.',
             'cpf.required' => 'O campo CPF é obrigatório.',
-            'name.required' => 'O campo nome é obrigatório.',
-            'name.min' => 'O campo nome deve ter no mínimo 3 caracteres.',
-            'name.max' => 'O campo nome deve ter no máximo 255 caracteres.',
-            'cargo.max' => 'O campo cargo deve ter no máximo 100 caracteres.',
-            'biografia.min' => 'O campo biografia deve ter no mínimo 10 caracteres.',
-            'linkedin.url' => 'O campo linkedin deve ser uma URL válida.',
-            'github.url' => 'O campo github deve ser uma URL válida.',
-            'alt.min' => 'O campo alt deve ter no mínimo 5 caracteres.',
-            'alt.max' => 'O campo alt deve ter no máximo 255 caracteres.',
-            'imagem.image' => 'O arquivo deve ser uma imagem.',
-            'imagem.mimes' => 'O arquivo deve ser uma imagem do tipo: jpeg, png, jpg, gif, svg.',
-            'imagem.max' => 'O arquivo deve ter no máximo 2048 KB.',
+            'nome.min' => 'O campo nome deve ter no mínimo 2 caracteres.',
+            'nome.max' => 'O campo nome deve ter no máximo 255 caracteres.',
+            'sobrenome.min' => 'O campo sobrenome deve ter no mínimo 2 caracteres.',
+            'sobrenome.max' => 'O campo sobrenome deve ter no máximo 255 caracteres.',
         ]);
     
         $entrada = $request->all();
         $entrada['ativo'] = $request->has('ativo') ? $request->ativo : false;
-    
-        if ($request->has('cropped_image') && $request->cropped_image) {
-            $image_parts = explode(";base64,", $request->cropped_image);
-            $image_type_aux = explode("image/", $image_parts[0]);
-            $image_type = $image_type_aux[1];
-            $image_base64 = base64_decode($image_parts[1]);
-            $imageName = uniqid() . '.png';
-            $imageFullPath = sys_get_temp_dir() . '/' . $imageName;
-            file_put_contents($imageFullPath, $image_base64);
-    
-            $uploader = new ImageUploader();
-            $uploader->setCompression(30);
-            $uploader->setResolution(160);
-            $uploader->setDestinationPath('users/');
-            $entrada['imagem'] = $uploader->upload(new \Illuminate\Http\File($imageFullPath), $user->imagem);
-        } else {
-            unset($entrada['imagem']);
+        
+        // Combinar nome e sobrenome no campo name para compatibilidade, se existirem
+        if ($request->filled('nome') && $request->filled('sobrenome')) {
+            $entrada['name'] = $entrada['nome'] . ' ' . $entrada['sobrenome'];
+        } elseif (!$request->filled('name') && ($request->filled('nome') || $request->filled('sobrenome'))) {
+            $entrada['name'] = ($entrada['nome'] ?? '') . ' ' . ($entrada['sobrenome'] ?? '');
         }
-    
+        
+        // Converter checkbox para boolean
+        $entrada['celular_whatsapp'] = $request->has('celular_whatsapp') ? true : false;
+
         $user->update($entrada);
         $user->syncRoles($request->roles);
     

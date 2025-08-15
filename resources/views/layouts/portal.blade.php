@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Portal CodeLab - Submissão de Demandas, Certificados e mais.">
+    <meta name="description" content="Amaer - Associação Maringaense de Aeromodelismo e Automodelismo Radio Controlado.">
     <meta name="author" content="Cadu e João">
     <meta name="keywords" content="">
 
     <link rel="apple-touch-icon" sizes="180x180" src="{{ asset('img/favicon/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/codelab-logo-ico.png')  }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('img/codelab-logo-ico.png')  }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/amaer-ico.png')  }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('img/amaer-ico.png')  }}">
     <link rel="mask-icon" src="{{ asset('img/favicon/safari-pinned-tab.svg') }}" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
@@ -61,10 +61,60 @@
         main {
             flex: 1;
         }
+        
+        /* Footer Styles */
+        .hover-text-primary:hover {
+            color: #007bff !important;
+        }
+        
+        .hover-text-white:hover {
+            color: #ffffff !important;
+        }
+        
+        .border-white-10 {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        .text-white-50 {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+        
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        
+        footer .footer-nav li a:hover {
+            padding-left: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        footer i.ri-map-pin-line,
+        footer i.ri-mail-line,
+        footer i.ri-phone-line {
+            color: #007bff;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            footer .d-flex.gap-3 {
+                justify-content: center;
+            }
+            
+            footer h6 {
+                text-align: center;
+                margin-bottom: 1rem !important;
+            }
+            
+            footer .footer-nav {
+                text-align: center;
+            }
+        }
     </style>
     
     @vite('resources/css/libs.bundle.css')    
     @vite('resources/css/theme.bundle.css')
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <noscript>
         <style>
           .simplebar-content-wrapper {
@@ -79,10 +129,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white ">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center lh-1 me-1 transition-opacity opacity-75-hover" href="{{ route('home') }}">
-            <span class="f-w-8 d-block text-success mb-1 me-1">
-                <img class="img-fluid mx-auto d-block" src="{{ asset('img/codelab-logo-ico.png') }}" alt="">
-            </span>
-            <span class="fw-bold text-body text-center fs-6">CodeLab</span>
+            <img class="img-fluid" src="{{ asset('img/logo-amaer.png') }}" alt="AMAER Logo" style="height: 55px; background-color: #1a1a1a; padding: 10px; border-radius: 8px;">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,51 +137,14 @@
         </button>    
         <div class="collapse navbar-collapse justify-content-evenly" id="navbarSupportedContent">
             <ul class="navbar-nav" style="gap: 0.3rem;"> 
-                <li class="nav-item dropdown position-static ">
-                    <a class="nav-link dropdown-toggle me-lg-0 ms-lg-0" href="#" role="button" data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false" style="font-size: 1.2rem;">
-                        <i class="ri-award-line me-2"></i>
-                        <span>Certificação</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-megamenu">
-                        <div class="container">
-                            <div class="row py-lg-5 gx-8">
-                                <div class="col-auto me-4 mb-4 col-lg-4 d-flex align-items-start">
-                                    <span class="f-w-16 d-block text-primary me-4 d-none d-lg-flex">
-                                        <svg class="w-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline opacity=".4" points="2 12 12 17 22 12"></polyline></svg>
-                                    </span>
-                                    <div class="position-relative">
-                                        <h6 class="dropdown-heading">Certificado</h6>
-                                        <p class="text-muted">Emita seu certificado de participação</p>
-                                        <a href="{{ route('certificados.emitir') }}" class="fw-medium fs-7 text-decoration-none link-cover">Acessar &rarr;</a>
-                                    </div>
-                                </div>
-                                <div class="col-auto me-4 mb-4 col-lg-4 d-flex align-items-start">
-                                    <span class="f-w-16 d-block text-primary me-4 d-none d-lg-flex">
-                                        <svg class="w-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect opacity=".3" x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
-                                    </span>
-                                    <div class="position-relative">
-                                        <h6 class="dropdown-heading">Validar Certificado</h6>
-                                        <p class="text-muted">Valide certificados de participação.</p>
-                                        <a href="{{ route('certificados.validar') }}" class="fw-medium fs-7 text-decoration-none link-cover">Acessar &rarr;</a>
-                                    </div>
-                                </div>                              
-                            </div>
-                        </div>
-                    </div>
-                </li>    
-                <li class="nav-item">
-                    <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('projeto.indexPublic') }}" style="font-size: 1.2rem;">
-                        <i class="ri-newspaper-line me-2"></i>
-                        <span>Projetos</span>
-                    </a>
-                </li>
+                              
                 <li class="nav-item">
                     <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('noticias.cards') }}" style="font-size: 1.2rem;">
                         <i class="ri-newspaper-line me-2"></i>
                         <span>Notícias</span>
                     </a>
                 </li>
+          
                 <li class="nav-item">
                     <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('about') }}" style="font-size: 1.2rem;">
                         <i class="ri-information-line me-2"></i>
@@ -146,17 +156,23 @@
                         <i class="ri-contacts-line me-2"></i>
                         <span>Contato</span>
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('submission') }}" style="font-size: 1.2rem;">
-                        <i class="ri-upload-line me-2"></i>
-                        <span>Submissão</span>
-                    </a>
-                </li>
+                </li>              
                 <li class="nav-item">
                     <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('galeria.indexPublic') }}" style="font-size: 1.2rem;">
                         <i class="ri-gallery-line me-2"></i>
                         <span>Galeria</span>
+                    </a>
+                </li>
+                      <li class="nav-item">
+                    <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('member.register.form') }}" style="font-size: 1.2rem;">
+                        <i class="ri-user-add-line me-2"></i>
+                        <span>Seja Membro</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('admin') }}" style="font-size: 1.2rem;">
+                        <i class="ri-settings-3-line me-2"></i>
+                        <span>Área do Associado</span>
                     </a>
                 </li>
             </ul>
@@ -166,50 +182,121 @@
 <main class="mt-0 ">
     @yield('content')
 </main>
-<footer class="bg-dark pt-4 pb-8">
+<footer class="bg-dark py-8">
     <div class="container">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <a class="d-flex align-items-center lh-1 text-white transition-opacity opacity-50-hover text-decoration-none mb-4 mb-md-0"
-                href="#">
-                <span class="f-w-7 d-block text-success me-2">
-                <img class="img-fluid d-table mx-auto bg-white rounded-1" src="{{ asset('img/codelab-logo-ico.png') }}" alt="">
-                </span>
-                <span class="fw-bold">CodeLab</span>
-            </a>    
-        </div>
-        <div class="d-flex flex-wrap justify-content-between mt-5 mt-lg-7">    
-            <div class="w-100 w-sm-50 w-lg-auto mb-4 mb-lg-0">
-                <h6 class="text-uppercase fs-xs fw-bolder tracking-wider text-white opacity-50">Portal</h6>
+        <!-- Seção principal do footer -->
+        <div class="row g-4 mb-6">
+            <!-- Logo e descrição -->
+            <div class="col-lg-4 col-md-6">
+                <div class="d-flex align-items-center mb-4">
+                    <span class="f-w-7 d-block text-success me-3">
+                        <img class="img-fluid d-table mx-auto bg-white rounded-2 p-1" src="{{ asset('img/amaer-ico.png') }}" alt="AMAER Logo">
+                    </span>
+                    <div>
+                        <h5 class="text-white fw-bold mb-1">AMAER</h5>
+                        <small class="text-white-50">Associação de Aeromodelismo e Automodelismo</small>
+                    </div>
+                </div>
+                <p class="text-white-50 mb-4">Promovendo o aeromodelismo e automodelismo em Paranavaí - PR com segurança, educação e diversão para toda a família.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white-50 hover-text-primary transition-all">
+                        <i class="ri-facebook-fill fs-5"></i>
+                    </a>
+                    <a href="#" class="text-white-50 hover-text-primary transition-all">
+                        <i class="ri-instagram-line fs-5"></i>
+                    </a>
+                    <a href="#" class="text-white-50 hover-text-primary transition-all">
+                        <i class="ri-youtube-line fs-5"></i>
+                    </a>
+                    <a href="#" class="text-white-50 hover-text-primary transition-all">
+                        <i class="ri-mail-line fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Links rápidos -->
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <h6 class="text-white fw-bold mb-4">Portal</h6>
                 <ul class="list-unstyled footer-nav">
-                    <li><a href="{{ route('about') }}">Sobre Nós</a></li>
-                    <li><a href="#">Junte-se</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Últimas Noticias</a></li>
+                    <li class="mb-2"><a href="{{ route('about') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Sobre Nós</a></li>
+                    <li class="mb-2"><a href="{{ route('member.register.form') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Seja Membro</a></li>
+                    <li class="mb-2"><a href="{{ route('noticias.cards') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Notícias</a></li>
+                    <li class="mb-2"><a href="{{ route('galeria.indexPublic') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Galeria</a></li>
                 </ul>
             </div>
-            <div class="w-100 w-sm-50 w-lg-auto mb-4 mb-lg-0">
-                <h6 class="text-uppercase fs-xs fw-bolder tracking-wider text-white opacity-50">Navegação</h6>
+
+            <!-- Navegação -->
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <h6 class="text-white fw-bold mb-4">Navegação</h6>
                 <ul class="list-unstyled footer-nav">
-                    <li><a href="{{ route('home') }}">Home</a></li>
-                    <li><a href="{{ route('contact') }}">Contato</a></li>
+                    <li class="mb-2"><a href="{{ route('home') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Home</a></li>
+                    <li class="mb-2"><a href="{{ route('contact') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Contato</a></li>
+                    <li class="mb-2"><a href="{{ route('admin') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Área do Associado</a></li>
+                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-text-white transition-all">Projetos</a></li>
                 </ul>
             </div>
-            <div class="w-100 w-sm-50 w-lg-auto mb-4 mb-lg-0">
-                <h6 class="text-uppercase fs-xs fw-bolder tracking-wider text-white opacity-50">Termos Legais</h6>
-                <ul class="list-unstyled footer-nav">
-                    <li><a href="#">Política de Privacidade</a></li>
-                    <li><a href="#">Termos & Condições</a></li>
-                    <li><a href="#">LGPD</a></li>
-                    <li><a href="https://ifpr.edu.br/paranavai/" target="_blank">IFPR</a></li>
-                </ul>
-            </div>    
+
+            <!-- Contato e informações -->
+            <div class="col-lg-4 col-md-6">
+                <h6 class="text-white fw-bold mb-4">Contato & Localização</h6>
+                <div class="mb-3">
+                    <div class="d-flex align-items-start mb-2">
+                        <i class="ri-map-pin-line text-primary me-2 mt-1"></i>
+                        <span class="text-white-50 small">Maringá - PR<br>Brasil</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="ri-mail-line text-primary me-2"></i>
+                        <a href="mailto:contato@amaer.com.br" class="text-white-50 text-decoration-none hover-text-white transition-all small">contato@amaer.com.br</a>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="ri-phone-line text-primary me-2"></i>
+                        <span class="text-white-50 small">(44) 9999-9999</span>
+                    </div>
+                </div>
+                
+                <h6 class="text-white fw-bold mb-3 mt-4">Horário de Funcionamento</h6>
+                <div class="text-white-50 small">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Sábados:</span>
+                        <span>08:00 - 17:00</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Domingos:</span>
+                        <span>08:00 - 16:00</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Segunda - Sexta:</span>
+                        <span>Consultar</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="container">
-        <div class="border-top pt-6 mt-7 border-white-10 d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <span class="small text-white opacity-50 mb-2 mb-md-0">Todos os direitos reservados &copy IFPR 2024 e Sigma 2021</span>
-            <span class="small text-white opacity-50">Termos de Serviço  |  Política de Segurança</span>
+
+        <!-- Seção de termos legais -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="border-top border-white-10 pt-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h6 class="text-white fw-bold mb-3">Links Legais</h6>
+                            <div class="d-flex flex-wrap gap-3">
+                                <a href="#" class="text-white-50 text-decoration-none hover-text-white transition-all small">Política de Privacidade</a>
+                                <a href="#" class="text-white-50 text-decoration-none hover-text-white transition-all small">Termos & Condições</a>
+                                <a href="#" class="text-white-50 text-decoration-none hover-text-white transition-all small">LGPD</a>
+                                <a href="https://ifpr.edu.br/paranavai/" target="_blank" class="text-white-50 text-decoration-none hover-text-white transition-all small">IFPR Paranavaí</a>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                            <div class="text-white-50 small">
+                                <div><a href="https://codelabifpr.com.br" target="_blank" class="text-white-50 text-decoration-none hover-text-white transition-all ">Desenvolvido com ❤️ pelo CodeLab IFPR</a></div>
+                                <div class="mt-1">Todos os direitos reservados © AMAER 2024</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>    
 </footer>
 <div class="modal fade modal-video" id="videoIframeModal" tabindex="-1" aria-hidden="true">
@@ -228,5 +315,8 @@
     </div>
     @vite('resources/js/vendor.bundle.js')
     @vite('resources/js/theme.bundle.js')
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
 </body>
 </html>

@@ -10,5 +10,5 @@ class FraseInicio extends Model
 
     protected $table = 'frase_inicio';
 
-    protected $fillable = ['frase'];
+    protected $fillable = ['frase', 'titulo', 'subtitulo', 'localizacao', 'descricao', 'como_associar_se'];
 }
