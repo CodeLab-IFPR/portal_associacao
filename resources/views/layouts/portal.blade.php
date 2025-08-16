@@ -129,7 +129,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white ">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center lh-1 me-1 transition-opacity opacity-75-hover" href="{{ route('home') }}">
-            <img class="img-fluid" src="{{ asset('img/logo-amaer.png') }}" alt="AMAER Logo" style="height: 55px; background-color: #1a1a1a; padding: 10px; border-radius: 8px;">
+            <img class="img-fluid" src="{{ asset('img/logo-amaer.png') }}" alt="AMAER Logo" style="height: 55px; background-color: #2c2c2c; padding: 10px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

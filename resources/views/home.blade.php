@@ -891,7 +891,11 @@ AMAER
             
             el.previsaoGrid.innerHTML = '';
             
-            for (let i = 0; i < Math.min(5, daily.time.length); i++) {
+            // Começar do índice 1 para pular o dia atual e mostrar os próximos 5 dias
+            const startIndex = 1; // Pula o dia atual (hoje)
+            const endIndex = Math.min(6, daily.time.length); // Mostra até o índice 5 (próximos 5 dias)
+            
+            for (let i = startIndex; i < endIndex; i++) {
                 const div = document.createElement('div');
                 div.className = 'day';
                 
@@ -924,7 +928,7 @@ AMAER
                     current: 'temperature_2m,relative_humidity_2m,rain,cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index',
                     daily: 'temperature_2m_max,temperature_2m_min,rain_sum,wind_speed_10m_max',
                     timezone: 'America/Sao_Paulo',
-                    forecast_days: 5
+                    forecast_days: 6  // Aumentado para 6 para ter dados suficientes após pular o dia atual
                 });
 
                 const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);

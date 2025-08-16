@@ -16,8 +16,8 @@ Contate Nos
     </div>
 </header>
 <div class="container position-relative z-index-20 py-7">
-    <div class="row gx-10 my-10 pt-5">
-        <div class="col-12 col-lg-8">
+    <div class="row justify-content-center my-10 pt-5">
+        <div class="col-12 col-lg-8 col-xl-6">
             <p class="mb-3 small fw-bolder tracking-wider text-uppercase text-primary">Entre em contato</p>
             <h2 class="display-5 fw-bold mb-6">Envie-nos uma mensagem</h2>
             <form id="contactForm" method="POST" action="{{ route('send-message') }}" aria-labelledby="formTitle">
@@ -44,16 +44,6 @@ Contate Nos
                     </div>
                 </div>
             </form>
-        </div>
-        <div class="col-12 col-lg-4 mt-5 mt-lg-0">
-            <div class="mb-5">
-                <p class="mb-4 small fw-bolder tracking-wider text-uppercase text-primary">Nos encontre online</p>
-                <ul class="list-unstyled">
-                    <li class="d-flex align-items-center mb-2"><i class="ri-github-line me-3 ri-lg"></i> <a class="text-muted" href="https://github.com/CodeLab-IFPR" target="_blank">GitHub</a></li>
-                </ul>
-            </div>
-            <p class="mb-4 small fw-bolder tracking-wider text-uppercase text-primary">Nosso endereço</p>
-            <p>Av. José Felipe Tequinha, 1400 - Jardim das Nacoes, Paranavaí - PR</p>
         </div>
     </div>
 </div>
