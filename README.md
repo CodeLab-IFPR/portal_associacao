@@ -1,6 +1,6 @@
-# Portal CodeLab IFPR
+# Portal AMAER - Associação de Aeromodelismo e Automodelismo
 
-Este projeto é um portal desenvolvido para o gerenciamento de projetos de extensão do CodeLab IFPR, permitindo a automação de processos como a emissão e validação de certificados, além da divulgação de notícias e informações institucionais.
+Este projeto é um portal desenvolvido para o gerenciamento da AMAER (Associação de Aeromodelismo e Automodelismo), permitindo a administração de membros, eventos, notícias, certificados e informações institucionais da associação.
 
 ## Requisitos
 
@@ -84,7 +84,8 @@ Na raíz do projeto, execute o comando:
 
 7. **Configure o arquivo de ambiente:**
    - Renomeie o arquivo `.env-example` para `.env`.
-   - Insira as credenciais do e-mail (necessárias para a criação de membros).
+   - Insira as credenciais do e-mail (necessárias para a comunicação com membros e envio de notificações).
+   - Configure as informações da associação (nome, localização, coordenadas GPS para previsão do tempo).
 
 ## Executando o projeto
 
@@ -120,14 +121,44 @@ Na raíz do projeto, execute o comando:
 
 10. **Acesse o sistema:**
     - No navegador, acesse:
-      `/login`
-      `/admin`
+      - `/` - Página pública da associação
+      - `/login` - Login de membros
+      - `/admin` - Área administrativa
 
 ---
 
 ### Nota
 
 - Para criar um novo membro, é necessário configurar as credenciais de e-mail no arquivo `.env`.
+- O sistema permite gerenciar associados, eventos de aeromodelismo e automodelismo, notícias da associação e documentos dos membros.
+- Inclui funcionalidades de previsão do tempo para condições de voo e pista.
+
+---
+
+## Funcionalidades
+
+### Portal Público
+- **Página inicial** com informações da associação e condições operacionais da pista
+- **Previsão do tempo** específica para atividades de aeromodelismo e automodelismo
+- **Notícias e eventos** da associação
+- **Galeria de fotos** de atividades e equipamentos
+- **Formulário de contato** e solicitação de associação
+- **Guia para iniciantes** em aeromodelismo e automodelismo
+
+### Área Administrativa
+- **Gerenciamento de membros** (cadastro, documentos, aprovações)
+- **Gestão de notícias** e eventos
+- **Sistema de certificados** digitais
+- **Controle de permissões** de usuários
+- **Dashboard administrativo** com estatísticas
+- **Gerenciamento de galeria** de imagens
+
+### Recursos Técnicos
+- **API de previsão do tempo** integrada para condições de voo
+- **Sistema de documentos** com upload e aprovação
+- **Notificações por email** automatizadas
+- **Interface responsiva** para dispositivos móveis
+- **Autenticação segura** com controle de acesso
 
 ---
 ## Starter pack
@@ -136,11 +167,11 @@ Este projeto segue a arquitetura Model-View-Controller, os arquivos principais e
 - View - `resources/views`
 - Controller - `app/http/Controllers`
 
-Para acessar a área autenticada vá para a rota /admin no navegador, e insira as credencais: 
+Para acessar a área administrativa vá para a rota /admin no navegador, e insira as credenciais: 
 
 | email | senha |
 |---|---|
-| cdt.projetos@gmail.com | admin123 |
+| admin@amaer.org.br | admin123 |
 
 ---
 
