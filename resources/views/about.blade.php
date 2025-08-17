@@ -250,7 +250,7 @@ Sobre a AMAER
                                 <i class="ri-user-line" style="font-size: 2rem; color: white;"></i>
                             </div>
                         </div>
-                        <p style="font-weight:bold; margin-bottom:0.5rem; margin-top:1rem;">Lucas Martins</p>
+                        <p style="font-weight:bold; margin-bottom:0.5rem; margin-top:1rem;">Lucas Martins de Souza</p>
                         <p style="color:#007bff; font-weight:bold; margin-bottom:1rem; font-size:small;">Diretor de Eventos</p>
                         <p style="color:#6c757d; margin-bottom:1rem; line-height:1.5; word-wrap:break-word; overflow-wrap:break-word; white-space:normal;">Organiza competições, encontros e atividades recreativas para os associados.</p>
                         <ul style="list-style:none; padding-left:0; display:flex; align-items:center; justify-content:center; margin-bottom:0;">
