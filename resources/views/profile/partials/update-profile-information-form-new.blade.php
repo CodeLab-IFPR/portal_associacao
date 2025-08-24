@@ -95,7 +95,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="cpf" class="form-label"><strong>CPF:</strong></label>
-                                <input type="text" name="cpf" class="form-control @error('cpf') is-invalid @enderror" id="cpf" value="{{ old('cpf', $user->cpf) }}">
+                                <input type="text" name="cpf" class="form-control @error('cpf') is-invalid @enderror" id="cpf" value="{{ old('cpf', $user->cpf) }}" data-mask="cpf">
                                 @error('cpf')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
@@ -133,7 +133,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="telefone_celular" class="form-label"><strong>Telefone Celular:</strong></label>
-                                <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="telefone_celular" value="{{ old('telefone_celular', $user->telefone_celular) }}">
+                                <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="telefone_celular" value="{{ old('telefone_celular', $user->telefone_celular) }}" data-mask="phone">
                                 @error('telefone_celular')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
@@ -153,7 +153,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="telefone_residencial" class="form-label"><strong>Telefone Residencial:</strong></label>
-                                <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="telefone_residencial" value="{{ old('telefone_residencial', $user->telefone_residencial) }}">
+                                <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="telefone_residencial" value="{{ old('telefone_residencial', $user->telefone_residencial) }}" data-mask="phone">
                                 @error('telefone_residencial')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
@@ -162,7 +162,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="telefone_comercial" class="form-label"><strong>Telefone Comercial:</strong></label>
-                                <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="telefone_comercial" value="{{ old('telefone_comercial', $user->telefone_comercial) }}">
+                                <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="telefone_comercial" value="{{ old('telefone_comercial', $user->telefone_comercial) }}" data-mask="phone">
                                 @error('telefone_comercial')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
