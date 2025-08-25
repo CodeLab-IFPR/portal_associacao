@@ -219,7 +219,8 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="cep" class="form-label"><strong>CEP:</strong></label>
-                                <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep" value="{{ old('cep', $user->cep) }}" data-mask="cep">
+                                <!-- <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep" value="{{ old('cep', $user->cep) }}" data-mask="cep"> -->
+                                <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep"        value="{{ old('cep', $user->cep ? substr($user->cep, 0, 5) . '-' . substr($user->cep, 5) : '') }}" maxlength="8">
                                 @error('cep')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
@@ -395,6 +396,8 @@
         </div>
     </div>
 </div>
+
+@vite('resources/js/utils/viacep.js')
 
 <!-- Scripts necessários para Cropper.js -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.6/cropper.css"/>

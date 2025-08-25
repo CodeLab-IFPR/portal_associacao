@@ -3,8 +3,15 @@ document.addEventListener('DOMContentLoaded', function () {
     let hasEdited = false;
     if (!cepInput) return;
 
+
+
     cepInput.addEventListener('input', function(e) {
         hasEdited = true;
+        if(!(cepInput.hasAttribute('data-mask'))) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{5})(\d{3})/, '$1-$2');
+            e.target.value = value;
+    }
     });
 
     // Buscar endereço quando sair do campo
@@ -12,9 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if(!hasEdited) return
         const cep = cepInput.value;
         hasEdited = false;
-
+        
+        
         if (cep.length !== 9) {
-            console.log('não 9');
             return;
         }
         

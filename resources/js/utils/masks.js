@@ -64,10 +64,25 @@ export function bindMask(input, type) {
 }
 
 // Inicialização automática via data-mask
+// export function initMasks(root = document) {
+//     root.querySelectorAll('[data-mask]')
+//         .forEach(el => bindMask(el, el.getAttribute('data-mask')));
+// }
+
 export function initMasks(root = document) {
     root.querySelectorAll('[data-mask]')
-        .forEach(el => bindMask(el, el.getAttribute('data-mask')));
+        .forEach(el => {
+            const maskType = el.getAttribute('data-mask');
+            
+            // Aplicar formatação inicial se o campo já tem valor
+            if (el.value && maskType === 'cep') {
+                el.value = maskCEP(el.value);
+            }
+            
+            bindMask(el, maskType);
+        });
 }
+
 
 // Auto init ao carregar DOM
 if (typeof document !== 'undefined') {

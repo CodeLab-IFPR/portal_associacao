@@ -197,7 +197,7 @@ Membros - Cadastro
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label for="inputCep" class="form-label"><strong>*CEP:</strong></label>
-                            <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="inputCep" data-mask="cep"
+                            <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep" maxlength="8"
                                 placeholder="CEP..." value="{{ old('cep') }}" required>
                             @error('cep')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -306,6 +306,7 @@ Membros - Cadastro
     </div>
 </div>
 
+@vite('resources/js/utils/viacep.js')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var password = Math.random().toString(36).slice(-8);
