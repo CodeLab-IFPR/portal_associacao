@@ -120,7 +120,7 @@
 
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="cpf">CPF *</label>
-                                <input type="text" class="form-control rounded" id="cpf" name="cpf" value="{{ old('cpf') }}" required>
+                                <input type="text" class="form-control rounded" id="cpf" name="cpf" value="{{ old('cpf') }}" required data-mask="cpf">
                                 @error('cpf')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
@@ -144,7 +144,7 @@
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="telefone_celular">Telefone Celular *</label>
-                                <input type="tel" class="form-control rounded" id="telefone_celular" name="telefone_celular" value="{{ old('telefone_celular') }}" required>
+                                <input type="tel" class="form-control rounded" id="telefone_celular" name="telefone_celular" value="{{ old('telefone_celular') }}" required data-mask="phone">
                                 @error('telefone_celular')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
@@ -161,7 +161,7 @@
 
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="telefone_residencial">Telefone Residencial</label>
-                                <input type="tel" class="form-control rounded" id="telefone_residencial" name="telefone_residencial" value="{{ old('telefone_residencial') }}">
+                                <input type="tel" class="form-control rounded" id="telefone_residencial" name="telefone_residencial" value="{{ old('telefone_residencial') }}" data-mask="phone">
                                 @error('telefone_residencial')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
@@ -169,7 +169,7 @@
 
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="telefone_comercial">Telefone Comercial</label>
-                                <input type="tel" class="form-control rounded" id="telefone_comercial" name="telefone_comercial" value="{{ old('telefone_comercial') }}">
+                                <input type="tel" class="form-control rounded" id="telefone_comercial" name="telefone_comercial" value="{{ old('telefone_comercial') }}" data-mask="phone">
                                 @error('telefone_comercial')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
