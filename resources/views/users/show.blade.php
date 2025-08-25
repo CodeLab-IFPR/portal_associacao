@@ -160,7 +160,7 @@
                 <div class="col-md-6">
                     <div class="form-group mb-3">
                         <strong>CEP:</strong>
-                        <p class="mb-0">{{ $user->cep }}</p>
+                        <p class="mb-0">{{ substr($user->cep, 0, 5) . '-' . substr($user->cep, 5) }}</p>
                     </div>
                     <div class="form-group mb-3">
                         <strong>Logradouro:</strong>

@@ -87,7 +87,7 @@ Membros - Edição
                         <div class="mb-3">
                             <label for="inputCpf" class="form-label"><strong>CPF:</strong></label>
                             <input type="text" name="cpf" value="{{ old('cpf', $user->cpf) }}"
-                                class="form-control @error('cpf') is-invalid @enderror" id="inputCpf" placeholder="CPF...">
+                                class="form-control @error('cpf') is-invalid @enderror" id="inputCpf" placeholder="CPF..." data-mask="cpf">
                             @error('cpf')
                                 <div class="form-text text-danger">{{ $message }}</div>
                             @enderror
@@ -122,7 +122,7 @@ Membros - Edição
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputTelefoneCelular" class="form-label"><strong>Telefone Celular:</strong></label>
-                            <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="inputTelefoneCelular"
+                            <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="inputTelefoneCelular" data-mask="phone"
                                 placeholder="Telefone Celular..." value="{{ old('telefone_celular', $user->telefone_celular) }}">
                             @error('telefone_celular')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -143,7 +143,7 @@ Membros - Edição
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputTelefoneResidencial" class="form-label"><strong>Telefone Residencial:</strong></label>
-                            <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="inputTelefoneResidencial"
+                            <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="inputTelefoneResidencial" data-mask="phone"
                                 placeholder="Telefone Residencial..." value="{{ old('telefone_residencial', $user->telefone_residencial) }}">
                             @error('telefone_residencial')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -153,7 +153,7 @@ Membros - Edição
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputTelefoneComercial" class="form-label"><strong>Telefone Comercial:</strong></label>
-                            <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="inputTelefoneComercial"
+                            <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="inputTelefoneComercial" data-mask="phone"
                                 placeholder="Telefone Comercial..." value="{{ old('telefone_comercial', $user->telefone_comercial) }}">
                             @error('telefone_comercial')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -203,7 +203,7 @@ Membros - Edição
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label for="inputCep" class="form-label"><strong>CEP:</strong></label>
-                            <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="inputCep"
+                            <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="inputCep" data-mask="cep"
                                 placeholder="CEP..." value="{{ old('cep', $user->cep) }}">
                             @error('cep')
                                 <div class="form-text text-danger">{{ $message }}</div>

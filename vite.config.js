@@ -19,6 +19,7 @@ export default defineConfig({
                 'resources/js/datatables.min.js',
                 'resources/js/adminlte.js',
                 'resources/js/menu.js',
+                'resources/js/utils/viacep.js',
                 // 'resources/fonts*',
             ],
             refresh: true,

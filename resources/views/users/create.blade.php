@@ -89,7 +89,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputCpf" class="form-label"><strong>*CPF:</strong></label>
-                            <input type="text" class="form-control @error('cpf') is-invalid @enderror" name="cpf" id="inputCpf"
+                            <input type="text" class="form-control @error('cpf') is-invalid @enderror" name="cpf" id="inputCpf" data-mask="cpf"
                                 placeholder="CPF..." value="{{ old('cpf') }}" required>
                             @error('cpf')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -116,7 +116,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputTelefoneCelular" class="form-label"><strong>*Telefone Celular:</strong></label>
-                            <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="inputTelefoneCelular"
+                            <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="inputTelefoneCelular" data-mask="phone"
                                 placeholder="Telefone Celular..." value="{{ old('telefone_celular') }}" required>
                             @error('telefone_celular')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -137,7 +137,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputTelefoneResidencial" class="form-label"><strong>Telefone Residencial:</strong></label>
-                            <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="inputTelefoneResidencial"
+                            <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="inputTelefoneResidencial" data-mask="phone"
                                 placeholder="Telefone Residencial..." value="{{ old('telefone_residencial') }}">
                             @error('telefone_residencial')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -147,7 +147,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputTelefoneComercial" class="form-label"><strong>Telefone Comercial:</strong></label>
-                            <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="inputTelefoneComercial"
+                            <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="inputTelefoneComercial" data-mask="phone"
                                 placeholder="Telefone Comercial..." value="{{ old('telefone_comercial') }}">
                             @error('telefone_comercial')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -197,7 +197,7 @@ Membros - Cadastro
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label for="inputCep" class="form-label"><strong>*CEP:</strong></label>
-                            <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="inputCep"
+                            <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep" maxlength="8"
                                 placeholder="CEP..." value="{{ old('cep') }}" required>
                             @error('cep')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -207,7 +207,7 @@ Membros - Cadastro
                     <div class="col-md-8">
                         <div class="mb-3">
                             <label for="inputLogradouro" class="form-label"><strong>*Logradouro:</strong></label>
-                            <input type="text" name="logradouro" class="form-control @error('logradouro') is-invalid @enderror" id="inputLogradouro"
+                            <input type="text" name="logradouro" class="form-control @error('logradouro') is-invalid @enderror" id="logradouro"
                                 placeholder="Logradouro..." value="{{ old('logradouro') }}" required>
                             @error('logradouro')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -230,7 +230,7 @@ Membros - Cadastro
                     <div class="col-md-8">
                         <div class="mb-3">
                             <label for="inputBairro" class="form-label"><strong>*Bairro:</strong></label>
-                            <input type="text" name="bairro" class="form-control @error('bairro') is-invalid @enderror" id="inputBairro"
+                            <input type="text" name="bairro" class="form-control @error('bairro') is-invalid @enderror" id="bairro"
                                 placeholder="Bairro..." value="{{ old('bairro') }}" required>
                             @error('bairro')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -243,7 +243,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputEstado" class="form-label"><strong>*Estado:</strong></label>
-                            <input type="text" name="estado" class="form-control @error('estado') is-invalid @enderror" id="inputEstado"
+                            <input type="text" name="estado" class="form-control @error('estado') is-invalid @enderror" id="estado"
                                 placeholder="Estado..." value="{{ old('estado') }}" required>
                             @error('estado')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -253,7 +253,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputCidade" class="form-label"><strong>*Cidade:</strong></label>
-                            <input type="text" name="cidade" class="form-control @error('cidade') is-invalid @enderror" id="inputCidade"
+                            <input type="text" name="cidade" class="form-control @error('cidade') is-invalid @enderror" id="cidade"
                                 placeholder="Cidade..." value="{{ old('cidade') }}" required>
                             @error('cidade')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -306,6 +306,7 @@ Membros - Cadastro
     </div>
 </div>
 
+@vite('resources/js/utils/viacep.js')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var password = Math.random().toString(36).slice(-8);

@@ -33,7 +33,7 @@ Contate Nos
                     </div>
                     <div class="col-12 col-md-6">
                         <label class="form-label" for="telephone">Celular</label>
-                        <input type="text" class="form-control rounded" id="telephone" name="telephone" placeholder="(99) 9-9999-9999" required aria-required="true">
+                        <input type="text" class="form-control rounded" id="telephone" name="telephone" placeholder="(99) 99999-9999" required aria-required="true" data-mask="phone">
                     </div>
                     <div class="col-12">
                         <label class="form-label" for="message">Mensagem</label>
@@ -49,12 +49,6 @@ Contate Nos
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var telephoneInput = document.getElementById('telephone');
-        telephoneInput.addEventListener('input', function (e) {
-            var x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,1})(\d{0,4})(\d{0,4})/);
-            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '') + (x[4] ? '-' + x[4] : '');
-        });
-    });
+    @push('scripts') @endpush
 </script>
 @endsection
