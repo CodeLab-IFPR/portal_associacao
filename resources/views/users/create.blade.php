@@ -207,7 +207,7 @@ Membros - Cadastro
                     <div class="col-md-8">
                         <div class="mb-3">
                             <label for="inputLogradouro" class="form-label"><strong>*Logradouro:</strong></label>
-                            <input type="text" name="logradouro" class="form-control @error('logradouro') is-invalid @enderror" id="inputLogradouro"
+                            <input type="text" name="logradouro" class="form-control @error('logradouro') is-invalid @enderror" id="logradouro"
                                 placeholder="Logradouro..." value="{{ old('logradouro') }}" required>
                             @error('logradouro')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -230,7 +230,7 @@ Membros - Cadastro
                     <div class="col-md-8">
                         <div class="mb-3">
                             <label for="inputBairro" class="form-label"><strong>*Bairro:</strong></label>
-                            <input type="text" name="bairro" class="form-control @error('bairro') is-invalid @enderror" id="inputBairro"
+                            <input type="text" name="bairro" class="form-control @error('bairro') is-invalid @enderror" id="bairro"
                                 placeholder="Bairro..." value="{{ old('bairro') }}" required>
                             @error('bairro')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -243,7 +243,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputEstado" class="form-label"><strong>*Estado:</strong></label>
-                            <input type="text" name="estado" class="form-control @error('estado') is-invalid @enderror" id="inputEstado"
+                            <input type="text" name="estado" class="form-control @error('estado') is-invalid @enderror" id="estado"
                                 placeholder="Estado..." value="{{ old('estado') }}" required>
                             @error('estado')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -253,7 +253,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputCidade" class="form-label"><strong>*Cidade:</strong></label>
-                            <input type="text" name="cidade" class="form-control @error('cidade') is-invalid @enderror" id="inputCidade"
+                            <input type="text" name="cidade" class="form-control @error('cidade') is-invalid @enderror" id="cidade"
                                 placeholder="Cidade..." value="{{ old('cidade') }}" required>
                             @error('cidade')
                                 <div class="form-text text-danger">{{ $message }}</div>
