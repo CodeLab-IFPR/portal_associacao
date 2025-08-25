@@ -219,7 +219,7 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="cep" class="form-label"><strong>CEP:</strong></label>
-                                <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep" value="{{ old('cep', $user->cep) }}">
+                                <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep" value="{{ old('cep', $user->cep) }}" data-mask="cep">
                                 @error('cep')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror

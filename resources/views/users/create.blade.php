@@ -197,7 +197,7 @@ Membros - Cadastro
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label for="inputCep" class="form-label"><strong>*CEP:</strong></label>
-                            <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="inputCep"
+                            <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="inputCep" data-mask="cep"
                                 placeholder="CEP..." value="{{ old('cep') }}" required>
                             @error('cep')
                                 <div class="form-text text-danger">{{ $message }}</div>
