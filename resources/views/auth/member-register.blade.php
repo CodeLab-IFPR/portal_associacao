@@ -209,7 +209,11 @@
                         <div class="row g-3">
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="cep">CEP *</label>
-                                <input type="text" class="form-control rounded" id="cep" name="cep" value="{{ old('cep') }}" required>
+                                <input type="text" class="form-control rounded" id="cep" name="cep" value="{{ old('cep') }}" required data-mask="cep">
+                            <div id="cep-loading" style="display: none;" class="text-primary small">
+                                <i class="fas fa-spinner fa-spin"></i> Buscando endereço...
+                            </div>
+                            <div id="cep-error" style="display: none;" class="text-danger small mt-1"></div>
                                 @error('cep')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
@@ -270,6 +274,7 @@
 </div>
 
 @push('scripts')
+@vite('resources/js/utils/viacep.js')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.querySelector('form');

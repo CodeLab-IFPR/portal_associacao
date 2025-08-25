@@ -27,6 +27,13 @@ export function maskPhone(value = '') {
     return v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
 }
 
+// Máscara CEP: 00000-000
+export function maskCEP(value = '') {
+    let v = onlyDigits(value).slice(0, 8);
+    v = v.replace(/(\d{5})(\d{1,3})$/, '$1-$2');
+    return v;
+}
+
 // Desformata (para enviar ao backend se quiser manualmente)
 export function unmask(value = '') { return onlyDigits(value); }
 
@@ -41,7 +48,7 @@ function applyWithCursor(el, formatter) {
 }
 
 export function bindMask(input, type) {
-    const formatter = type === 'cpf' ? maskCPF : type === 'phone' ? maskPhone : type === 'rg' ? onlyDigits : null;
+    const formatter = type === 'cpf' ? maskCPF : type === 'phone' ? maskPhone : type === 'cep' ? maskCEP : type === 'rg' ? onlyDigits : null;
     if (!formatter) return;
 
     // Bloqueia caracteres não numéricos (exceto control keys)
@@ -57,10 +64,25 @@ export function bindMask(input, type) {
 }
 
 // Inicialização automática via data-mask
+// export function initMasks(root = document) {
+//     root.querySelectorAll('[data-mask]')
+//         .forEach(el => bindMask(el, el.getAttribute('data-mask')));
+// }
+
 export function initMasks(root = document) {
     root.querySelectorAll('[data-mask]')
-        .forEach(el => bindMask(el, el.getAttribute('data-mask')));
+        .forEach(el => {
+            const maskType = el.getAttribute('data-mask');
+            
+            // Aplicar formatação inicial se o campo já tem valor
+            if (el.value && maskType === 'cep') {
+                el.value = maskCEP(el.value);
+            }
+            
+            bindMask(el, maskType);
+        });
 }
+
 
 // Auto init ao carregar DOM
 if (typeof document !== 'undefined') {
@@ -75,6 +97,7 @@ initMasks();
 export default {
     onlyDigits,
     maskCPF,
+    maskCEP,
     maskPhone,
     unmask,
     bindMask,
