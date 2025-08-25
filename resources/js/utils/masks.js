@@ -41,7 +41,7 @@ function applyWithCursor(el, formatter) {
 }
 
 export function bindMask(input, type) {
-    const formatter = type === 'cpf' ? maskCPF : type === 'phone' ? maskPhone : null;
+    const formatter = type === 'cpf' ? maskCPF : type === 'phone' ? maskPhone : type === 'rg' ? onlyDigits : null;
     if (!formatter) return;
 
     // Bloqueia caracteres não numéricos (exceto control keys)
@@ -64,7 +64,11 @@ export function initMasks(root = document) {
 
 // Auto init ao carregar DOM
 if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', () => initMasks());
+if (document.readyState === 'loading') {
+document.addEventListener('DOMContentLoaded', () => initMasks());
+} else {
+initMasks();
+}
 }
 
 // Export default opcional

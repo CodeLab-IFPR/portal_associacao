@@ -107,7 +107,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="rg" class="form-label"><strong>RG:</strong></label>
-                                <input type="text" name="rg" class="form-control @error('rg') is-invalid @enderror" id="rg" value="{{ old('rg', $user->rg) }}">
+                                <input type="text" name="rg" class="form-control @error('rg') is-invalid @enderror" id="rg" value="{{ old('rg', $user->rg) }}" maxlength="11" data-mask="rg">
                                 @error('rg')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
