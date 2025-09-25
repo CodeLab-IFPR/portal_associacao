@@ -26,15 +26,23 @@
             </div>
         @endif
 
+        <label for="email" class="email-label">E-mail</label>
         <input type="email" name="email" placeholder="Digite seu e-mail" value="{{ old('email') }}" required autofocus autocomplete="username">
+        
+        <label for="password" class="password-label">Senha</label> 
         <input type="password" name="password" placeholder="Digite sua senha" required autocomplete="current-password">
         
-        <div class="remember-me">
-          <input type="checkbox" name="remember" id="remember">
-          <label for="remember">Lembrar-me</label>
-        </div>
+        <div class="remember-forgot">
+            <div class="remember">
+              <input type="checkbox" name="remember" id="remember">
+              <label for="remember">Lembrar-me</label>
+            </div>
 
-        <a href="{{ route('password.request') }}">Esqueceu a senha?</a>
+            <div class="forgot-password">
+              <a href="{{ route('password.request') }}">Esqueceu a senha?</a>
+            </div>
+        </div>
+        
         <input type="submit" class="button" value="Entrar">
       </form>
         </a>

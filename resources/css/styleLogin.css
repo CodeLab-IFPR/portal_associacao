@@ -9,7 +9,7 @@
 body{
   min-height: 100vh;
   width: 100%;
-  background: #007BFF; /* Cor de fundo azul */
+  background: linear-gradient(135deg, #007BFF 0%, #0064d6 50%, #004a99 100%); /* Cor de fundo azul */
 }
 .container{
   position: absolute;
@@ -19,7 +19,7 @@ body{
   max-width: 430px;
   width: 100%;
   background: #fff;
-  border-radius: 7px;
+  border-radius: 25px;
   box-shadow: 0 5px 10px rgba(0,0,0,0.3);
 }
 .container .registration{
@@ -50,7 +50,7 @@ body{
    font-size: 17px;
    margin-bottom: 1.3rem;
    border: 1px solid #ddd;
-   border-radius: 6px;
+   border-radius: 12px;
    outline: none;
  }
  .form input:focus{
@@ -58,24 +58,26 @@ body{
  }
 .form a{
   font-size: 16px;
-  color: #007BFF; /* Cor do link azul */
+  font-weight: 500;
+  color: #0064d6; /* Cor do link azul */
   text-decoration: none;
 }
 .form a:hover{
   text-decoration: underline;
 }
 .form input.button{
+  border-radius: 12px;
   color: #fff;
-  background: #007BFF; /* Cor do botão azul */
-  font-size: 1.2rem;
+  background: #0064d6; /* Cor do botão azul */
+  font-size: 1.3rem;
   font-weight: 500;
   letter-spacing: 1px;
-  margin-top: 1.7rem;
+  margin: 1.7rem 0 0.5rem 0;
   cursor: pointer;
   transition: 0.4s;
 }
 .form input.button:hover{
-  background: #0056b3; /* Cor do botão azul escuro */
+  background: #004a99; /* Cor do botão azul escuro */
 }
 .signup{
   font-size: 17px;
@@ -89,16 +91,26 @@ body{
   text-decoration: underline;
 }
 
-.remember-me {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+.email-label, .password-label {
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
-.remember-me input[type="checkbox"] {
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+}
+
+.remember input[type="checkbox"] {
   width: 15px;
   height: 15px;
-  margin-right: 5px;
+  margin: 0 5px 0 0;
 }
 
 .error-message {
