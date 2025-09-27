@@ -11,6 +11,7 @@
   <div class="container">
     <input type="checkbox" id="check">
     <div class="login form">
+      <img src="{{ asset('img/login_key.png') }}" alt="Chave" class="login-key-img">
       <header>Login</header>
       <form method="POST" action="{{ route('login') }}">
         @csrf
@@ -45,8 +46,6 @@
         
         <input type="submit" class="button" value="Entrar">
       </form>
-        </a>
-      </div>
     </div>
   </div>
 </body>
