@@ -9,7 +9,7 @@
 body{
   min-height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, #007BFF 0%, #0064d6 50%, #004a99 100%); /* Cor de fundo azul */
+  background: linear-gradient(180deg, #007BFF 0%, #0064d6 50%, #004a99 100%); /* Cor de fundo azul */
 }
 .container{
   position: absolute;
@@ -40,7 +40,7 @@ body{
 
 .login-key-img {
   display: block;
-  margin: 0 auto 30px auto;
+  margin: 0 auto 10px auto;
   width: 70px;
   height: 70px;
   border-radius: 12px;
@@ -50,7 +50,7 @@ body{
   font-size: 2.5rem;
   font-weight: 500;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
  .form input{
    height: 60px;
@@ -81,7 +81,7 @@ body{
   font-size: 1.3rem;
   font-weight: 500;
   letter-spacing: 1px;
-  margin: 1.7rem 0 0.5rem 0;
+  margin: 1.2rem 0 0 0;
   cursor: pointer;
   transition: 0.4s;
 }
