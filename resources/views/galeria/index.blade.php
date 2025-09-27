@@ -41,31 +41,28 @@ Galeria
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
             @foreach($midias as $midia)
                 <div class="col-md-4">
-                    <div class="card mb-4">
-                        @if($midia->tipo == 'imagem')
-                            <img src="{{ asset($midia->caminho) }}" class="card-img-top" alt="{{ $midia->titulo }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px; cursor: pointer;">
-                        @else
-                            @php
-                                $videoId = '';
-                                if (preg_match('/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/', $midia->caminho, $match)) {
-                                    $videoId = $match[7];
-                                }
-                            @endphp
-                            <div class="ratio ratio-16x9"  style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px; overflow: hidden;">
-                                <iframe 
-                                    src="https://www.youtube.com/embed/{{ $videoId }}"
-                                    title="{{ $midia->titulo }}"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen>
-                                </iframe>
+                    {{-- Adicionamos a tag <a> envolvendo o card --}}
+                    <a href="{{ route('galeria.show', $midia->id) }}" class="text-decoration-none text-dark">
+                        <div class="card mb-4">
+                            @if($midia->tipo == 'imagem')
+                                <img src="{{ asset($midia->caminho) }}" class="card-img-top" alt="{{ $midia->titulo }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px;">
+                            @else
+                                @php
+                                    $videoId = '';
+                                    if (preg_match('/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/', $midia->caminho, $match)) {
+                                        $videoId = $match[7];
+                                    }
+                                @endphp
+                                <div class="ratio ratio-16x9"  style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px; overflow: hidden;">
+                                    <div style="background-image: url('https://img.youtube.com/vi/{{ $videoId }}/hqdefault.jpg'); background-size: cover; background-position: center; width: 100%; height: 100%;"></div>
+                                </div>
+                            @endif
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $midia->titulo }}</h5>
+                                <p class="card-text">{{ $midia->descricao }}</p>
                             </div>
-                        @endif
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $midia->titulo }}</h5>
-                            <p class="card-text">{{ $midia->descricao }}</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             @endforeach
         </div>

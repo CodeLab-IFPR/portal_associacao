@@ -69,6 +69,7 @@ Route::get('/google/callback', [GoogleLoginController::class, 'handleGoogleCallb
 // Public gallery routes
 Route::get('/galeria', [GaleriaController::class, 'index'])->name('galeria.public');
 Route::get('/galeria/ano/{ano}', [GaleriaController::class, 'peloAno'])->name('galeria.ano');
+Route::get('/galeria/{id}', [GaleriaController::class, 'show'])->name('galeria.show');
 Route::get('/galeria', [GaleriaController::class, 'indexPublic'])->name('galeria.indexPublic');
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -116,7 +117,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
         Route::put('/{permissao}', [PermissaoController::class, 'update'])->name('permissoes.update');
         Route::delete('/{permissao}', [PermissaoController::class, 'destroy'])->name('permissoes.destroy');
     });
-    
+
     // Rotas manuais para funções
     Route::group(['prefix' => 'funcoes'], function () {
         Route::get('/', [RoleController::class, 'index'])->name('funcoes.index');
@@ -131,7 +132,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('projetos', ProjetoController::class);
     Route::resource('servicos', ServicoController::class);
     Route::resource('tags', TagController::class);
-    
+
     Route::group(['prefix' => 'lancamentos'], function(){
         Route::get('/', [LancamentoServicoController::class, 'index'])->name('lancamentos.index');
         Route::get('/create', [LancamentoServicoController::class, 'create'])->name('lancamentos.create');
@@ -141,7 +142,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{lancamento}', [LancamentoServicoController::class, 'destroy'])->name('lancamentos.destroy');
         Route::post('/lancamentos/generate-certificates', [LancamentoServicoController::class, 'generateCertificates'])->name('lancamentos.generateCertificates');
     });
-    
+
     Route::resource('parceiros', ParceiroController::class);
 
     // Rotas de notícias (admin) - removido 'cards' da resource
