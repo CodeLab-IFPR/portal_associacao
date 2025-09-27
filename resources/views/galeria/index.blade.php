@@ -16,7 +16,6 @@ Galeria
     @endhasrole
 
     @if($anos->isNotEmpty())
-        <!-- Filtro por Ano -->
         <div class="d-flex justify-content-center mb-4">
             <div class="input-group" style="max-width: 200px; border-radius: 10px; overflow: hidden;">
                 <label class="input-group-text" for="anoSelect" style="border-radius: 10px 0 0 10px;">Ano</label>
@@ -37,11 +36,9 @@ Galeria
     @if($midias->isEmpty())
         <p class="text-center">Não há mídias disponíveis no momento.</p>
     @else
-        <!-- Grid de Mídia -->
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
             @foreach($midias as $midia)
                 <div class="col-md-4">
-                    {{-- Adicionamos a tag <a> envolvendo o card --}}
                     <a href="{{ route('galeria.show', $midia->id) }}" class="text-decoration-none text-dark">
                         <div class="card mb-4">
                             @if($midia->tipo == 'imagem')
@@ -92,13 +89,13 @@ Galeria
                 modal.style.alignItems = 'center';
                 modal.style.justifyContent = 'center';
                 modal.style.zIndex = '1000';
-                modal.style.padding = '10px'; // Add padding for better mobile view
+                modal.style.padding = '10px';
 
                 const modalImage = document.createElement('img');
                 modalImage.src = this.src;
                 modalImage.style.maxWidth = '100%';
                 modalImage.style.maxHeight = '100%';
-                modalImage.style.borderRadius = '10px'; // Add border-radius for better aesthetics
+                modalImage.style.borderRadius = '10px';
 
                 modal.appendChild(modalImage);
 

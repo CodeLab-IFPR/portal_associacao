@@ -18,9 +18,15 @@
                         <input type="text" class="form-control" id="titulo" name="titulo" value="{{ old('titulo') }}" required>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="data_evento" class="form-label">Data do Evento</label>
-                        <input type="date" class="form-control" id="data_evento" name="data_evento" value="{{ old('data_evento') }}" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="data_inicio_evento" class="form-label">Data de Início do Evento</label>
+                            <input type="date" class="form-control" id="data_inicio_evento" name="data_inicio_evento" value="{{ old('data_inicio_evento') }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="data_fim_evento" class="form-label">Data de Fim do Evento</label>
+                            <input type="date" class="form-control" id="data_fim_evento" name="data_fim_evento" value="{{ old('data_fim_evento') }}">
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -29,30 +35,30 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="tipo" class="form-label">Tipo da Mídia Principal</label>
-                        <select class="form-select" id="tipo" name="tipo" required>
-                            <option value="imagem" selected>Imagem</option>
-                            <option value="video">Vídeo do YouTube</option>
+                        <label for="tipo_midia" class="form-label">Tipo da Mídia Principal</label>
+                        <select class="form-select" id="tipo_midia" name="tipo_midia" required>
+                            <option value="imagem" {{ old('tipo_midia') == 'imagem' ? 'selected' : '' }}>Imagem</option>
+                            <option value="video" {{ old('tipo_midia') == 'video' ? 'selected' : '' }}>Vídeo do YouTube</option>
                         </select>
                     </div>
 
-                    <div id="campo-imagem" class="mb-3">
+                    <div id="campo-imagem" class="mb-3" style="{{ old('tipo_midia') == 'video' ? 'display: none;' : 'display: block;' }}">
                         <label for="imagem_principal" class="form-label">Imagem Principal (Capa)</label>
-                        <input type="file" class="form-control" id="imagem_principal" name="imagem_principal" accept="image/*">
+                        <input type="file" class="form-control" id="imagem_principal" name="imagem_principal" accept="image/*" {{ old('tipo_midia') == 'imagem' ? 'required' : '' }}>
                     </div>
 
-                    <div id="campo-video" class="mb-3" style="display: none;">
-                        <label for="youtube_url" class="form-label">URL do Vídeo do YouTube</label>
-                        <input type="text" class="form-control" id="youtube_url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=...">
+                    <div id="campo-video" class="mb-3" style="{{ old('tipo_midia') == 'imagem' ? 'display: none;' : 'display: block;' }}">
+                        <label for="link_youtube" class="form-label">URL do Vídeo do YouTube</label>
+                        <input type="text" class="form-control" id="link_youtube" name="link_youtube" placeholder="https://www.youtube.com/watch?v=..." value="{{ old('link_youtube') }}" {{ old('tipo_midia') == 'video' ? 'required' : '' }}>
                     </div>
 
                     <div class="mb-3">
-                        <label for="arquivos_galeria" class="form-label">Imagens da Galeria (selecione múltiplas)</label>
-                        <input class="form-control" type="file" id="arquivos_galeria" name="arquivos_galeria[]" multiple accept="image/*">
+                        <label for="arquivos" class="form-label">Imagens da Galeria (selecione múltiplas)</label>
+                        <input class="form-control" type="file" id="arquivos" name="arquivos[]" multiple accept="image/*">
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <a href="{{ route('galeria.indexPublic') }}" class="btn btn-secondary me-2">Cancelar</a>
+                        <a href="{{ route('galeria.indexAdmin') }}" class="btn btn-secondary me-2">Cancelar</a>
                         <button type="submit" class="btn btn-primary">Salvar</button>
                     </div>
                 </form>
@@ -61,27 +67,34 @@
     </div>
 
     <script>
-        document.getElementById('tipo').addEventListener('change', function () {
-            const tipo = this.value;
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoSelect = document.getElementById('tipo_midia');
             const campoImagem = document.getElementById('campo-imagem');
             const campoVideo = document.getElementById('campo-video');
             const inputImagem = document.getElementById('imagem_principal');
-            const inputVideo = document.getElementById('youtube_url');
+            const inputVideo = document.getElementById('link_youtube');
+            const arquivosGaleria = document.getElementById('arquivos');
 
-            if (tipo === 'imagem') {
-                campoImagem.style.display = 'block';
-                campoVideo.style.display = 'none';
-                inputImagem.required = true;
-                inputVideo.required = false;
-            } else {
-                campoImagem.style.display = 'none';
-                campoVideo.style.display = 'block';
-                inputImagem.required = false;
-                inputVideo.required = true;
+            function toggleCampos() {
+                const tipo = tipoSelect.value;
+                if (tipo === 'imagem') {
+                    campoImagem.style.display = 'block';
+                    inputImagem.required = true;
+                    campoVideo.style.display = 'none';
+                    inputVideo.required = false;
+                    arquivosGaleria.required = true;
+                } else {
+                    campoImagem.style.display = 'none';
+                    inputImagem.required = false;
+                    campoVideo.style.display = 'block';
+                    inputVideo.required = true;
+                    arquivosGaleria.required = false;
+                }
             }
-        });
 
-        // Dispara o evento 'change' na carga da página para definir o estado inicial correto
-        document.getElementById('tipo').dispatchEvent(new Event('change'));
+            tipoSelect.addEventListener('change', toggleCampos);
+
+            toggleCampos();
+        });
     </script>
 @endsection
