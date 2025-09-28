@@ -159,66 +159,108 @@ class GaleriaController extends Controller implements HasMiddleware
             'titulo' => 'required|string|max:255',
             'data_inicio_evento' => 'required|date',
             'data_fim_evento' => 'nullable|date|after_or_equal:data_inicio_evento',
-            'descricao' => 'nullable|string|max:255',
-            'tipo' => 'required|string|in:imagem,video',
-            'link' => ['required_if:tipo,video', 'nullable', 'url', 'regex:#^(https?\:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]+#'],
-            'file' => 'nullable|file|mimes:png,jpg,jpeg,gif|max:2048',
-        ],[
-            'titulo.required' => 'O campo título é obrigatório.',
-            'titulo.max' => 'O campo título deve ter no máximo 255 caracteres.',
-            'data_inicio_evento.required' => 'A data de início do evento é obrigatória.',
-            'data_fim_evento.after_or_equal' => 'A data de fim do evento não pode ser anterior à data de início.',
-            'descricao.max' => 'O campo descrição deve ter no máximo 255 caracteres.',
-            'file.mimes' => 'O arquivo deve ser uma imagem.',
-            'file.max' => 'O arquivo deve ter no máximo 2MB.',
-            'link.required_if' => 'O link do YouTube é obrigatório quando o tipo é vídeo.',
-            'link.regex' => 'O link deve ser uma URL válida do YouTube.',
+            'descricao' => 'nullable|string',
+            'tipo_midia' => 'required|string|in:imagem,video',
+            'link_youtube' => ['required_if:tipo_midia,video', 'nullable', 'url', 'regex:#^(https?\:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]+#'],
+            'imagem_principal' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            'arquivos' => 'nullable|array',
+            'arquivos.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        if ($request->tipo === 'video') {
-
-            if ($galeria->tipo === 'imagem' && $galeria->caminho && File::exists(public_path($galeria->caminho))) {
-                File::delete(public_path($galeria->caminho));
-            }
-            $galeria->caminho = $request->link;
-            $galeria->tipo = 'video';
-
-            $galeria->midias()->delete();
-            GaleriaMidia::create([
-                'galeria_id' => $galeria->id,
-                'tipo' => 'video',
-                'caminho' => $request->link,
+        DB::beginTransaction();
+        try {
+            $galeria->fill([
+                'titulo' => $request->titulo,
+                'descricao' => $request->descricao,
+                'data_inicio_evento' => $request->data_inicio_evento,
+                'data_fim_evento' => $request->data_fim_evento,
+                'ano' => date('Y', strtotime($request->data_inicio_evento)),
+                'tipo' => $request->tipo_midia,
             ]);
-        } else {
-            if ($request->hasFile('file')) {
 
-                if ($galeria->tipo === 'imagem' && $galeria->caminho && File::exists(public_path($galeria->caminho))) {
-                    File::delete(public_path($galeria->caminho));
+            $originalType = $galeria->getOriginal('tipo');
+            $newType = $request->tipo_midia;
+
+            if ($originalType !== $newType) {
+                if ($originalType === 'imagem') {
+                    if ($galeria->getOriginal('caminho') && File::exists(public_path($galeria->getOriginal('caminho')))) {
+                        File::delete(public_path($galeria->getOriginal('caminho')));
+                    }
                 }
-                $file = $request->file('file');
-                $fileName = date('YmdHis') . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('img/fotos'), $fileName);
-                $galeria->caminho = 'img/fotos/' . $fileName;
-                $galeria->tipo = 'imagem';
+                foreach ($galeria->midias as $midia) {
+                    if ($midia->tipo === 'imagem' && File::exists(public_path($midia->caminho))) {
+                        File::delete(public_path($midia->caminho));
+                    }
+                    $midia->delete();
+                }
             }
 
-            if ($galeria->tipo === 'video') {
+            if ($newType === 'video') {
+                $galeria->caminho = $request->link_youtube;
                 $galeria->midias()->delete();
+                GaleriaMidia::create([
+                    'galeria_id' => $galeria->id,
+                    'tipo' => 'video',
+                    'caminho' => $request->link_youtube,
+                ]);
+            } else {
+                if ($originalType === 'video') {
+                    $galeria->caminho = null;
+                }
+
+                if ($request->hasFile('imagem_principal')) {
+                    if ($galeria->caminho && File::exists(public_path($galeria->caminho))) {
+                        File::delete(public_path($galeria->caminho));
+                    }
+                    $file = $request->file('imagem_principal');
+                    $mainImageName = Str::slug($request->titulo) . '-main-' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('img/fotos'), $mainImageName);
+                    $galeria->caminho = 'img/fotos/' . $mainImageName;
+                }
+
+                if ($request->hasFile('arquivos')) {
+                    foreach ($request->file('arquivos') as $key => $mediaFile) {
+                        $mediaFileName = Str::slug($request->titulo) . '-item-' . time() . '-' . ($key + 1) . '.' . $mediaFile->getClientOriginalExtension();
+                        $mediaFile->move(public_path('img/fotos'), $mediaFileName);
+                        GaleriaMidia::create([
+                            'galeria_id' => $galeria->id,
+                            'tipo' => 'imagem',
+                            'caminho' => 'img/fotos/' . $mediaFileName,
+                        ]);
+                    }
+                }
             }
 
+            $galeria->save();
+            DB::commit();
 
+            return redirect()->route('galeria.indexAdmin')->with('success', 'Evento atualizado com sucesso!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Ocorreu um erro inesperado ao atualizar o evento. Tente novamente.');
         }
-
-        $galeria->titulo = $request->titulo;
-        $galeria->descricao = $request->descricao;
-        $galeria->data_inicio_evento = $request->data_inicio_evento;
-        $galeria->data_fim_evento = $request->data_fim_evento;
-        $galeria->ano = date('Y', strtotime($request->data_inicio_evento));
-        $galeria->save();
-
-        return redirect()->route('galeria.indexAdmin')->with('success', 'Mídia atualizada com sucesso!');
     }
 
+    public function destroyMedia($id)
+    {
+        try {
+            $midia = GaleriaMidia::findOrFail($id);
+
+            if ($midia->tipo === 'imagem' && File::exists(public_path($midia->caminho))) {
+                File::delete(public_path($midia->caminho));
+            }
+
+            $midia->delete();
+
+            return response()->json(['success' => true, 'message' => 'Arquivo excluído com sucesso!']);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao excluir o arquivo: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function destroy($id)
     {

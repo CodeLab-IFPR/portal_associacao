@@ -91,6 +91,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/galeria/{galeria}/edit', [GaleriaController::class, 'edit'])->name('galeria.edit');
     Route::put('/galeria/{galeria}', [GaleriaController::class, 'update'])->name('galeria.update');
     Route::delete('/galeria/{galeria}', [GaleriaController::class, 'destroy'])->name('galeria.destroy');
+    Route::delete('/galeria/media/{id}', [GaleriaController::class, 'destroyMedia'])->name('galeria.media.destroy');
 
     // Rotas de certificados (admin)
     Route::resource('certificados', CertificadoController::class)->except(['show']);
