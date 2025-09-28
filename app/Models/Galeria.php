@@ -27,7 +27,7 @@ class Galeria extends Model
         'data_fim_evento' => 'date',
     ];
 
-    public function midias(): HasMany {
+    public function galerias(): HasMany {
         return $this->hasMany(GaleriaMidia::class);
     }
 }

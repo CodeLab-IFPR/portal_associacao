@@ -37,9 +37,9 @@ class GaleriaController extends Controller implements HasMiddleware
         $anos = Galeria::selectRaw('YEAR(created_at) as ano')
             ->distinct()->orderBy('ano', 'desc')->pluck('ano');
 
-        $midias = Galeria::latest()->paginate(12);
+        $galerias = Galeria::latest()->paginate(12);
 
-        return view('galeria.index', compact('midias', 'anos'));
+        return view('galeria.index', compact('galerias', 'anos'));
     }
 
     public function peloAno($ano)
@@ -146,7 +146,7 @@ class GaleriaController extends Controller implements HasMiddleware
 
     public function show(Galeria $galeria)
     {
-        $galeria->load('midias');
+        $galeria->load('galerias');
 
         return view('galeria.show', compact('galeria'));
     }

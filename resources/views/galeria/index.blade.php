@@ -33,20 +33,20 @@ Galeria
         </div>
     @endif
 
-    @if($midias->isEmpty())
+    @if($galerias->isEmpty())
         <p class="text-center">Não há mídias disponíveis no momento.</p>
     @else
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-            @foreach($midias as $midia)
+            @foreach($galerias as $galeria)
                 <div class="col-md-4">
-                    <a href="{{ route('galeria.show', $midia->id) }}" class="text-decoration-none text-dark">
+                    <a href="{{ route('galeria.show', $galeria->id) }}" class="text-decoration-none text-dark">
                         <div class="card mb-4">
-                            @if($midia->tipo == 'imagem')
-                                <img src="{{ asset($midia->caminho) }}" class="card-img-top" alt="{{ $midia->titulo }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px;">
+                            @if($galeria->tipo == 'imagem')
+                                <img src="{{ asset($galeria->caminho) }}" class="card-img-top" alt="{{ $galeria->titulo }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px;">
                             @else
                                 @php
                                     $videoId = '';
-                                    if (preg_match('/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/', $midia->caminho, $match)) {
+                                    if (preg_match('/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/', $galeria->caminho, $match)) {
                                         $videoId = $match[7];
                                     }
                                 @endphp
@@ -55,8 +55,9 @@ Galeria
                                 </div>
                             @endif
                             <div class="card-body">
-                                <h5 class="card-title">{{ $midia->titulo }}</h5>
-                                <p class="card-text">{{ $midia->descricao }}</p>
+                                <h5 class="card-title">{{ $galeria->titulo }}</h5>
+                                <p class="card-text">{{ $galeria->descricao }}</p>
+                                <p class="ml-3">{{ \Carbon\Carbon::parse($galeria->data_inicio_evento)->format('d/m/Y') }} a {{ \Carbon\Carbon::parse($galeria->data_fim_evento)->format('d/m/Y') }}</p>
                             </div>
                         </div>
                     </a>
@@ -66,7 +67,7 @@ Galeria
 
         <!-- Paginação -->
         <div class="d-flex justify-content-center mt-4">
-            {{ $midias->links() }}
+            {{ $galerias->links() }}
         </div>
     @endif
 </div>
