@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Editar Documento - ' . $documento->descricao)
+@section('title', 'Editar Documento - ' . str_replace('_', ' ', preg_replace('/\.pdf$/i', '', $documento->nome_original)))
 
 @section('content')
 <div class="app-content-header">
@@ -39,34 +39,36 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="titulo" class="form-label">Título da ATA *</label>
-                                <input type="text" 
-                                       class="form-control @error('titulo') is-invalid @enderror" 
-                                       id="titulo" 
-                                       name="titulo" 
-                                       value="{{ old('titulo', $documento->descricao) }}" 
-                                       placeholder="Digite o título da ATA"
-                                       required>
-                                @error('titulo')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <label for="tipo_documento" class="form-label">Tipo do Documento *</label>
+                        <select class="form-select @error('tipo_documento') is-invalid @enderror" 
+                                id="tipo_documento" 
+                                name="tipo_documento" 
+                                required>
+                            <option value="{{ $documento->tipo_documento }}">Manter como {{ $documento->tipo_documento }}</option>
+                            @foreach(['RG', 'CPF', 'Comprovante de Residência', 'Diploma', 'Certificado', 'Currículo', 'Termo de Compromisso', 'Declaração', 'Outros'] as $tipo)
+                                @if($tipo !== $documento->tipo_documento)
+                                    <option value="{{ $tipo }}" {{ old('tipo_documento') === $tipo ? 'selected' : '' }}>{{ $tipo }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                        @error('tipo_documento')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-3">
-                                <label for="descricao" class="form-label">Descrição da ATA *</label>
+                                <label for="descricao" class="form-label">Descrição do Documento</label>
                                 <textarea class="form-control @error('descricao') is-invalid @enderror" 
                                           id="descricao" 
                                           name="descricao" 
                                           rows="4" 
-                                          placeholder="Descreva o conteúdo da ATA"
-                                          required>{{ old('descricao', $documento->descricao) }}</textarea>
+                                          placeholder="Descreva brevemente o conteúdo do documento...">{{ old('descricao', $documento->descricao) }}</textarea>
+                                <div class="form-text">
+                                    Máximo 1000 caracteres.
+                                </div>
                                 @error('descricao')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -74,7 +76,7 @@
                         </div>
                     </div>
 
-                    @if($documento->arquivo)
+                    @if($documento->caminho_arquivo)
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-3">
@@ -82,10 +84,10 @@
                                 <div class="d-flex align-items-center p-3 bg-light border rounded">
                                     <i class="fas fa-file-pdf fa-2x text-danger me-3"></i>
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1">{{ $documento->arquivo_original }}</h6>
+                                        <h6 class="mb-1">{{ $documento->nome_original }}</h6>
                                         <small class="text-muted">Arquivo PDF atual</small>
                                     </div>
-                                    <a href="{{ route('admin.documentos.download', $documento) }}" 
+                                    <a href="{{ route('documentos.download', $documento) }}" 
                                        class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-download me-1"></i>Download
                                     </a>
@@ -99,17 +101,17 @@
                         <div class="col-12">
                             <div class="mb-3">
                                 <label for="arquivo" class="form-label">
-                                    {{ $documento->arquivo ? 'Substituir Arquivo PDF' : 'Arquivo PDF *' }}
+                                    {{ $documento->caminho_arquivo ? 'Substituir Arquivo PDF' : 'Arquivo PDF *' }}
                                 </label>
                                 <input type="file" 
                                        class="form-control @error('arquivo') is-invalid @enderror" 
                                        id="arquivo" 
                                        name="arquivo" 
                                        accept=".pdf"
-                                       {{ !$documento->arquivo ? 'required' : '' }}>
+                                       {{ !$documento->caminho_arquivo ? 'required' : '' }}>
                                 <div class="form-text">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    {{ $documento->arquivo ? 'Deixe em branco para manter o arquivo atual. ' : '' }}
+                                    {{ $documento->caminho_arquivo ? 'Deixe em branco para manter o arquivo atual. ' : '' }}
                                     Somente arquivos PDF. Tamanho máximo: 10MB
                                 </div>
                                 @error('arquivo')
@@ -126,7 +128,7 @@
                                     <i class="fas fa-times me-2"></i>Cancelar
                                 </a>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save me-2"></i>Atualizar ATA
+                                    <i class="fas fa-save me-2"></i>Atualizar Documento
                                 </button>
                             </div>
                         </div>
