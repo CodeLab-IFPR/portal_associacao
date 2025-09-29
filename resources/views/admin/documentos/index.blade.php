@@ -162,6 +162,12 @@ Documentos
                                                     title="Rejeitar">
                                                 <i class="bi bi-x"></i> Rejeitar
                                             </button>
+                                            <!-- <button type="button" class="btn btn-sm btn-warning"  -->
+                                            <a href="{{ route('documentos.edit', $documento) }}" 
+                                                    class="btn btn-sm btn-warning" 
+                                                    title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
                                         @endif                                                        @if($documento->status !== 'aprovado')
                                                             <button type="button" class="btn btn-sm btn-danger" 
                                                                     data-bs-toggle="modal" 

@@ -102,6 +102,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/documentos/{documento}/download', [\App\Http\Controllers\DocumentoController::class, 'download'])->name('documentos.download');
     Route::patch('/documentos/{documento}/aprovar', [\App\Http\Controllers\DocumentoController::class, 'aprovar'])->name('documentos.aprovar');
     Route::patch('/documentos/{documento}/rejeitar', [\App\Http\Controllers\DocumentoController::class, 'rejeitar'])->name('documentos.rejeitar');
+    Route::get('/documentos/{documento}/edit', [\App\Http\Controllers\DocumentoController::class, 'edit'])->name('documentos.edit');
     Route::get('/documentos/usuario/{user}', [\App\Http\Controllers\DocumentoController::class, 'porUsuario'])->name('documentos.usuario');
 
     // Rotas de usuários

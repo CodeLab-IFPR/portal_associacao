@@ -101,6 +101,46 @@ class DocumentoController extends Controller
         );
     }
 
+    public function edit(Documento $documento)
+    {
+        return view('admin.documentos.edit', compact('documento'));
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'arquivo' => 'required|file|mimes:pdf|max:10240', // 10MB max
+            'tipo_documento' => 'required|string|max:255',
+            'descricao' => 'nullable|string|max:1000'
+        ], [
+            'arquivo.required' => 'O arquivo é obrigatório.',
+            'arquivo.mimes' => 'O arquivo deve ser um PDF.',
+            'arquivo.max' => 'O arquivo não pode exceder 10MB.',
+            'tipo_documento.required' => 'O tipo do documento é obrigatório.'
+        ]);
+
+        $arquivo = $request->file('arquivo');
+        $nomeOriginal = $arquivo->getClientOriginalName();
+        $nomeArquivo = time() . '_' . $nomeOriginal;
+        
+        // Salvar o arquivo no storage
+        $caminhoArquivo = $arquivo->storeAs('documentos', $nomeArquivo, 'private');
+
+        Documento::create([
+            'user_id' => Auth::id(),
+            'nome_arquivo' => $nomeArquivo,
+            'nome_original' => $nomeOriginal,
+            'caminho_arquivo' => $caminhoArquivo,
+            'tipo_documento' => $request->tipo_documento,
+            'descricao' => $request->descricao,
+            'status' => 'pendente'
+        ]);
+
+        return redirect()->route('documentos.index')
+            ->with('success', 'Documento enviado com sucesso! Aguarde a aprovação.');
+    }
+
+
     public function destroy(Documento $documento)
     {
         $user = Auth::user();
