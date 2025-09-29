@@ -140,11 +140,11 @@ Documentos
                                                 <td>
                                                     <div class="btn-group" role="group">
                                                         <a href="{{ route('documentos.show', $documento) }}" 
-                                                           class="btn btn-sm btn-info" title="Visualizar">
+                                                           class="btn btn-sm btn-info align-content-center" title="Visualizar">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
                                                         <a href="{{ route('documentos.download', $documento) }}" 
-                                                           class="btn btn-sm btn-success" title="Download">
+                                                           class="btn btn-sm btn-success align-content-center" title="Download">
                                                             <i class="bi bi-download"></i>
                                                         </a>
                                                         
@@ -164,12 +164,12 @@ Documentos
                                             </button>
                                             <!-- <button type="button" class="btn btn-sm btn-warning"  -->
                                             <a href="{{ route('documentos.edit', $documento) }}" 
-                                                    class="btn btn-sm btn-warning" 
+                                                    class="btn btn-sm btn-warning align-content-center" 
                                                     title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         @endif                                                        @if($documento->status !== 'aprovado')
-                                                            <button type="button" class="btn btn-sm btn-danger" 
+                                                            <button type="button" class="btn btn-sm btn-danger align-content-center" 
                                                                     data-bs-toggle="modal" 
                                                                     data-bs-target="#excluirModal{{ $documento->id }}"
                                                                     title="Excluir">
