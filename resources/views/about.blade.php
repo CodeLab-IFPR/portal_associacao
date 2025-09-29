@@ -49,8 +49,8 @@ Sobre a AMAER
                 <p class="lead text-muted">Descubra as diversas modalidades e eventos que promovemos</p>
             </div>
             
-            <div class="row g-6">
-                <div class="col-12 col-md-4">
+            <div class="row g-6 justify-content-center">
+                <div class="col-12 col-md-5">
                     <div class="text-center">
                         <div class="mb-4">
                             <i class="ri-plane-line display-4 text-primary"></i>
@@ -59,8 +59,8 @@ Sobre a AMAER
                         <p class="text-muted">Modelos de aviões rádio controlados, planadores, helicópteros e drones. Promovemos voos recreativos, treinos técnicos e competições oficiais.</p>
                     </div>
                 </div>
-                
-                <div class="col-12 col-md-4">
+
+                <div class="col-12 col-md-5">
                     <div class="text-center">
                         <div class="mb-4">
                             <i class="ri-car-line display-4 text-primary"></i>
@@ -68,17 +68,7 @@ Sobre a AMAER
                         <h4 class="fw-bold mb-3">Automodelismo</h4>
                         <p class="text-muted">Carros rádio controlados de diversas categorias: pista, rally, drift e crawler. Organizamos corridas e eventos técnicos regulares.</p>
                     </div>
-                </div>
-                
-                <div class="col-12 col-md-4">
-                    <div class="text-center">
-                        <div class="mb-4">
-                            <i class="ri-tools-line display-4 text-primary"></i>
-                        </div>
-                        <h4 class="fw-bold mb-3">Oficinas Técnicas</h4>
-                        <p class="text-muted">Workshops de construção, manutenção e pilotagem. Compartilhamos conhecimento técnico e melhores práticas do modelismo.</p>
-                    </div>
-                </div>
+                </div>                
             </div>
         </div>
     </div>
