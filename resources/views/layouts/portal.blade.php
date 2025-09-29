@@ -61,57 +61,57 @@
         main {
             flex: 1;
         }
-        
+
         /* Footer Styles */
         .hover-text-primary:hover {
             color: #007bff !important;
         }
-        
+
         .hover-text-white:hover {
             color: #ffffff !important;
         }
-        
+
         .border-white-10 {
             border-color: rgba(255, 255, 255, 0.1) !important;
         }
-        
+
         .text-white-50 {
             color: rgba(255, 255, 255, 0.5) !important;
         }
-        
+
         .transition-all {
             transition: all 0.3s ease;
         }
-        
+
         footer .footer-nav li a:hover {
             padding-left: 0.5rem;
             transition: all 0.3s ease;
         }
-        
+
         footer i.ri-map-pin-line,
         footer i.ri-mail-line,
         footer i.ri-phone-line {
             color: #007bff;
         }
-        
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             footer .d-flex.gap-3 {
                 justify-content: center;
             }
-            
+
             footer h6 {
                 text-align: center;
                 margin-bottom: 1rem !important;
             }
-            
+
             footer .footer-nav {
                 text-align: center;
             }
         }
     </style>
-    
-    @vite('resources/css/libs.bundle.css')    
+
+    @vite('resources/css/libs.bundle.css')
     @vite('resources/css/theme.bundle.css')
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -123,28 +123,25 @@
         </style>
     </noscript>
     <title>@yield('title')</title>
-    
+
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-white ">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center lh-1 me-1 transition-opacity opacity-75-hover" href="{{ route('home') }}">
-            <img class="img-fluid" src="{{ asset('img/logo-amaer.png') }}" alt="AMAER Logo" style="height: 55px; background-color: #2c2c2c; padding: 10px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
-        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <i class="ri-menu-line"></i>
-        </button>    
+        </button>
         <div class="collapse navbar-collapse justify-content-evenly" id="navbarSupportedContent">
-            <ul class="navbar-nav" style="gap: 0.3rem;"> 
-                              
+            <ul class="navbar-nav" style="gap: 0.3rem;">
+
                 <li class="nav-item">
                     <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('noticias.cards') }}" style="font-size: 1.2rem;">
                         <i class="ri-newspaper-line me-2"></i>
                         <span>Notícias</span>
                     </a>
                 </li>
-          
+
                 <li class="nav-item">
                     <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('about') }}" style="font-size: 1.2rem;">
                         <i class="ri-information-line me-2"></i>
@@ -156,7 +153,7 @@
                         <i class="ri-contacts-line me-2"></i>
                         <span>Contato</span>
                     </a>
-                </li>              
+                </li>
                 <li class="nav-item">
                     <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('galeria.indexPublic') }}" style="font-size: 1.2rem;">
                         <i class="ri-gallery-line me-2"></i>
@@ -253,7 +250,7 @@
                         <span class="text-white-50 small">(44) 9999-9999</span>
                     </div>
                 </div>
-                
+
                 <h6 class="text-white fw-bold mb-3 mt-4">Horário de Funcionamento</h6>
                 <div class="text-white-50 small">
                     <div class="d-flex justify-content-between mb-1">
@@ -297,7 +294,7 @@
             </div>
         </div>
 
-    </div>    
+    </div>
 </footer>
 <div class="modal fade modal-video" id="videoIframeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
