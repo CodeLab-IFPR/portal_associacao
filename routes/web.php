@@ -18,6 +18,7 @@ use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\Admin\FraseInicioController;
 use App\Http\Controllers\LancamentoServicoController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CartaoAssociadoController;
 
 use App\Http\Controllers\MemberRegistrationController;
 
@@ -201,10 +202,20 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
         Route::delete('/perfil', 'destroy')->name('profile.destroy');
     });
 
+    // Cartão do Associado
+    // Cartão do Associado
+    Route::get('/cartao-associado', [CartaoAssociadoController::class, 'index'])->name('cartao-associado');
+    Route::get('/cartao-associado/download-image', [CartaoAssociadoController::class, 'downloadImage'])->name('cartao-associado.download-image');
+
     // Frase Início
     Route::get('frase-inicio/editar', [FraseInicioController::class, 'editar'])->name('admin.frase_inicio.editar');
     Route::put('frase-inicio/atualizar', [FraseInicioController::class, 'atualizar'])->name('admin.frase_inicio.atualizar');
     Route::post('lancamentos/generate-certificates', [LancamentoServicoController::class, 'generateCertificates'])->name('lancamentos.generateCertificates');
 });
+
+// Rotas públicas para validação de cartão
+Route::get('/validar-cartao/{user}/{hash}', [CartaoAssociadoController::class, 'validar'])->name('cartao-associado.validar');
+Route::get('/validar', [CartaoAssociadoController::class, 'paginaValidacao'])->name('cartao-associado.pagina-validacao');
+Route::post('/validar', [CartaoAssociadoController::class, 'procesarValidacao'])->name('cartao-associado.processar-validacao');
 
 require __DIR__.'/auth.php';

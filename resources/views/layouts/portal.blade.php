@@ -115,6 +115,8 @@
     @vite('resources/css/theme.bundle.css')
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <noscript>
         <style>
           .simplebar-content-wrapper {
@@ -136,9 +138,23 @@
             <ul class="navbar-nav" style="gap: 0.3rem;">
 
                 <li class="nav-item">
+                    <a class="nav-link me-lg-0 ms-lg-0" href="/" style="font-size: 1.2rem;">
+                        <i class="ri-home-4-line me-2"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                
+            <li class="nav-item">
                     <a class="nav-link me-lg-0 ms-lg-0" href="{{ route('noticias.cards') }}" style="font-size: 1.2rem;">
                         <i class="ri-newspaper-line me-2"></i>
                         <span>Notícias</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link me-lg-0 ms-lg-0" href="/validar" style="font-size: 1.2rem;">
+                        <i class="ri-shield-check-line me-2"></i>
+                        <span>Validar Cartão</span>
                     </a>
                 </li>
 
