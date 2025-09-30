@@ -95,21 +95,13 @@ Visualizar Documento
                                     </div>
                                 @endif
 
-                                @if($documento->observacoes)
-                                    <h5>Observações do Administrador:</h5>
-                                    <div class="alert alert-warning">
-                                        <i class="bi bi-exclamation-triangle"></i>
-                                        {{ $documento->observacoes }}
-                                    </div>
-                                @endif
-
                                 <div class="d-grid gap-2">
                                     <a href="{{ route('documentos.download', $documento) }}" 
                                        class="btn btn-success">
                                         <i class="bi bi-download"></i> Download do Arquivo
                                     </a>
 
-                                    @if(auth()->user()->hasRole('admin') && $documento->status === 'pendente')
+                                    @if((auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin')) && $documento->status === 'pendente')
                                         <button type="button" class="btn btn-warning" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#aprovarModal">
@@ -122,8 +114,8 @@ Visualizar Documento
                                         </button>
                                     @endif
 
-                                    @if($documento->status !== 'aprovado')
-                                        <button type="button" class="btn btn-outline-danger" 
+                                    @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin'))
+                                        <button type="button" class="btn btn-danger" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#excluirModal">
                                             <i class="bi bi-trash"></i> Excluir Documento
@@ -144,7 +136,7 @@ Visualizar Documento
     </div>
 </div>
 
-@if(auth()->user()->hasRole('admin') && $documento->status === 'pendente')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin'))
     <!-- Modal Aprovar -->
     <div class="modal fade" id="aprovarModal" tabindex="-1">
         <div class="modal-dialog">
@@ -199,7 +191,7 @@ Visualizar Documento
     </div>
 @endif
 
-@if($documento->status !== 'aprovado')
+@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin'))
     <!-- Modal Excluir -->
     <div class="modal fade" id="excluirModal" tabindex="-1">
         <div class="modal-dialog">

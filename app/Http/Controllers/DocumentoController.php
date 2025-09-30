@@ -101,6 +101,53 @@ class DocumentoController extends Controller
         );
     }
 
+    public function edit(Documento $documento)
+    {
+        return view('admin.documentos.edit', compact('documento'));
+    }
+
+    public function update(Request $request, Documento $documento)
+    {
+        $request->validate([
+            'arquivo' => 'nullable|file|mimes:pdf|max:10240', // 10MB max
+            'tipo_documento' => 'required|string|max:255',
+            'descricao' => 'nullable|string|max:1000'
+        ], [
+            'arquivo.mimes' => 'O arquivo deve ser um PDF.',
+            'arquivo.max' => 'O arquivo não pode exceder 10MB.',
+            'tipo_documento.required' => 'O tipo do documento é obrigatório.'
+        ]);
+
+        $documento->tipo_documento = $request->tipo_documento;
+        $documento->descricao = $request->descricao;
+
+        if ($request->hasFile('arquivo')) {
+            if(Storage::exists($documento->caminho_arquivo)){
+                Storage::delete($documento->caminho_arquivo);
+            }
+            $arquivo = $request->file('arquivo');
+            $nomeOriginal = $arquivo->getClientOriginalName();
+            $nomeArquivo = time() . '_' . $nomeOriginal;
+        
+            $caminhoArquivo = $arquivo->storeAs('documentos', $nomeArquivo, 'private');
+            $documento->nome_arquivo = $nomeArquivo;
+            $documento->nome_original = $nomeOriginal;
+            $documento->caminho_arquivo = $caminhoArquivo;
+        }
+
+        $documento->update([
+            'nome_arquivo' => $documento->nome_arquivo,
+            'nome_original' => $documento->nome_original,
+            'caminho_arquivo' => $documento->caminho_arquivo,
+            'tipo_documento' => $request->tipo_documento,
+            'descricao' => $request->descricao
+        ]);
+
+        return redirect()->route('documentos.index')
+            ->with('success', 'Documento editado com sucesso!');
+    }
+
+
     public function destroy(Documento $documento)
     {
         $user = Auth::user();

@@ -91,9 +91,10 @@ Adicionar Documento
                                 @enderror
                             </div>
 
-                            <div class="alert alert-info">
+                            <div class="alert alert-info top-50 start-50">
                                 <i class="bi bi-info-circle"></i>
                                 <strong>Importante:</strong>
+                                <button type="button" id="close" class="btn-close float-end transparent"></button>
                                 <ul class="mb-0 mt-2">
                                     <li>O documento será enviado para análise do administrador.</li>
                                     <li>Você receberá uma notificação quando o documento for aprovado ou rejeitado.</li>
@@ -126,5 +127,11 @@ Adicionar Documento
             fileText.textContent = `Arquivo selecionado: ${fileName}`;
         }
     });
+
+    document.getElementById('close').addEventListener('click', function() {
+        this.parentElement.style.display = 'none';
+    });
+
+
 </script>
 @endsection
