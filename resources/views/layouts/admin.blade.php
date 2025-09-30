@@ -149,10 +149,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"> <i
                                 class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item d-none d-md-block"> <a href="{{ route('home') }}"
-                            class="nav-link">Home</a> </li>
-                    <li class="nav-item d-none d-md-block"> <a href="{{ route('contact') }}"
-                            class="nav-link">Contato</a> </li>
+             
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
@@ -217,7 +214,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
             <div class="sidebar-brand"><a href="{{ route('admin') }}" class="brand-link"> <img
                         src="{{ asset('/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
-                        class="brand-image opacity-75 shadow"><span class="brand-text fw-light">AdminLTE 4</span></a>
+                        class="brand-image opacity-75 shadow"><span class="brand-text fw-light">AMAER</span></a>
             </div>
             <div class="sidebar-wrapper">
                 <nav class="mt-2">
@@ -458,6 +455,15 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                                class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-person-gear"></i>
                                 <p>Editar Perfil</p>
+                            </a>
+                        </li>
+
+                        <!-- Cartão do Associado (Todos os usuários) -->
+                        <li class="nav-item">
+                            <a href="{{ route('cartao-associado') }}" 
+                               class="nav-link {{ request()->routeIs('cartao-associado') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-credit-card"></i>
+                                <p>Cartão do Associado</p>
                             </a>
                         </li>
 

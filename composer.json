@@ -7,14 +7,14 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.0",
-        "intervention/image": "^2.3",
+        "barryvdh/laravel-snappy": "^1.0",
+        "intervention/image": "^3.11",
         "laravel/framework": "^11.9",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
         "mpdf/mpdf": "^8.2",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
-        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^6.10",
         "webklex/laravel-imap": "^4.1",
         "webklex/php-imap": "^4.1"
