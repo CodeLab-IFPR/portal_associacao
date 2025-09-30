@@ -143,16 +143,6 @@ class DocumentoController extends Controller
             'descricao' => $request->descricao
         ]);
 
-        // Documento::create([
-        //     'user_id' => Auth::id(),
-        //     'nome_arquivo' => $nomeArquivo,
-        //     'nome_original' => $nomeOriginal,
-        //     'caminho_arquivo' => $caminhoArquivo,
-        //     'tipo_documento' => $request->tipo_documento,
-        //     'descricao' => $request->descricao,
-        //     'status' => 'pendente'
-        // ]);
-
         return redirect()->route('documentos.index')
             ->with('success', 'Documento editado com sucesso!');
     }
