@@ -25,25 +25,21 @@ Cartão do Associado
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Seu Cartão AMAER</h3>
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    <div class="card-body">
-                        @if(session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
-                        
-                        @if(session('success'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
-                        <!-- Cartão do Associado -->
+                @endif
+                
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                
+                <!-- Cartão do Associado -->
                         <div class="cartao-associado mx-auto" style="width: 100%; max-width: 600px; height: 380px; background: #f8f9fa; border-radius: 30px; position: relative; overflow: hidden; color: #333; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
                             
                             <!-- Header com Logo e Status -->
@@ -141,8 +137,6 @@ Cartão do Associado
                                 <li>Mantenha sempre seu cartão atualizado junto à administração</li>
                             </ul>
                         </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -150,9 +144,126 @@ Cartão do Associado
 
 <style>
 @media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    
+    .col-lg-10 {
+        max-width: 100% !important;
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+    
     .cartao-associado {
-        transform: scale(0.8);
-        margin: 20px auto !important;
+        width: 100% !important;
+        max-width: 95vw !important;
+        height: 350px !important;
+        margin: 10px auto !important;
+        border-radius: 20px !important;
+    }
+    
+    /* Ajustar header */
+    .cartao-associado > div:first-child {
+        padding: 10px 15px !important;
+    }
+    
+    /* Ajustar conteúdo principal */
+    .cartao-associado > div:nth-child(2) {
+        top: 75px !important;
+        left: 15px !important;
+        right: 15px !important;
+        bottom: 95px !important;
+        display: grid !important;
+        grid-template-columns: 90px 1fr !important;
+        grid-template-rows: auto 1fr !important;
+        gap: 20px !important;
+        align-items: start !important;
+    }
+    
+    /* Foto do associado - Grid posição 1,1 */
+    .cartao-associado > div:nth-child(2) > div:first-child {
+        width: 90px !important;
+        height: 90px !important;
+        border-radius: 45px !important;
+        margin: 0 !important;
+        border: 3px solid rgba(255,255,255,0.9) !important;
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        align-self: start !important;
+    }
+    
+    /* Informações do associado - Grid posição 2,1 */
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) {
+        text-align: left !important;
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        align-self: start !important;
+        min-width: 0 !important;
+    }
+    
+    /* QR Code - Grid posição 1-2,2 (span 2 colunas) */
+    .cartao-associado > div:nth-child(2) > div:nth-child(3) {
+        width: 80px !important;
+        height: 80px !important;
+        margin: 0 auto !important;
+        padding: 5px !important;
+        grid-column: 1 / 3 !important;
+        grid-row: 2 !important;
+        justify-self: center !important;
+        align-self: center !important;
+    }
+    
+    /* Nome do associado */
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) > div > h3 {
+        font-size: 20px !important;
+        margin-bottom: 8px !important;
+        line-height: 1.2 !important;
+    }
+    
+    /* Grid das informações */
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(2),
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(3) {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        margin-bottom: 6px !important;
+    }
+    
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(2) > div,
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(3) > div {
+        text-align: left !important;
+    }
+    
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(2) > div > div:first-child,
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(3) > div > div:first-child {
+        font-size: 10px !important;
+    }
+    
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(2) > div > div:nth-child(2),
+    .cartao-associado > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(3) > div > div:nth-child(2) {
+        font-size: 13px !important;
+        font-weight: bold !important;
+    }
+    
+    .cartao-associado > div:nth-child(2) > div:nth-child(3) > div > img {
+        width: 70px !important;
+        height: 70px !important;
+    }
+    
+    .cartao-associado > div:nth-child(2) > div:nth-child(3) > div > div {
+        font-size: 6px !important;
+        margin-top: 1px !important;
+        line-height: 1.1 !important;
+        text-align: center !important;
+    }
+    
+    /* Footer */
+    .cartao-associado > div:nth-child(3) {
+        padding: 8px 15px !important;
+        font-size: 9px !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+        text-align: center !important;
     }
 }
 

@@ -27,9 +27,9 @@ class CartaoAssociadoController extends Controller
                 return redirect()->back()->with('error', 'Usuário não encontrado.');
             }
 
-            // Dimensões iguais ao layout web
-            $width = 600;
-            $height = 380;
+            // Dimensões em formato retrato otimizado para mobile
+            $width = 450;  // Reduzido para formato retrato
+            $height = 600; // Aumentado para formato vertical
             $img = imagecreatetruecolor($width, $height);
             
             // Cores exatas do CSS
@@ -46,9 +46,9 @@ class CartaoAssociadoController extends Controller
             // Preencher fundo
             imagefill($img, 0, 0, $fundoCartao);
             
-            // Header com gradiente igual ao CSS (135deg, #1e88e5, #42a5f5)
-            for ($y = 0; $y <= 70; $y++) {
-                $ratio = $y / 70;
+            // Header com gradiente - ajustado para nova largura
+            for ($y = 0; $y <= 80; $y++) { // Aumentado de 70 para 80
+                $ratio = $y / 80;
                 // Simular gradiente diagonal
                 $r = (int)(30 + ($ratio * 36));
                 $g = (int)(136 + ($ratio * 29));
@@ -57,17 +57,17 @@ class CartaoAssociadoController extends Controller
                 imageline($img, 0, $y, $width, $y, $corGradiente);
             }
             
-            // Logo container - fundo branco com transparência (aumentando a área)
-            imagefilledrectangle($img, 25, 15, 140, 55, $branco);
+            // Logo container - ajustado para nova largura
+            imagefilledrectangle($img, 25, 20, 180, 65, $branco);
             
             // Carregar logo
             $logoPath = public_path('img/logos/logo-amaer2.png');
             if (file_exists($logoPath)) {
                 $logo = @imagecreatefrompng($logoPath);
                 if ($logo) {
-                    // Área disponível para logo (mais espaço)
-                    $logoAreaWidth = 105;  // 140 - 25 - 10 (margem interna)
-                    $logoAreaHeight = 32;  // 55 - 15 - 8 (margem interna)
+                    // Área disponível para logo - ajustada para novo container
+                    $logoAreaWidth = 140;  // 180 - 25 - 15 (margem interna)
+                    $logoAreaHeight = 35;  // 65 - 20 - 10 (margem interna)
                     
                     // Dimensões originais da logo
                     $logoOriginalWidth = imagesx($logo);
@@ -91,9 +91,9 @@ class CartaoAssociadoController extends Controller
                     imagecopyresampled($logoResized, $logo, 0, 0, 0, 0, 
                                      $logoWidth, $logoHeight, $logoOriginalWidth, $logoOriginalHeight);
                     
-                    // Centralizar logo na área disponível
-                    $logoX = 25 + (($logoAreaWidth - $logoWidth) / 2) + 5;
-                    $logoY = 15 + (($logoAreaHeight - $logoHeight) / 2) + 4;
+                    // Centralizar logo na área disponível - ajustado para novo container
+                    $logoX = 25 + (($logoAreaWidth - $logoWidth) / 2) + 10;
+                    $logoY = 20 + (($logoAreaHeight - $logoHeight) / 2) + 5;
                     
                     imagecopy($img, $logoResized, $logoX, $logoY, 0, 0, $logoWidth, $logoHeight);
                     
@@ -105,14 +105,14 @@ class CartaoAssociadoController extends Controller
                 imagestring($img, 5, 60, 28, 'AMAER', $azulPrimario);
             }
             
-            // Status ATIVO - formato arredondado
-            imagefilledrectangle($img, 520, 23, 575, 47, $verde);
-            imagestring($img, 3, 535, 30, 'ATIVO', $branco);
+            // Status ATIVO - ajustado para nova largura
+            imagefilledrectangle($img, $width - 80, 25, $width - 20, 50, $verde);
+            imagestring($img, 3, $width - 65, 32, 'ATIVO', $branco);
             
-            // Foto circular (120x120 como no CSS)
-            $fotoX = 50;
-            $fotoY = 110;
-            $fotoSize = 120;
+            // Foto circular - centralizada e maior para formato retrato
+            $fotoSize = 140; // Aumentado de 120 para 140
+            $fotoX = ($width - $fotoSize) / 2; // Centralizada horizontalmente
+            $fotoY = 120; // Posicionada abaixo do header
             $fotoRadius = $fotoSize / 2;
             
             // Criar máscara circular
@@ -131,52 +131,53 @@ class CartaoAssociadoController extends Controller
             
             imagedestroy($maskImg);
             
-            // Nome (posição igual ao CSS)
+            // Nome centralizado abaixo da foto - fonte maior
             $nome = $user->name;
-            if (strlen($nome) > 18) {
-                $nome = substr($nome, 0, 15) . '...';
+            if (strlen($nome) > 20) {
+                $nome = substr($nome, 0, 17) . '...';
             }
-            imagestring($img, 5, 195, 110, $nome, $preto);
             
-            // Grid de dados (replicando o layout CSS)
-            $baseY = 140;
+            // Calcular posição centralizada do nome
+            $nomeWidth = strlen($nome) * 12; // Aproximação da largura do texto
+            $nomeX = ($width - $nomeWidth) / 2;
+            imagestring($img, 5, $nomeX, $fotoY + $fotoSize + 20, $nome, $preto);
             
-            // Primeira linha - Matrícula e Categoria
-            imagestring($img, 2, 195, $baseY, 'Matricula', $cinzaTexto);
-            imagestring($img, 2, 320, $baseY, 'Categoria', $cinzaTexto);
+            // Informações em layout vertical centralizado - fontes maiores
+            $infoStartY = $fotoY + $fotoSize + 60;
+            $lineHeight = 40;
             
+            // Matrícula
             $matricula = $user->matricula ?: 'AS-' . str_pad($user->id, 6, '0', STR_PAD_LEFT);
+            imagestring($img, 3, 50, $infoStartY, 'Matricula:', $cinzaTexto);
+            imagestring($img, 4, 50, $infoStartY + 15, $matricula, $preto);
+            
+            // Categoria
             $categoria = $user->categoria ?: 'Aeromodelismo';
+            imagestring($img, 3, $width - 200, $infoStartY, 'Categoria:', $cinzaTexto);
+            imagestring($img, 4, $width - 200, $infoStartY + 15, $categoria, $preto);
             
-            imagestring($img, 4, 195, $baseY + 12, $matricula, $preto);
-            imagestring($img, 4, 320, $baseY + 12, $categoria, $preto);
-            
-            // Segunda linha - Ingresso e Validade
-            $baseY += 55;
-            imagestring($img, 2, 195, $baseY, 'Ingresso', $cinzaTexto);
-            imagestring($img, 2, 320, $baseY, 'Validade', $cinzaTexto);
-            
+            // Ingresso
             $ingresso = $user->created_at->format('d/m/Y');
+            imagestring($img, 3, 50, $infoStartY + $lineHeight, 'Ingresso:', $cinzaTexto);
+            imagestring($img, 4, 50, $infoStartY + $lineHeight + 15, $ingresso, $preto);
+            
+            // Validade
             $validade = $user->created_at->addYears(2)->format('d/m/Y');
+            imagestring($img, 3, $width - 200, $infoStartY + $lineHeight, 'Validade:', $cinzaTexto);
+            imagestring($img, 4, $width - 200, $infoStartY + $lineHeight + 15, $validade, $preto);
             
-            imagestring($img, 4, 195, $baseY + 12, $ingresso, $preto);
-            imagestring($img, 4, 320, $baseY + 12, $validade, $preto);
-            
-            // QR Code container (igual ao CSS)
-            $qrX = 485;
-            $qrY = 110;
-            $qrContainerSize = 100;
+            // QR Code maior no final do cartão - otimizado para mobile
+            $qrSize = 120; // Tamanho maior para mobile
+            $qrX = ($width - $qrSize) / 2; // Centralizado horizontalmente
+            $qrY = $height - $qrSize - 80; // 80px do bottom para texto
             
             // Fundo branco do QR container
-            imagefilledrectangle($img, $qrX, $qrY, $qrX + $qrContainerSize, $qrY + $qrContainerSize, $branco);
+            imagefilledrectangle($img, $qrX - 10, $qrY - 10, $qrX + $qrSize + 10, $qrY + $qrSize + 10, $branco);
             
-            // QR Code
-            $qrData = route('cartao-associado.validar', [
-                'user' => $user->id, 
-                'hash' => md5($user->email . $user->created_at)
-            ]);
-            
-            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=" . urlencode($qrData);
+            // QR Code usando signature para validação
+            $signature = md5($user->email . $user->created_at->format('Y-m-d'));
+            $qrData = config('app.url') . "/validacao?signature=" . $signature;
+            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size={$qrSize}x{$qrSize}&data=" . urlencode($qrData);
             
             $context = stream_context_create([
                 'http' => [
@@ -190,27 +191,25 @@ class CartaoAssociadoController extends Controller
             if ($qrImageData) {
                 $qrImage = @imagecreatefromstring($qrImageData);
                 if ($qrImage) {
-                    imagecopy($img, $qrImage, $qrX + 15, $qrY + 10, 0, 0, 70, 70);
+                    imagecopy($img, $qrImage, $qrX, $qrY, 0, 0, $qrSize, $qrSize);
                     imagedestroy($qrImage);
                 }
             }
             
-            // Texto do QR (igual ao CSS)
-            imagestring($img, 1, $qrX + 15, $qrY + 85, 'Validar em:', $cinzaTexto);
-            imagestring($img, 1, $qrX + 5, $qrY + 93, 'amaer.com.br/validar', $cinzaTexto);
+            // Texto do QR centralizado - fonte maior
+            $textoValidacao = 'Validar em: amaer.com.br/validacao';
+            $textoWidth = strlen($textoValidacao) * 6;
+            $textoX = ($width - $textoWidth) / 2;
+            imagestring($img, 3, $textoX, $qrY + $qrSize + 15, $textoValidacao, $cinzaTexto);
             
-            // Footer (igual ao CSS)
-            imagefilledrectangle($img, 0, 320, $width, $height, $azulPrimario);
+            // Footer - ajustado para layout retrato
+            imagefilledrectangle($img, 0, $height - 40, $width, $height, $azulPrimario);
             
-            // Assinatura eletrônica
-            $assinatura = 'Assinatura eletronica: ' . substr(md5($user->email . $user->created_at), 0, 12);
-            imagestring($img, 2, 25, 340, $assinatura, $branco);
-            
-            // Data de emissão
-            $dataEmissao = 'Emitido em ' . now()->format('d/m/Y');
-            imagestring($img, 2, 450, 340, $dataEmissao, $branco);
-            
-            // Gerar imagem PNG
+            // Assinatura eletrônica centralizada
+            $assinatura = 'Assinatura: ' . substr(md5($user->email . $user->created_at), 0, 10);
+            $assWidth = strlen($assinatura) * 5;
+            $assX = ($width - $assWidth) / 2;
+            imagestring($img, 2, $assX, $height - 30, $assinatura, $branco);
             ob_start();
             imagepng($img, null, 8);
             $imageData = ob_get_clean();
