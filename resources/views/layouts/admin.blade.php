@@ -42,8 +42,6 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
         integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
         integrity="sha384-Qsx5lrStHZyR9REqhUF8iQt73X06c8LGIUPzpOhwRrI=" crossorigin="anonymous">
-    <script src="https://cdn.tiny.cloud/1/i6174a4p21k3bvgofjdjglzvdfxrle8qza1n62srherxw93i/tinymce/7/tinymce.min.js">
-    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
@@ -58,26 +56,63 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-    <script src="https://cdn.tiny.cloud/1/i6174a4p21k3bvgofjdjglzvdfxrle8qza1n62srherxw93i/tinymce/7/tinymce.min.js"
-        referrerpolicy="origin"></script>
+    <!-- CKEditor 5 -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     @vite('resources/css/adminlte.css')
         <script>
-            tinymce.init({
-                selector: '#inputConteudo',
-                language: 'pt_BR',
-                directionality: 'ltr',
-                toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media | forecolor backcolor emoticons',
-                plugins: [
-                    'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor',
-                    'pagebreak',
-                    'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen',
-                    'insertdatetime',
-                    'media', 'table', 'emoticons', 'help'
-                ],
+            // Inicializar CKEditor 5
+            document.addEventListener('DOMContentLoaded', function() {
+                if (document.querySelector('#inputConteudo')) {
+                    ClassicEditor
+                        .create(document.querySelector('#inputConteudo'), {
+                            language: 'pt-br',
+                            toolbar: {
+                                items: [
+                                    'heading', '|',
+                                    'bold', 'italic', 'underline', '|',
+                                    'link', 'insertImage', '|',
+                                    'bulletedList', 'numberedList', '|',
+                                    'outdent', 'indent', '|',
+                                    'alignment', '|',
+                                    'blockQuote', 'insertTable', '|',
+                                    'undo', 'redo'
+                                ]
+                            },
+                            image: {
+                                toolbar: [
+                                    'imageTextAlternative', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side'
+                                ]
+                            },
+                            table: {
+                                contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ]
+                            }
+                        })
+                        .then(editor => {
+                            window.editor = editor;
+                            
+                            // Aplicar altura mínima ao editor
+                            const editorElement = document.querySelector('.ck-editor__editable');
+                            if (editorElement) {
+                                editorElement.style.minHeight = '300px';
+                            }
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
             });
         </script>
     <style>
+        /* CKEditor 5 - Altura mínima personalizada */
+        .ck-editor__editable {
+            min-height: 300px !important;
+        }
+        
+        .ck-content {
+            min-height: 280px !important;
+        }
+        
         #loading-screen {
             position: fixed;
             top: 0;
@@ -149,10 +184,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"> <i
                                 class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item d-none d-md-block"> <a href="{{ route('home') }}"
-                            class="nav-link">Home</a> </li>
-                    <li class="nav-item d-none d-md-block"> <a href="{{ route('contact') }}"
-                            class="nav-link">Contato</a> </li>
+             
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
@@ -217,7 +249,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
             <div class="sidebar-brand"><a href="{{ route('admin') }}" class="brand-link"> <img
                         src="{{ asset('/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
-                        class="brand-image opacity-75 shadow"><span class="brand-text fw-light">AdminLTE 4</span></a>
+                        class="brand-image opacity-75 shadow"><span class="brand-text fw-light">AMAER</span></a>
             </div>
             <div class="sidebar-wrapper">
                 <nav class="mt-2">
@@ -461,6 +493,15 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                             </a>
                         </li>
 
+                        <!-- Cartão do Associado (Todos os usuários) -->
+                        <li class="nav-item">
+                            <a href="{{ route('cartao-associado') }}" 
+                               class="nav-link {{ request()->routeIs('cartao-associado') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-credit-card"></i>
+                                <p>Cartão do Associado</p>
+                            </a>
+                        </li>
+
                     </ul>
                 </nav>
             </div>
@@ -686,21 +727,6 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                 });
             </script>
 
-            <script>
-                tinymce.init({
-                    selector: '#inputConteudo',
-                    language: 'pt_BR',
-                    directionality: 'ltr',
-                    toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media | forecolor backcolor emoticons',
-                    plugins: [
-                        'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor',
-                        'pagebreak',
-                        'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen',
-                        'insertdatetime',
-                        'media', 'table', 'emoticons', 'help'
-                    ],
-                });
-            </script>
     <script>
         window.addEventListener('load', function() {
             // Aguarda um pequeno delay para garantir que todos os recursos estejam carregados

@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Intervention\Image\ImageManager;
-use Intervention\Image\Imagick\Driver;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Illuminate\Support\Facades\File;
 
 class ImageUploader
@@ -48,14 +48,12 @@ class ImageUploader
         }
 
         $profileImage = date('YmdHis') . ".jpg";
-        $manager = new ImageManager(['driver' => 'imagick']);
+        $manager = new ImageManager(new GdDriver());
 
-        $image = $manager->make($image->getRealPath())
-                         ->resize($this->resolution[0], $this->resolution[1], function ($constraint) {
-                             $constraint->aspectRatio();
-                         });
+        $image = $manager->read($image->getRealPath())
+                         ->resize($this->resolution[0], $this->resolution[1]);
 
-        $image->save(public_path($this->destinationPath) . '/' . $profileImage, $this->compression);
+        $image->toJpeg($this->compression)->save(public_path($this->destinationPath) . '/' . $profileImage);
 
         return $profileImage;
     }

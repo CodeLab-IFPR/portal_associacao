@@ -18,6 +18,7 @@ use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\Admin\FraseInicioController;
 use App\Http\Controllers\LancamentoServicoController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CartaoAssociadoController;
 
 use App\Http\Controllers\MemberRegistrationController;
 
@@ -69,6 +70,7 @@ Route::get('/google/callback', [GoogleLoginController::class, 'handleGoogleCallb
 // Public gallery routes
 Route::get('/galeria', [GaleriaController::class, 'index'])->name('galeria.public');
 Route::get('/galeria/ano/{ano}', [GaleriaController::class, 'peloAno'])->name('galeria.ano');
+Route::get('/galeria/{galeria}', [GaleriaController::class, 'show'])->name('galeria.show');
 Route::get('/galeria', [GaleriaController::class, 'indexPublic'])->name('galeria.indexPublic');
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -83,15 +85,14 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
         return view('admin.index');
     })->name('admin');
 
-    // Rotas da galeria (admin)
-    Route::group(['prefix' => 'galeria'], function () {
-        Route::get('/', [GaleriaController::class, 'indexAdmin'])->name('galeria.indexAdmin');
-        Route::get('/create', [GaleriaController::class, 'create'])->name('galeria.create');
-        Route::post('/', [GaleriaController::class, 'store'])->name('galeria.store');
-        Route::get('/{galeria}/edit', [GaleriaController::class, 'edit'])->name('galeria.edit');
-        Route::put('/{galeria}', [GaleriaController::class, 'update'])->name('galeria.update');
-        Route::delete('/{galeria}', [GaleriaController::class, 'destroy'])->name('galeria.destroy');
-    });
+    // não tava achando a rota do indexAdmin então tive que tirar do grupo
+    Route::get('/galeria', [GaleriaController::class, 'indexAdmin'])->name('galeria.indexAdmin');
+    Route::get('/galeria/create', [GaleriaController::class, 'create'])->name('galeria.create');
+    Route::post('/galeria', [GaleriaController::class, 'store'])->name('galeria.store');
+    Route::get('/galeria/{galeria}/edit', [GaleriaController::class, 'edit'])->name('galeria.edit');
+    Route::put('/galeria/{galeria}', [GaleriaController::class, 'update'])->name('galeria.update');
+    Route::delete('/galeria/{galeria}', [GaleriaController::class, 'destroy'])->name('galeria.destroy');
+    Route::delete('/galeria/media/{id}', [GaleriaController::class, 'destroyMedia'])->name('galeria.media.destroy');
 
     // Rotas de certificados (admin)
     Route::resource('certificados', CertificadoController::class)->except(['show']);
@@ -102,6 +103,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/documentos/{documento}/download', [\App\Http\Controllers\DocumentoController::class, 'download'])->name('documentos.download');
     Route::patch('/documentos/{documento}/aprovar', [\App\Http\Controllers\DocumentoController::class, 'aprovar'])->name('documentos.aprovar');
     Route::patch('/documentos/{documento}/rejeitar', [\App\Http\Controllers\DocumentoController::class, 'rejeitar'])->name('documentos.rejeitar');
+    Route::get('/documentos/{documento}/edit', [\App\Http\Controllers\DocumentoController::class, 'edit'])->name('documentos.edit');
     Route::get('/documentos/usuario/{user}', [\App\Http\Controllers\DocumentoController::class, 'porUsuario'])->name('documentos.usuario');
 
     // Rotas de usuários
@@ -116,7 +118,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
         Route::put('/{permissao}', [PermissaoController::class, 'update'])->name('permissoes.update');
         Route::delete('/{permissao}', [PermissaoController::class, 'destroy'])->name('permissoes.destroy');
     });
-    
+
     // Rotas manuais para funções
     Route::group(['prefix' => 'funcoes'], function () {
         Route::get('/', [RoleController::class, 'index'])->name('funcoes.index');
@@ -131,7 +133,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::resource('projetos', ProjetoController::class);
     Route::resource('servicos', ServicoController::class);
     Route::resource('tags', TagController::class);
-    
+
     Route::group(['prefix' => 'lancamentos'], function(){
         Route::get('/', [LancamentoServicoController::class, 'index'])->name('lancamentos.index');
         Route::get('/create', [LancamentoServicoController::class, 'create'])->name('lancamentos.create');
@@ -141,7 +143,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{lancamento}', [LancamentoServicoController::class, 'destroy'])->name('lancamentos.destroy');
         Route::post('/lancamentos/generate-certificates', [LancamentoServicoController::class, 'generateCertificates'])->name('lancamentos.generateCertificates');
     });
-    
+
     Route::resource('parceiros', ParceiroController::class);
 
     // Rotas de notícias (admin) - removido 'cards' da resource
@@ -179,14 +181,6 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     // Admin gallery routes (protected)
     Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-        Route::resource('galeria', GaleriaController::class)->names([
-            'index' => 'galeria.index',
-            'create' => 'galeria.create',
-            'store' => 'galeria.store',
-            'edit' => 'galeria.edit',
-            'update' => 'galeria.update',
-            'destroy' => 'galeria.destroy'
-        ]);
 
         // ATAs routes
         Route::resource('atas', AtaController::class)->names([
@@ -208,10 +202,20 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
         Route::delete('/perfil', 'destroy')->name('profile.destroy');
     });
 
+    // Cartão do Associado
+    // Cartão do Associado
+    Route::get('/cartao-associado', [CartaoAssociadoController::class, 'index'])->name('cartao-associado');
+    Route::get('/cartao-associado/download-image', [CartaoAssociadoController::class, 'downloadImage'])->name('cartao-associado.download-image');
+
     // Frase Início
     Route::get('frase-inicio/editar', [FraseInicioController::class, 'editar'])->name('admin.frase_inicio.editar');
     Route::put('frase-inicio/atualizar', [FraseInicioController::class, 'atualizar'])->name('admin.frase_inicio.atualizar');
     Route::post('lancamentos/generate-certificates', [LancamentoServicoController::class, 'generateCertificates'])->name('lancamentos.generateCertificates');
 });
+
+// Rotas públicas para validação de cartão
+Route::get('/validar-cartao/{user}/{hash}', [CartaoAssociadoController::class, 'validar'])->name('cartao-associado.validar');
+Route::get('/validar', [CartaoAssociadoController::class, 'paginaValidacao'])->name('cartao-associado.pagina-validacao');
+Route::post('/validar', [CartaoAssociadoController::class, 'procesarValidacao'])->name('cartao-associado.processar-validacao');
 
 require __DIR__.'/auth.php';

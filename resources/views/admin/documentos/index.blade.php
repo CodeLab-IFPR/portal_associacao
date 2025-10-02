@@ -140,36 +140,41 @@ Documentos
                                                 <td>
                                                     <div class="btn-group" role="group">
                                                         <a href="{{ route('documentos.show', $documento) }}" 
-                                                           class="btn btn-sm btn-info" title="Visualizar">
+                                                           class="btn btn-sm btn-info align-content-center" title="Visualizar">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
                                                         <a href="{{ route('documentos.download', $documento) }}" 
-                                                           class="btn btn-sm btn-success" title="Download">
+                                                           class="btn btn-sm btn-success align-content-center" title="Download">
                                                             <i class="bi bi-download"></i>
+                                                        </a>      
+                                                    @if((auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin')) && $documento->status === 'pendente')
+                                                        <!-- DEBUG": Usuário é admin e documento é pendente -->
+                                                        <button type="button" class="btn btn-sm btn-warning" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#aprovarModal{{ $documento->id }}"
+                                                                title="Aprovar">
+                                                            <i class="bi bi-check"></i> Aprovar
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#rejeitarModal{{ $documento->id }}"
+                                                                title="Rejeitar">
+                                                            <i class="bi bi-x"></i> Rejeitar
+                                                        </button>
+                                                        <a href="{{ route('documentos.edit', $documento) }}" 
+                                                                class="btn btn-sm btn-warning align-content-center" 
+                                                                title="Editar">
+                                                            <i class="fas fa-edit"></i>
                                                         </a>
-                                                        
-                                        @if((auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin')) && $documento->status === 'pendente')
-                                            <!-- DEBUG: Usuário é admin e documento é pendente -->
-                                            <button type="button" class="btn btn-sm btn-warning" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#aprovarModal{{ $documento->id }}"
-                                                    title="Aprovar">
-                                                <i class="bi bi-check"></i> Aprovar
-                                            </button>
-                                            <button type="button" class="btn btn-sm btn-danger" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#rejeitarModal{{ $documento->id }}"
-                                                    title="Rejeitar">
-                                                <i class="bi bi-x"></i> Rejeitar
-                                            </button>
-                                        @endif                                                        @if($documento->status !== 'aprovado')
-                                                            <button type="button" class="btn btn-sm btn-danger" 
-                                                                    data-bs-toggle="modal" 
-                                                                    data-bs-target="#excluirModal{{ $documento->id }}"
-                                                                    title="Excluir">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        @endif
+                                                    @endif
+                                                    @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin'))
+                                                        <button type="button" class="btn btn-sm btn-danger align-content-center" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#excluirModal{{ $documento->id }}"
+                                                                title="Excluir">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    @endif
                                                     </div>
                                                 </td>
                                             </tr>

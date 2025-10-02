@@ -695,7 +695,6 @@ AMAER
                 <div class="row justify-content-center mt-5">
                     <div class="col-12 text-center">
                         <a href="#inscricao" class="btn btn-primary me-3">Agende mentoria gratuita</a>
-                        <a href="#oficinas" class="btn btn-outline-primary">Ver oficinas para iniciantes</a>
                     </div>
                 </div>
             </div>

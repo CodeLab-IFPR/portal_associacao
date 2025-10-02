@@ -20,15 +20,17 @@ AMAER
         </div>
 
         <div class="col-12 col-lg-8 position-relative z-index-20 text-center mx-auto" data-aos="fade-in">
-            <h1 class="display-1 fw-bold mb-1">{{ $fraseInicio->titulo ?? 'AMAER' }}</h1>
-            <h2 class="fs-5 fs-md-4 fw-bold mb-3">{{ $fraseInicio->subtitulo ?? 'Associação de Aeromodelismo e Automodelismo' }}</h2>
+            <img class="img-fluid" src="{{ asset('img/logos/logo-amaer2.png') }}" alt="AMAER">
+            <p>
+                <h2 class="fs-5 fs-md-4 fw-bold mb-3">{{ $fraseInicio->subtitulo ?? 'Associação de Aeromodelismo e Automodelismo' }}</h2>
+            </p>
             <p class="fs-6 fs-md-5 fw-medium mb-4">{{ $fraseInicio->localizacao ?? 'Paranavaí - PR' }}</p>
             <p class="text-muted mb-5">{{ $fraseInicio->descricao ?? 'Uma associação dedicada aos amantes do aeromodelismo e automodelismo' }}</p>
 
             <div class="mt-4 pt-1 d-flex flex-column flex-md-row justify-content-center">
-                <a href="{{ route('member.register.form') }}" class="btn btn-success" role="button">Seja Membro</a>
+                <a href="{{ route('member.register.form') }}" class="btn" style="background-color: #1CADE4; color: white;" role="button">Seja Membro</a>
                 <a href="{{ route('contact') }}" class="btn btn-link text-decoration-none text-muted ms-2 bg-light-hover"
-                    role="button">Entre em Contato</a>
+                   role="button">Entre em Contato</a>
             </div>
         </div>
         <!-- / Hero Text-->
@@ -549,7 +551,6 @@ AMAER
                 <div class="row justify-content-center mt-5">
                     <div class="col-12 text-center">
                         <a href="#inscricao" class="btn btn-primary me-3">Agende mentoria gratuita</a>
-                        <a href="#oficinas" class="btn btn-outline-primary">Ver oficinas para iniciantes</a>
                     </div>
                 </div>
             </div>
@@ -629,7 +630,7 @@ AMAER
         .step-item {
             padding: 1rem;
         }
-        
+
         .step-number {
             width: 40px;
             height: 40px;
@@ -875,8 +876,8 @@ AMAER
             el.badgeAereo.textContent = aeroCondition.badge.toUpperCase();
             el.msgAereo.textContent = aeroCondition.msg;
 
-            const pistaCondition = c.rain > 0.1 ? 
-                { badge: 'desf', msg: 'Pista molhada - não recomendado' } : 
+            const pistaCondition = c.rain > 0.1 ?
+                { badge: 'desf', msg: 'Pista molhada - não recomendado' } :
                 { badge: 'bom', msg: 'Pista seca - condições adequadas' };
             el.badgePista.className = `badge ${pistaCondition.badge}`;
             el.badgePista.textContent = pistaCondition.badge.toUpperCase();
@@ -888,31 +889,31 @@ AMAER
         function renderPrevisao(data) {
             if (!data || !data.daily) return;
             const daily = data.daily;
-            
+
             el.previsaoGrid.innerHTML = '';
-            
+
             // Começar do índice 1 para pular o dia atual e mostrar os próximos 5 dias
             const startIndex = 1; // Pula o dia atual (hoje)
             const endIndex = Math.min(6, daily.time.length); // Mostra até o índice 5 (próximos 5 dias)
-            
+
             for (let i = startIndex; i < endIndex; i++) {
                 const div = document.createElement('div');
                 div.className = 'day';
-                
+
                 const date = new Date(daily.time[i]);
                 const dayName = date.toLocaleDateString('pt-BR', { weekday: 'short' });
                 const dayNum = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-                
+
                 div.innerHTML = `
                     <h5>${dayName} ${dayNum}</h5>
                     <div class="meta">Temp: <strong>${daily.temperature_2m_min[i]}°C - ${daily.temperature_2m_max[i]}°C</strong></div>
                     <div class="meta">Vento: <strong>${daily.wind_speed_10m_max[i]} km/h</strong></div>
                     <div class="meta">Chuva: <strong>${daily.rain_sum[i] || 0} mm</strong></div>
                 `;
-                
+
                 el.previsaoGrid.appendChild(div);
             }
-            
+
             el.previsao.hidden = false;
         }
 
@@ -933,10 +934,10 @@ AMAER
 
                 const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
                 if (!response.ok) throw new Error('Erro na API');
-                
+
                 const data = await response.json();
                 const runwayHdg = runway !== '' && !isNaN(runway) ? parseFloat(runway) : null;
-                
+
                 renderAgora(data, runwayHdg);
                 renderPrevisao(data);
                 setStatus('');
@@ -1062,7 +1063,7 @@ AMAER
             .banner-container {
                 max-height: 200px;
             }
-            
+
             .banner-container img {
                 max-height: 200px;
                 width: auto !important;

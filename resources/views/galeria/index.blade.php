@@ -16,7 +16,6 @@ Galeria
     @endhasrole
 
     @if($anos->isNotEmpty())
-        <!-- Filtro por Ano -->
         <div class="d-flex justify-content-center mb-4">
             <div class="input-group" style="max-width: 200px; border-radius: 10px; overflow: hidden;">
                 <label class="input-group-text" for="anoSelect" style="border-radius: 10px 0 0 10px;">Ano</label>
@@ -34,45 +33,41 @@ Galeria
         </div>
     @endif
 
-    @if($midias->isEmpty())
+    @if($galerias->isEmpty())
         <p class="text-center">Não há mídias disponíveis no momento.</p>
     @else
-        <!-- Grid de Mídia -->
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-            @foreach($midias as $midia)
+            @foreach($galerias as $galeria)
                 <div class="col-md-4">
-                    <div class="card mb-4">
-                        @if($midia->tipo == 'imagem')
-                            <img src="{{ asset($midia->caminho) }}" class="card-img-top" alt="{{ $midia->titulo }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px; cursor: pointer;">
-                        @else
-                            @php
-                                $videoId = '';
-                                if (preg_match('/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/', $midia->caminho, $match)) {
-                                    $videoId = $match[7];
-                                }
-                            @endphp
-                            <div class="ratio ratio-16x9"  style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px; overflow: hidden;">
-                                <iframe 
-                                    src="https://www.youtube.com/embed/{{ $videoId }}"
-                                    title="{{ $midia->titulo }}"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen>
-                                </iframe>
+                    <a href="{{ route('galeria.show', $galeria->id) }}" class="text-decoration-none text-dark">
+                        <div class="card mb-4">
+                            @if($galeria->tipo == 'imagem')
+                                <img src="{{ asset($galeria->caminho) }}" class="card-img-top" alt="{{ $galeria->titulo }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px;">
+                            @else
+                                @php
+                                    $videoId = '';
+                                    if (preg_match('/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/', $galeria->caminho, $match)) {
+                                        $videoId = $match[7];
+                                    }
+                                @endphp
+                                <div class="ratio ratio-16x9"  style="width: 100%; height: 200px; object-fit: cover; border-radius: 9px; overflow: hidden;">
+                                    <div style="background-image: url('https://img.youtube.com/vi/{{ $videoId }}/hqdefault.jpg'); background-size: cover; background-position: center; width: 100%; height: 100%;"></div>
+                                </div>
+                            @endif
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $galeria->titulo }}</h5>
+                                <p class="card-text">{{ $galeria->descricao }}</p>
+                                <p class="ml-3">{{ \Carbon\Carbon::parse($galeria->data_inicio_evento)->format('d/m/Y') }} a {{ \Carbon\Carbon::parse($galeria->data_fim_evento)->format('d/m/Y') }}</p>
                             </div>
-                        @endif
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $midia->titulo }}</h5>
-                            <p class="card-text">{{ $midia->descricao }}</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             @endforeach
         </div>
 
         <!-- Paginação -->
         <div class="d-flex justify-content-center mt-4">
-            {{ $midias->links() }}
+            {{ $galerias->links() }}
         </div>
     @endif
 </div>
@@ -95,13 +90,13 @@ Galeria
                 modal.style.alignItems = 'center';
                 modal.style.justifyContent = 'center';
                 modal.style.zIndex = '1000';
-                modal.style.padding = '10px'; // Add padding for better mobile view
+                modal.style.padding = '10px';
 
                 const modalImage = document.createElement('img');
                 modalImage.src = this.src;
                 modalImage.style.maxWidth = '100%';
                 modalImage.style.maxHeight = '100%';
-                modalImage.style.borderRadius = '10px'; // Add border-radius for better aesthetics
+                modalImage.style.borderRadius = '10px';
 
                 modal.appendChild(modalImage);
 
