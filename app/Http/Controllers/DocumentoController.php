@@ -152,12 +152,6 @@ class DocumentoController extends Controller
     {
         $user = Auth::user();
         
-        // Verificar se o documento pode ser excluído
-        if ($documento->status === 'aprovado') {
-            return redirect()->back()
-                ->with('error', 'Documentos aprovados não podem ser excluídos.');
-        }
-
         // Verificar permissões
         if (!$user->hasRole('admin') && $documento->user_id !== $user->id) {
             abort(403, 'Você não tem permissão para excluir este documento.');
