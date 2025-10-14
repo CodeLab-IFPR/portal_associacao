@@ -189,9 +189,7 @@ Visualizar Documento
             </div>
         </div>
     </div>
-@endif
 
-@if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin'))
     <!-- Modal Excluir -->
     <div class="modal fade" id="excluirModal" tabindex="-1">
         <div class="modal-dialog">

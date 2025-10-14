@@ -265,7 +265,6 @@ Documentos
         </div>
     @endif
 
-    @if($documento->status !== 'aprovado')
         <!-- Modal Excluir -->
         <div class="modal fade" id="excluirModal{{ $documento->id }}" tabindex="-1">
             <div class="modal-dialog">
@@ -289,6 +288,5 @@ Documentos
                 </div>
             </div>
         </div>
-    @endif
 @endforeach
 @endsection
