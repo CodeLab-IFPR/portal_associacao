@@ -126,8 +126,89 @@ class CartaoAssociadoController extends Controller
             imagefilledellipse($img, $fotoX + $fotoRadius, $fotoY + $fotoRadius, $fotoSize, $fotoSize, $cinzaFoto);
             imagefilledellipse($img, $fotoX + $fotoRadius, $fotoY + $fotoRadius, $fotoSize-8, $fotoSize-8, $branco);
             
-            // Ícone de pessoa (placeholder)
-            imagestring($img, 5, $fotoX + 45, $fotoY + 50, 'FOTO', $cinzaIcon);
+            // Carregar foto do usuário
+            $fotoCarregada = false;
+            if ($user->imagem && file_exists(public_path('imagens/users/' . $user->imagem))) {
+                $fotoPath = public_path('imagens/users/' . $user->imagem);
+                $fotoExtension = strtolower(pathinfo($fotoPath, PATHINFO_EXTENSION));
+                
+                $fotoUsuario = null;
+                
+                // Carregar imagem baseada na extensão
+                try {
+                    switch ($fotoExtension) {
+                        case 'jpg':
+                        case 'jpeg':
+                            $fotoUsuario = @imagecreatefromjpeg($fotoPath);
+                            break;
+                        case 'png':
+                            $fotoUsuario = @imagecreatefrompng($fotoPath);
+                            break;
+                        case 'gif':
+                            $fotoUsuario = @imagecreatefromgif($fotoPath);
+                            break;
+                        case 'webp':
+                            $fotoUsuario = @imagecreatefromwebp($fotoPath);
+                            break;
+                    }
+                    
+                    if ($fotoUsuario) {
+                        // Redimensionar foto para se ajustar ao círculo
+                        $fotoOriginalWidth = imagesx($fotoUsuario);
+                        $fotoOriginalHeight = imagesy($fotoUsuario);
+                        
+                        // Calcular dimensões para crop quadrado
+                        $cropSize = min($fotoOriginalWidth, $fotoOriginalHeight);
+                        $cropX = ($fotoOriginalWidth - $cropSize) / 2;
+                        $cropY = ($fotoOriginalHeight - $cropSize) / 2;
+                        
+                        // Criar imagem redimensionada para o círculo
+                        $fotoCircular = imagecreatetruecolor($fotoSize - 8, $fotoSize - 8);
+                        imagecopyresampled($fotoCircular, $fotoUsuario, 0, 0, $cropX, $cropY, 
+                                         $fotoSize - 8, $fotoSize - 8, $cropSize, $cropSize);
+                        
+                        // Aplicar máscara circular
+                        $maskCircular = imagecreatetruecolor($fotoSize - 8, $fotoSize - 8);
+                        $maskBg = imagecolorallocate($maskCircular, 0, 0, 0);
+                        $maskWhite = imagecolorallocate($maskCircular, 255, 255, 255);
+                        imagefill($maskCircular, 0, 0, $maskBg);
+                        imagefilledellipse($maskCircular, ($fotoSize - 8) / 2, ($fotoSize - 8) / 2, 
+                                         $fotoSize - 8, $fotoSize - 8, $maskWhite);
+                        
+                        // Aplicar máscara à foto
+                        imagecolortransparent($maskCircular, $maskBg);
+                        for ($x = 0; $x < $fotoSize - 8; $x++) {
+                            for ($y = 0; $y < $fotoSize - 8; $y++) {
+                                $maskColor = imagecolorat($maskCircular, $x, $y);
+                                if ($maskColor == $maskBg) {
+                                    imagesetpixel($fotoCircular, $x, $y, $branco);
+                                }
+                            }
+                        }
+                        
+                        // Inserir foto circular no cartão
+                        imagecopy($img, $fotoCircular, $fotoX + 4, $fotoY + 4, 0, 0, $fotoSize - 8, $fotoSize - 8);
+                        
+                        imagedestroy($fotoUsuario);
+                        imagedestroy($fotoCircular);
+                        imagedestroy($maskCircular);
+                        
+                        $fotoCarregada = true;
+                    }
+                } catch (\Exception $e) {
+                    Log::warning('Erro ao carregar foto do usuário', [
+                        'user_id' => $user->id,
+                        'foto_path' => $fotoPath,
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+            
+            // Se não conseguiu carregar a foto, mostrar ícone de pessoa
+            if (!$fotoCarregada) {
+                // Desenhar ícone de pessoa simples
+                imagestring($img, 5, $fotoX + $fotoRadius - 20, $fotoY + $fotoRadius - 10, 'USER', $cinzaIcon);
+            }
             
             imagedestroy($maskImg);
             
