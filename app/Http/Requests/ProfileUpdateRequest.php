@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
+use App\Rules\ValidCpf;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,7 +20,7 @@ class ProfileUpdateRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
             'cargo' => ['nullable', 'string', 'max:255'],
-            'cpf' => ['nullable', 'string', 'max:14'],
+            'cpf' => ['nullable', 'string', 'max:14', new ValidCpf()],
             'cropped_image' => ['nullable', 'string'],
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             // Novos campos

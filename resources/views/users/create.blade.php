@@ -24,35 +24,47 @@ Membros - Cadastro
         </div>
     </div>
 </div>
-<div class="container d-flex justify-content-center">
-    <div class="card-body" style="max-width: 600px;">
+
+<div class="container pt-2 d-flex justify-content-center">
+    <div class="card-body p-4 p-lg-5 rounded-4 shadow-sm bg-white" style="max-width: 1000px; width: 100%;">
+        <header class="text-center mb-4">
+            <h2 class="fs-4 fw-medium mb-3">{{ __('Cadastro de Novo Membro') }}</h2>
+            <p class="text-muted">{{ __("Preencha as informações para cadastrar um novo membro da associação.") }}</p>
+        </header>
+
         <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <!-- Modalidade Principal -->
-            <div class="mb-4">
-                <h5 class="text-primary"><strong>Modalidade Principal:</strong></h5>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="modalidade_principal" id="aeromodelismo" value="aeromodelismo" {{ old('modalidade_principal') == 'aeromodelismo' ? 'checked' : '' }}>
-                    <label class="form-check-label" for="aeromodelismo">
-                        Aeromodelismo
-                    </label>
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-star"></i> Modalidade Principal</h5>
                 </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="modalidade_principal" id="automodelismo" value="automodelismo" {{ old('modalidade_principal') == 'automodelismo' ? 'checked' : '' }}>
-                    <label class="form-check-label" for="automodelismo">
-                        Automodelismo
-                    </label>
+                <div class="card-body">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="modalidade_principal" id="aeromodelismo" value="aeromodelismo" {{ old('modalidade_principal') == 'aeromodelismo' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="aeromodelismo">
+                            Aeromodelismo
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="modalidade_principal" id="automodelismo" value="automodelismo" {{ old('modalidade_principal') == 'automodelismo' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="automodelismo">
+                            Automodelismo
+                        </label>
+                    </div>
+                    @error('modalidade_principal')
+                        <div class="form-text text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
-                @error('modalidade_principal')
-                    <div class="form-text text-danger">{{ $message }}</div>
-                @enderror
             </div>
 
             <!-- Dados do usuário -->
-            <div class="mb-4">
-                <h5 class="text-primary"><strong>Dados do usuário:</strong></h5>
-                
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-user"></i> Dados do Usuário</h5>
+                </div>
+                <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -89,8 +101,8 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputCpf" class="form-label"><strong>*CPF:</strong></label>
-                            <input type="text" class="form-control @error('cpf') is-invalid @enderror" name="cpf" id="inputCpf" data-mask="cpf"
-                                placeholder="CPF..." value="{{ old('cpf') }}" required>
+                                                        <input type="text" class="form-control @error('cpf') is-invalid @enderror" name="cpf" id="inputCpf" maxlength="14"
+                                placeholder="CPF..." value="{{ old('cpf') }}">
                             @error('cpf')
                                 <div class="form-text text-danger">{{ $message }}</div>
                             @enderror
@@ -106,17 +118,35 @@ Membros - Cadastro
                         <div class="form-text text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <div class="mb-3">
+                    <label for="inputCargo" class="form-label"><strong>Cargo:</strong></label>
+                    <select name="cargo_id" class="form-control @error('cargo_id') is-invalid @enderror" id="inputCargo">
+                        <option value="">Selecione um cargo (opcional)</option>
+                        @foreach(\App\Models\Cargo::all() as $cargo)
+                            <option value="{{ $cargo->id }}" {{ old('cargo_id') == $cargo->id ? 'selected' : '' }}>
+                                {{ $cargo->descricao }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('cargo_id')
+                        <div class="form-text text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+                </div>
             </div>
 
             <!-- Contato -->
-            <div class="mb-4">
-                <h5 class="text-primary"><strong>Contato:</strong></h5>
-                
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-phone"></i> Contato</h5>
+                </div>
+                <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputTelefoneCelular" class="form-label"><strong>*Telefone Celular:</strong></label>
-                            <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="inputTelefoneCelular" data-mask="phone"
+                            <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="inputTelefoneCelular" maxlength="15"
                                 placeholder="Telefone Celular..." value="{{ old('telefone_celular') }}" required>
                             @error('telefone_celular')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -137,7 +167,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputTelefoneResidencial" class="form-label"><strong>Telefone Residencial:</strong></label>
-                            <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="inputTelefoneResidencial" data-mask="phone"
+                            <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="inputTelefoneResidencial" maxlength="15"
                                 placeholder="Telefone Residencial..." value="{{ old('telefone_residencial') }}">
                             @error('telefone_residencial')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -147,7 +177,7 @@ Membros - Cadastro
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="inputTelefoneComercial" class="form-label"><strong>Telefone Comercial:</strong></label>
-                            <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="inputTelefoneComercial" data-mask="phone"
+                            <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="inputTelefoneComercial" maxlength="15"
                                 placeholder="Telefone Comercial..." value="{{ old('telefone_comercial') }}">
                             @error('telefone_comercial')
                                 <div class="form-text text-danger">{{ $message }}</div>
@@ -187,12 +217,15 @@ Membros - Cadastro
                         <div class="form-text text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+                </div>
             </div>
 
             <!-- Endereço -->
-            <div class="mb-4">
-                <h5 class="text-primary"><strong>Endereço:</strong></h5>
-                
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Endereço</h5>
+                </div>
+                <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="mb-3">
@@ -261,12 +294,15 @@ Membros - Cadastro
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
 
             <!-- Campos administrativos -->
-            <div class="mb-4">
-                <h5 class="text-primary"><strong>Configurações Administrativas:</strong></h5>
-                
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-cog"></i> Configurações Administrativas</h5>
+                </div>
+                <div class="card-body">
                 <div class="mb-3">
                     <label for="inputAtivo" class="form-label"><strong>Status:</strong></label>
                     <div class="form-check">
@@ -293,13 +329,17 @@ Membros - Cadastro
                         <div class="form-text text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+                </div>
             </div>
 
             <input type="hidden" name="generated_password" id="generated_password" value="">
 
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="submit" class="btn btn-outline-success">
-                    <i class="fas fa-plus"></i> Salvar
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <a href="{{ route('users.index') }}" class="btn btn-secondary me-md-2">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Salvar Membro
                 </button>
             </div>
         </form>
@@ -308,9 +348,65 @@ Membros - Cadastro
 
 @vite('resources/js/utils/viacep.js')
 <script>
+// Função para aplicar máscara de CPF
+function applyCPFMask() {
+    const cpfInput = document.getElementById('inputCpf');
+    if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+    }
+}
+
+// Função para aplicar máscara de telefone
+function applyPhoneMask() {
+    const phoneInputs = [
+        document.getElementById('inputTelefoneCelular'),
+        document.getElementById('inputTelefoneResidencial'), 
+        document.getElementById('inputTelefoneComercial')
+    ];
+    
+    phoneInputs.forEach(phoneInput => {
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 10) {
+                    value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                    value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                } else {
+                    value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                    value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                }
+                e.target.value = value;
+            });
+        }
+    });
+}
+
+// Função para aplicar máscara de CEP
+function applyCEPMask() {
+    const cepInput = document.getElementById('inputCep');
+    if (cepInput) {
+        cepInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     var password = Math.random().toString(36).slice(-8);
     document.getElementById('generated_password').value = password;
+    
+    // Aplicar máscaras
+    applyCPFMask();
+    applyPhoneMask();
+    applyCEPMask();
 });
 </script>
 @endsection

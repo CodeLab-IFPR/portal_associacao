@@ -66,9 +66,9 @@
 
                     <div id="galeria-midias-existentes" class="mb-4">
                         <label class="form-label">Imagens da Galeria Atuais</label>
-                        @if($galeria->galerias->count() > 0)
+                        @if($galeria->midias && $galeria->midias->count() > 0)
                             <div class="row row-cols-2 row-cols-md-4 g-3">
-                                @foreach($galeria->galerias as $midia)
+                                @foreach($galeria->midias as $midia)
                                     <div class="col" id="media-container-{{ $midia->id }}">
                                         <div class="card h-100">
                                             <img src="{{ asset($midia->caminho) }}" class="card-img-top" alt="Imagem da galeria" style="object-fit: cover; height: 150px;">
@@ -132,20 +132,17 @@
             form.addEventListener('submit', function(event) {
                 let isValid = true;
 
-                const hoje = new Date().toISOString().split('T')[0];
                 const dataInicio = dataInicioInput.value;
                 const dataFim = dataFimInput.value;
 
-                if (dataInicio && dataInicio < hoje) {
-                    alert('A data de início do evento não pode ser anterior à data de hoje.');
-                    event.preventDefault();
-                    isValid = false;
-                }
+                // Validar apenas se a data de fim é posterior à data de início
                 if (dataInicio && dataFim && dataFim < dataInicio) {
                     alert('A data de fim do evento deve ser posterior à data de início.');
                     event.preventDefault();
                     isValid = false;
                 }
+                
+                // Validar se a data não é muito no futuro (prevenção de erro)
                 if (dataFim && new Date(dataFim).getFullYear() >= 2099) {
                     alert('A data de fim do evento não pode ser em 2099 ou posterior.');
                     event.preventDefault();

@@ -1,5 +1,5 @@
-<div class="container pt-2 d-flex justify-content-center">
-    <div class="card-body p-4 p-lg-5 rounded-4 shadow-sm bg-white">
+<div class="container-fluid container-md pt-2 d-flex justify-content-center">
+    <div class="card-body p-2 p-md-4 p-lg-5 rounded-4 shadow-sm bg-white w-100" style="max-width: 900px;">
         <section>
             <!-- Nova seção da imagem no topo -->
             <div class="text-center mb-4 position-relative">
@@ -24,7 +24,7 @@
             </div>
 
             <header class="text-center">
-                <h2 class="fs-4 fw-medium mb-4">{{ __('Informações do Perfil') }}</h2>
+                <h2 class="fs-5 fs-md-4 fw-medium mb-4">{{ __('Informações do Perfil') }}</h2>
                 <p class="text-muted mb-4">{{ __("Atualize as informações do perfil e endereço de email da sua conta.") }}</p>
             </header>
 
@@ -95,7 +95,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="cpf" class="form-label"><strong>CPF:</strong></label>
-                                <input type="text" name="cpf" class="form-control @error('cpf') is-invalid @enderror" id="cpf" value="{{ old('cpf', $user->cpf) }}" data-mask="cpf">
+                                <input type="text" name="cpf" class="form-control @error('cpf') is-invalid @enderror" id="cpf" value="{{ old('cpf', $user->cpf) }}" maxlength="14">
                                 @error('cpf')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
@@ -133,7 +133,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="telefone_celular" class="form-label"><strong>Telefone Celular:</strong></label>
-                                <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="telefone_celular" value="{{ old('telefone_celular', $user->telefone_celular) }}" data-mask="phone">
+                                <input type="tel" name="telefone_celular" class="form-control @error('telefone_celular') is-invalid @enderror" id="telefone_celular" value="{{ old('telefone_celular', $user->telefone_celular) }}" maxlength="15">
                                 @error('telefone_celular')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
@@ -153,7 +153,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="telefone_residencial" class="form-label"><strong>Telefone Residencial:</strong></label>
-                                <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="telefone_residencial" value="{{ old('telefone_residencial', $user->telefone_residencial) }}" data-mask="phone">
+                                <input type="tel" name="telefone_residencial" class="form-control @error('telefone_residencial') is-invalid @enderror" id="telefone_residencial" value="{{ old('telefone_residencial', $user->telefone_residencial) }}" maxlength="15">
                                 @error('telefone_residencial')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
@@ -162,7 +162,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="telefone_comercial" class="form-label"><strong>Telefone Comercial:</strong></label>
-                                <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="telefone_comercial" value="{{ old('telefone_comercial', $user->telefone_comercial) }}" data-mask="phone">
+                                <input type="tel" name="telefone_comercial" class="form-control @error('telefone_comercial') is-invalid @enderror" id="telefone_comercial" value="{{ old('telefone_comercial', $user->telefone_comercial) }}" maxlength="15">
                                 @error('telefone_comercial')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
@@ -219,8 +219,11 @@
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="cep" class="form-label"><strong>CEP:</strong></label>
-                                <!-- <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep" value="{{ old('cep', $user->cep) }}" data-mask="cep"> -->
-                                <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep"        value="{{ old('cep', $user->cep ? substr($user->cep, 0, 5) . '-' . substr($user->cep, 5) : '') }}" maxlength="8">
+                                <input type="text" name="cep" class="form-control @error('cep') is-invalid @enderror" id="cep" value="{{ old('cep', $user->cep) }}" maxlength="10">
+                                <div id="cep-loading" style="display: none;">
+                                    <small class="text-info">🔍 Buscando endereço...</small>
+                                </div>
+                                <div id="cep-error" class="form-text text-danger" style="display: none;"></div>
                                 @error('cep')
                                     <div class="form-text text-danger">{{ $message }}</div>
                                 @enderror
@@ -291,75 +294,6 @@
                            x-transition
                            x-init="setTimeout(() => show = false, 2000)"
                            class="text-success">{{ __('Saved.') }}</p>
-                    @endif
-                </div>
-            </form>
-        </section>
-
-        <!-- Início da seção de senha -->
-        <section class="mt-5 pt-5 border-top">
-            <header>
-                <h2 class="fs-4 fw-medium mb-4">{{ __('Update Password') }}</h2>
-                <p class="text-muted mb-4">{{ __('Ensure your account is using a long, random password to stay secure.') }}</p>
-            </header>
-
-            <form method="post" action="{{ route('password.update') }}" class="mt-6">
-                @csrf
-                @method('put')
-
-                <div class="mb-3">
-                    <label for="update_password_current_password" class="form-label"><strong>{{ __('Current Password') }}:</strong></label>
-                    <input type="password" 
-                        name="current_password" 
-                        class="form-control form-control @error('current_password') is-invalid @enderror" 
-                        id="update_password_current_password"
-                        required>
-                    @error('current_password')
-                        <div class="form-text text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="update_password_password" class="form-label"><strong>{{ __('New Password') }}:</strong></label>
-                    <input type="password" 
-                        name="password" 
-                        class="form-control form-control @error('password') is-invalid @enderror" 
-                        id="update_password_password"
-                        required>
-                    @error('password')
-                        <div class="form-text text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="update_password_password_confirmation" class="form-label"><strong>{{ __('Confirm Password') }}:</strong></label>
-                    <input type="password" 
-                        name="password_confirmation" 
-                        class="form-control form-control @error('password_confirmation') is-invalid @enderror" 
-                        id="update_password_password_confirmation"
-                        required>
-                    @error('password_confirmation')
-                        <div class="form-text text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button type="submit" class="btn btn-outline-success btn-flat">
-                        <i class="fas fa-plus"></i> {{ __('Save') }}
-                    </button>
-
-                    @if (session('status') === 'password-updated')
-                        <p x-data="{ show: true }"
-                           x-show="show"
-                           x-transition
-                           x-init="setTimeout(() => show = false, 2000)"
-                           class="text-success">{{ __('Saved.') }}</p>
-                    @elseif (session('status') === 'password-error')
-                        <p x-data="{ show: true }"
-                           x-show="show"
-                           x-transition
-                           x-init="setTimeout(() => show = false, 3000)"
-                           class="text-danger">{{ __('Erro: Senha atual incorreta ou senhas não coincidem.') }}</p>
                     @endif
                 </div>
             </form>
@@ -486,4 +420,294 @@ $("#crop").click(function(){
         $('#croppedImageContainer').show();
     });
 @endif
+
+// Função para validar CPF
+function validateCPF(cpf) {
+    // Remove pontos e hífen
+    cpf = cpf.replace(/[^\d]+/g, '');
+    
+    // Verifica se tem 11 dígitos
+    if (cpf.length !== 11) return false;
+    
+    // Verifica se todos os dígitos são iguais (ex: 111.111.111-11)
+    if (/^(\d)\1{10}$/.test(cpf)) return false;
+    
+    // Calcula o primeiro dígito verificador
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+        sum += parseInt(cpf.charAt(i)) * (10 - i);
+    }
+    let remainder = 11 - (sum % 11);
+    let digit1 = remainder >= 10 ? 0 : remainder;
+    
+    // Verifica o primeiro dígito
+    if (digit1 !== parseInt(cpf.charAt(9))) return false;
+    
+    // Calcula o segundo dígito verificador
+    sum = 0;
+    for (let i = 0; i < 10; i++) {
+        sum += parseInt(cpf.charAt(i)) * (11 - i);
+    }
+    remainder = 11 - (sum % 11);
+    let digit2 = remainder >= 10 ? 0 : remainder;
+    
+    // Verifica o segundo dígito
+    return digit2 === parseInt(cpf.charAt(10));
+}
+
+// Função simples para máscara CPF
+function applyCPFMask() {
+    const cpfField = document.getElementById('cpf');
+    if (cpfField) {
+        console.log('Aplicando máscara CPF...'); // Debug
+        
+        // Criar elemento para mostrar erro de validação
+        let errorElement = document.getElementById('cpf-error');
+        if (!errorElement) {
+            errorElement = document.createElement('div');
+            errorElement.id = 'cpf-error';
+            errorElement.className = 'form-text text-danger';
+            errorElement.style.display = 'none';
+            cpfField.parentNode.appendChild(errorElement);
+        }
+        
+        cpfField.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            console.log('Valor digitado:', value); // Debug
+            
+            // Aplica a máscara 000.000.000-00
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                e.target.value = value;
+                console.log('Valor formatado:', value); // Debug
+            }
+        });
+        
+        // Validação quando o campo perde o foco
+        cpfField.addEventListener('blur', function(e) {
+            const cpfValue = e.target.value;
+            if (cpfValue && cpfValue.length >= 14) { // CPF completo tem 14 caracteres com máscara
+                if (validateCPF(cpfValue)) {
+                    // CPF válido
+                    e.target.classList.remove('is-invalid');
+                    e.target.classList.add('is-valid');
+                    errorElement.style.display = 'none';
+                } else {
+                    // CPF inválido
+                    e.target.classList.remove('is-valid');
+                    e.target.classList.add('is-invalid');
+                    errorElement.textContent = 'CPF inválido. Verifique os números digitados.';
+                    errorElement.style.display = 'block';
+                }
+            } else if (cpfValue) {
+                // CPF incompleto
+                e.target.classList.remove('is-valid');
+                e.target.classList.add('is-invalid');
+                errorElement.textContent = 'CPF incompleto. Digite todos os 11 dígitos.';
+                errorElement.style.display = 'block';
+            } else {
+                // Campo vazio - remove validação visual
+                e.target.classList.remove('is-invalid', 'is-valid');
+                errorElement.style.display = 'none';
+            }
+        });
+        
+        // Permite apenas números
+        cpfField.addEventListener('keypress', function(e) {
+            // Permite apenas números e teclas de controle
+            if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+        
+        console.log('Máscara CPF aplicada com sucesso!'); // Debug
+    } else {
+        console.log('Campo CPF não encontrado!'); // Debug
+    }
+}
+
+// Função para máscara de telefone
+function applyPhoneMask() {
+    const phoneFields = ['telefone_celular', 'telefone_residencial', 'telefone_comercial'];
+    
+    phoneFields.forEach(fieldId => {
+        const phoneField = document.getElementById(fieldId);
+        if (phoneField) {
+            console.log('Aplicando máscara telefone em:', fieldId);
+            
+            phoneField.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+                
+                // Aplica máscara (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+                if (value.length <= 11) {
+                    if (value.length <= 2) {
+                        value = value.replace(/(\d{1,2})/, '($1');
+                    } else if (value.length <= 6) {
+                        value = value.replace(/(\d{2})(\d{1,4})/, '($1) $2');
+                    } else if (value.length <= 10) {
+                        value = value.replace(/(\d{2})(\d{4})(\d{1,4})/, '($1) $2-$3');
+                    } else {
+                        value = value.replace(/(\d{2})(\d{5})(\d{1,4})/, '($1) $2-$3');
+                    }
+                    e.target.value = value;
+                }
+            });
+            
+            // Permite apenas números
+            phoneField.addEventListener('keypress', function(e) {
+                if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+}
+
+// Função para máscara de CEP
+function applyCEPMask() {
+    const cepField = document.getElementById('cep');
+    if (cepField) {
+        console.log('Aplicando máscara CEP...');
+        let hasEdited = false;
+        
+        cepField.addEventListener('input', function(e) {
+            hasEdited = true;
+            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            // Aplica a máscara 00000-000
+            if (value.length <= 8) {
+                value = value.replace(/(\d{5})(\d{1,3})/, '$1-$2');
+                e.target.value = value;
+            }
+        });
+        
+        // Buscar endereço quando sair do campo
+        cepField.addEventListener('blur', function() {
+            if (!hasEdited) return;
+            const cep = cepField.value;
+            hasEdited = false;
+            
+            if (cep.length !== 9) {
+                return;
+            }
+            
+            showCepLoading();
+            
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    hideCepLoading();
+                    
+                    if (data.erro) {
+                        showCepError('CEP não encontrado');
+                        fillAddressFields('');
+                        return;
+                    }
+                    
+                    fillAddressFields(data);
+                })
+                .catch(error => {
+                    hideCepLoading();
+                    showCepError('Erro ao buscar CEP');
+                    fillAddressFields('');
+                    console.error('Erro:', error);
+                });
+        });
+        
+        // Permite apenas números
+        cepField.addEventListener('keypress', function(e) {
+            if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+        
+        console.log('Máscara CEP aplicada com sucesso!');
+    }
+}
+
+// Funções auxiliares para CEP
+function fillAddressFields(data) {
+    const fields = {
+        'logradouro': data.logradouro || '',
+        'bairro': data.bairro || '',
+        'cidade': data.localidade || '',
+        'estado': data.uf || ''
+    };
+    
+    Object.keys(fields).forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        if (field) {
+            field.value = fields[fieldName];
+            field.readOnly = false;
+        }
+    });
+}
+
+function showCepLoading() {
+    const loadingEl = document.getElementById('cep-loading');
+    if (loadingEl) {
+        loadingEl.style.display = 'block';
+    }
+}
+
+function hideCepLoading() {
+    const loadingEl = document.getElementById('cep-loading');
+    if (loadingEl) {
+        loadingEl.style.display = 'none';
+    }
+}
+
+function showCepError(message) {
+    const errorEl = document.getElementById('cep-error');
+    if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+        setTimeout(() => {
+            errorEl.style.display = 'none';
+        }, 3000);
+    }
+}
+
+// Aplica as máscaras quando a página carrega
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM carregado, aplicando máscaras...'); // Debug
+    applyCPFMask();
+    applyPhoneMask();
+    applyCEPMask();
+});
 </script>
+
+<style>
+/* Melhorias responsivas para mobile */
+@media (max-width: 576px) {
+    .card-body {
+        border-radius: 0.5rem !important;
+    }
+    
+    .mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .form-control {
+        font-size: 16px !important; /* Evita zoom no iOS */
+    }
+    
+    .btn {
+        font-size: 0.9rem !important;
+        padding: 0.5rem 1rem !important;
+    }
+    
+    .container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-md-6 {
+        margin-bottom: 0.5rem;
+    }
+}
+</style>

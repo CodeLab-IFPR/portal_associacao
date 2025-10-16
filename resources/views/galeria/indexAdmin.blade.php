@@ -23,27 +23,57 @@ Galeria Admin
         </div>
     </div>
 </div>
-<div class="container">
-    <div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-right: 10px;">
-        <a class="btn btn-outline-success btn-sm" href="{{ route('galeria.create') }}" aria-label="Adicionar Mídia">
-            <i class="fa fa-plus" aria-hidden="true"></i> Adicionar Mídia
-        </a>
-    </div>
-    <br>
-    <div id="galeria-table-container">
-        <table id="galeria-datatable" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Título</th>
-                    <th>Descrição</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody>
-                @include('galeria.table', ['midias' => $midias])
-            </tbody>
-        </table>
+
+<div class="container pt-2 d-flex justify-content-center">
+    <div class="card-body p-4 p-lg-5 rounded-4 shadow-sm bg-white" style="max-width: 1200px; width: 100%;">
+        <header class="text-center mb-4">
+            <h2 class="fs-4 fw-medium mb-3">{{ __('Gerenciamento de Galeria') }}</h2>
+            <p class="text-muted">{{ __("Visualize e gerencie todas as mídias da galeria.") }}</p>
+        </header>
+
+        <!-- Seção de Ações -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-tools"></i> Ações</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div class="d-flex justify-content-center justify-content-md-start">
+                        <!-- A busca será integrada aqui pelo DataTable -->
+                        <div id="galeria-search-container"></div>
+                    </div>
+                    <div>
+                        <a class="btn btn-success" href="{{ route('galeria.create') }}" aria-label="Adicionar Mídia">
+                            <i class="fa fa-plus" aria-hidden="true"></i> Adicionar Mídia
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção da Tabela de Galeria -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-images"></i> Lista de Mídias</h5>
+            </div>
+            <div class="card-body p-0">
+                <div id="galeria-table-container">
+                    <table id="galeria-datatable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Título</th>
+                                <th>Descrição</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @include('galeria.table', ['midias' => $midias])
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -111,6 +141,40 @@ Galeria Admin
             "pageLength": 10,
             "responsive": true,
             "order": [[1, 'asc']], // Ordenar pela coluna título
+            "dom": '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6">>rtip', // Remove o campo de busca padrão
+        });
+
+        // Criar busca customizada na seção de ações
+        var customSearchInput = $('<input type="search" class="form-control me-2" placeholder="Buscar mídias" style="width: 250px;">');
+        var searchButton = $('<button class="btn btn-outline-primary" type="button"><i class="bi bi-search"></i> Buscar</button>');
+        
+        var searchForm = $('<div class="d-flex"></div>').append(customSearchInput).append(searchButton);
+        $('#galeria-search-container').append(searchForm);
+        
+        // Funcionalidade de busca customizada
+        customSearchInput.on('keyup search input', function() {
+            var searchValue = this.value;
+            table.search(searchValue).draw();
+        });
+        
+        // Busca também funciona ao pressionar Enter
+        customSearchInput.on('keypress', function(e) {
+            if (e.which === 13) { // Enter key
+                var searchValue = this.value;
+                table.search(searchValue).draw();
+            }
+        });
+        
+        searchButton.on('click', function() {
+            var searchValue = customSearchInput.val();
+            table.search(searchValue).draw();
+        });
+
+        // Limpar busca quando o campo for limpo
+        customSearchInput.on('search', function() {
+            if (this.value === '') {
+                table.search('').draw();
+            }
         });
 
         $('body').on('click', '.btn-delete', function (e) {
@@ -128,21 +192,41 @@ Galeria Admin
 
         $('#confirmDeleteButton').on('click', function () {
             var url = $(this).data('url');
+            var button = $(this);
+            
+            // Desabilitar o botão para evitar cliques duplos
+            button.prop('disabled', true).text('Excluindo...');
+            
             $.ajax({
                 url: url,
                 method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 success: function (response) {
                     if (response.success) {
                         $('#confirmDeleteModal').modal('hide');
-                        var table = $('#galeria-datatable').DataTable();
-                        table.row('#midia-' + response.id).remove().draw(false);
+                        // Recarregar a página ou atualizar a tabela
+                        location.reload();
                     } else {
-                        alert('Erro ao excluir a mídia.');
+                        alert('Erro ao excluir a mídia: ' + (response.message || 'Erro desconhecido'));
                     }
                 },
                 error: function (xhr) {
-                    console.error(xhr.responseText);
-                    alert('Ocorreu um erro ao tentar excluir a mídia.');
+                    console.error('Erro AJAX:', xhr);
+                    var errorMessage = 'Ocorreu um erro ao tentar excluir a mídia.';
+                    
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.responseText) {
+                        errorMessage = 'Erro: ' + xhr.responseText;
+                    }
+                    
+                    alert(errorMessage);
+                },
+                complete: function() {
+                    // Reabilitar o botão
+                    button.prop('disabled', false).text('Excluir');
                 }
             });
         });

@@ -168,5 +168,16 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'cpf' => 'CPF',
+        'name' => 'nome',
+        'email' => 'e-mail',
+        'telefone_celular' => 'telefone celular',
+        'telefone_residencial' => 'telefone residencial',
+        'telefone_comercial' => 'telefone comercial',
+        'cep' => 'CEP',
+        'current_password' => 'senha atual',
+        'password' => 'nova senha',
+        'password_confirmation' => 'confirmação da senha',
+    ],
 ];
