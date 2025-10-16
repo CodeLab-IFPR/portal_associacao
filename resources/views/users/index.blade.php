@@ -24,11 +24,36 @@ Membro - Lista
         </div>
     </div>
 </div>
-<div class="container">
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-right: 10px;">
-            <a class="btn btn-outline-success btn-sm" href="{{ route('users.create') }}">
-                <i class="fa fa-plus"></i> Adicionar Membro
-            </a>
+
+<div class="container pt-2 d-flex justify-content-center">
+    <div class="card-body p-4 p-lg-5 rounded-4 shadow-sm bg-white" style="max-width: 1200px; width: 100%;">
+        <header class="text-center mb-4">
+            <h2 class="fs-4 fw-medium mb-3">{{ __('Gerenciamento de Membros') }}</h2>
+            <p class="text-muted">{{ __("Visualize e gerencie todos os membros da associação.") }}</p>
+        </header>
+
+        <!-- Seção de Ações -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-tools"></i> Ações</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div class="d-flex justify-content-center justify-content-md-start">
+                        <form id="search-form" class="d-flex" method="GET" action="{{ route('users.index') }}">
+                            <input id="search-input" class="form-control me-2" type="search" name="search" placeholder="Buscar Membros" aria-label="Search" style="width: 250px;">
+                            <button class="btn btn-outline-primary" type="submit">
+                                <i class="bi bi-search"></i> Buscar
+                            </button>
+                        </form>
+                    </div>
+                    <div>
+                        <a class="btn btn-success" href="{{ route('users.create') }}">
+                            <i class="fa fa-plus"></i> Adicionar Membro
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         @if(session('success'))
@@ -41,21 +66,19 @@ Membro - Lista
                 </div>
             </div>
         @endif
-        <div class="d-flex justify-content-center mb-4">
-            <form id="search-form" class="d-flex" method="GET" action="{{ route('users.index') }}">
-            <input id="search-input" class="form-control me-2" type="search" name="search" placeholder="Buscar Membros"
-                aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">
-                <i class="bi bi-search"></i>
-            </button>
-            </form>
-        </div>
 
-        <div class="card-body">
-            <div id="users-table-container">
-                @include('users.table', ['users' => $users])
+        <!-- Seção da Tabela de Membros -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-users"></i> Lista de Membros</h5>
+            </div>
+            <div class="card-body p-0">
+                <div id="users-table-container">
+                    @include('users.table', ['users' => $users])
+                </div>
             </div>
         </div>
+    </div>
 </div>
 
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"

@@ -84,14 +84,8 @@ export function initMasks(root = document) {
 }
 
 
-// Auto init ao carregar DOM
-if (typeof document !== 'undefined') {
-if (document.readyState === 'loading') {
-document.addEventListener('DOMContentLoaded', () => initMasks());
-} else {
-initMasks();
-}
-}
+// Auto init removido para evitar conflitos
+// A inicialização será feita pelo app.js
 
 // Export default opcional
 export default {

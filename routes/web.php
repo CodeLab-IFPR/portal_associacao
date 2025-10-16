@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\FraseInicioController;
 use App\Http\Controllers\LancamentoServicoController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CartaoAssociadoController;
+use App\Http\Controllers\PasswordUpdateController;
+use App\Http\Controllers\CargoController;
 
 use App\Http\Controllers\MemberRegistrationController;
 
@@ -202,6 +204,12 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
         Route::delete('/perfil', 'destroy')->name('profile.destroy');
     });
 
+    // Rotas de alteração de senha
+    Route::controller(PasswordUpdateController::class)->group(function () {
+        Route::get('/alterar-senha', 'edit')->name('password.custom.edit');
+        Route::put('/alterar-senha', 'update')->name('password.custom.update');
+    });
+
     // Cartão do Associado
     // Cartão do Associado
     Route::get('/cartao-associado', [CartaoAssociadoController::class, 'index'])->name('cartao-associado');
@@ -211,6 +219,9 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::get('frase-inicio/editar', [FraseInicioController::class, 'editar'])->name('admin.frase_inicio.editar');
     Route::put('frase-inicio/atualizar', [FraseInicioController::class, 'atualizar'])->name('admin.frase_inicio.atualizar');
     Route::post('lancamentos/generate-certificates', [LancamentoServicoController::class, 'generateCertificates'])->name('lancamentos.generateCertificates');
+    
+    // Rotas de Cargos (apenas para administradores)
+    Route::resource('cargos', CargoController::class);
 });
 
 // Rotas públicas para validação de cartão

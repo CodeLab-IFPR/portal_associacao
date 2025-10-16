@@ -45,6 +45,9 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+    <!-- Cropper.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -170,25 +173,82 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
         body.loaded {
             visibility: visible;
         }
+
+        /* AdminLTE Modern Styling */
+        .app-header.navbar {
+            border-bottom: 1px solid rgba(0,0,0,.125);
+        }
+
+        .app-sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .sidebar-brand .brand-link {
+            background: rgba(0,0,0,.1);
+            border-bottom: 1px solid rgba(255,255,255,.1);
+        }
+
+        .sidebar-menu .nav-link {
+            color: #c2c7d0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu .nav-link:hover {
+            background-color: rgba(255,255,255,.1);
+            color: #fff;
+        }
+
+        .sidebar-menu .nav-link.active {
+            background-color: #007bff;
+            color: #fff;
+            box-shadow: 0 2px 4px rgba(0,123,255,.3);
+        }
+
+        .sidebar-menu .nav-item.menu-open > .nav-link {
+            background-color: rgba(255,255,255,.1);
+        }
+
+        .nav-treeview .nav-link {
+            padding-left: 3rem;
+            color: #adb5bd;
+        }
+
+        .nav-treeview .nav-link.active {
+            background-color: rgba(0,123,255,.8);
+            color: #fff;
+        }
+
+        .nav-icon {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .navbar .nav-link {
+            color: rgba(255,255,255,.8);
+        }
+
+        .navbar .nav-link:hover {
+            color: #fff;
+        }
     </style>
 </head>
 
-<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<body class="layout-fixed sidebar-expand-lg bg-light">
     <div id="loading-screen">
         <div class="spinner"></div>
     </div>
 
     <div class="app-wrapper">
-        <nav class="app-header navbar navbar-expand bg-body">
+        <nav class="app-header navbar navbar-expand bg-primary">
             <div class="container-fluid">
                 <ul class="navbar-nav">
-                    <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"> <i
+                    <li class="nav-item"> <a class="nav-link text-white" data-lte-toggle="sidebar" href="#" role="button"> <i
                                 class="bi bi-list"></i> </a> </li>
              
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
-                        <a class="nav-link" data-bs-toggle="dropdown" href="#">
+                        <a class="nav-link text-white" data-bs-toggle="dropdown" href="#">
                             <i class="bi bi-bell-fill"></i>
                             <span
                                 class="navbar-badge badge text-bg-warning">{{ $unreadMessagesCount + $unreadSubmissionsCount }}</span>
@@ -215,7 +275,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                                 data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i> <i
                                 data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none;"></i> </a>
                     </li>
-                    <li class="nav-item dropdown user-menu"> <a href="#" class="nav-link dropdown-toggle"
+                    <li class="nav-item dropdown user-menu"> <a href="#" class="nav-link dropdown-toggle text-white"
                             data-bs-toggle="dropdown">
                             @if(Auth::check())
                                 <img src="/imagens/users/{{ Auth::user()->imagem }}" class="user-image rounded-circle shadow" alt="{{ Auth::user()->alt }}"> 
@@ -246,7 +306,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                 </ul>
             </div>
         </nav>
-        <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
             <div class="sidebar-brand"><a href="{{ route('admin') }}" class="brand-link"> <img
                         src="{{ asset('/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
                         class="brand-image opacity-75 shadow"><span class="brand-text fw-light">AMAER</span></a>
@@ -373,6 +433,35 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                         </li>
                         @endif
 
+                        <!-- Cargos (Apenas Admins) -->
+                        @if(auth()->user()->hasRole('Admin'))
+                        <li class="nav-item {{ request()->routeIs('cargos.*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon bi bi-briefcase"></i>
+                                <p>
+                                    Cargos
+                                    <i class="nav-arrow bi bi-chevron-right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('cargos.create') }}"
+                                        class="nav-link {{ request()->routeIs('cargos.create') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('cargos.create') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Novo</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('cargos.index') }}"
+                                        class="nav-link {{ request()->routeIs('cargos.index') ? 'active' : '' }}">
+                                        <i class="nav-icon bi {{ request()->routeIs('cargos.index') ? 'bi-circle-fill' : 'bi-circle' }}"></i>
+                                        <p>Listagem</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        @endif
+
                         <!-- Galeria (Apenas Admins) -->
                         @if(auth()->user()->hasRole('Admin'))
                         <li class="nav-item {{ request()->routeIs('galeria.create') || request()->routeIs('galeria.indexAdmin') ? 'menu-open' : '' }}">
@@ -490,6 +579,15 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                                class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-person-gear"></i>
                                 <p>Editar Perfil</p>
+                            </a>
+                        </li>
+
+                        <!-- Alterar Senha (Todos os usuários) -->
+                        <li class="nav-item">
+                            <a href="{{ route('password.custom.edit') }}" 
+                               class="nav-link {{ request()->routeIs('password.custom.edit') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-key-fill"></i>
+                                <p>Alterar Senha</p>
                             </a>
                         </li>
 

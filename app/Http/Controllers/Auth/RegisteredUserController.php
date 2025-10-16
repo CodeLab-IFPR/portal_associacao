@@ -59,6 +59,7 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'data_nascimento' => 'nullable|date|before:today',
             'cpf' => 'required|unique:users,cpf',
             'rg' => 'nullable|string|max:20',
+            'cargo_id' => 'nullable|exists:cargos,id',
             
             // Contato
             'telefone_celular' => 'nullable|string|max:20',
@@ -166,6 +167,7 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'data_nascimento' => 'nullable|date|before:today',
             'cpf' => 'required|unique:users,cpf,' . $user->id,
             'rg' => 'nullable|string|max:20',
+            'cargo_id' => 'nullable|exists:cargos,id',
             
             // Contato
             'telefone_celular' => 'nullable|string|max:20',

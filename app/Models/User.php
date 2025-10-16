@@ -24,6 +24,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'ativo',
         'cargo',
+        'cargo_id',
         'cpf',
         'biografia',
         'linkedin',
@@ -86,5 +87,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function documentos()
     {
         return $this->hasMany(Documento::class);
+    }
+
+    public function cargoRelacionado()
+    {
+        return $this->belongsTo(Cargo::class, 'cargo_id');
     }
 }

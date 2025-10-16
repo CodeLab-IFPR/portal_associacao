@@ -15,12 +15,26 @@
     <tbody>
         @forelse($users as $user)
             <tr>
-                <td><img src="/imagens/users/{{ $user->imagem }}" alt="{{ $user->alt }}" width="80px"></td>
+                <td class="text-center align-middle">
+                    @if($user->imagem && file_exists(public_path('imagens/users/' . $user->imagem)))
+                        <img src="/imagens/users/{{ $user->imagem }}" 
+                             alt="{{ $user->alt }}" 
+                             width="50px" 
+                             height="50px" 
+                             class="rounded-circle" 
+                             style="object-fit: cover; border: 2px solid #e9ecef;">
+                    @else
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center text-muted mx-auto" 
+                             style="width: 50px; height: 50px; border: 2px solid #e9ecef;">
+                            <i class="fas fa-user" style="font-size: 20px;"></i>
+                        </div>
+                    @endif
+                </td>
                 <td>{{ $user->name }}</td>
                 <td>{{ $user->cpf }}</td>
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->ativo ? 'Sim' : 'Não' }}</td>
-                <td>{{ $user->cargo }}</td>
+                <td>{{ $user->cargoRelacionado ? $user->cargoRelacionado->descricao : ($user->cargo ?: 'Não informado') }}</td>
                 <td>
                     @if (!empty($user->getRoleNames()))
                         @foreach ($user->getRoleNames() as $role)

@@ -1,17 +1,8 @@
-@php
-use Illuminate\Support\Str;
-@endphp
+﻿@extends('layouts.admin')
 
-@extends('layouts.admin')
-
-<!-- Título -->
-@section('title')
-Mensagens de Contato
-@endsection
-<!-- Título -->
+@section('title', 'Mensagens de Contato')
 
 @section('content')
-
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
@@ -21,253 +12,210 @@ Mensagens de Contato
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                     <li class="breadcrumb-item"><a href="{{ route('admin') }}">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        Mensagens de Contato
-                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Mensagens</li>
                 </ol>
             </div>
         </div>
     </div>
 </div>
-<div class="container mt-4">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <div class="card">
-        <div class="card-body">
-            <div class="mb-3">
-            <button id="mark-read-selected" class="btn btn-primary btn-sm" title="Marcar Selecionadas como Lidas">
-            <i class="bi bi-envelope-open"></i>
-            </button>
-            <button id="mark-unread-selected" class="btn btn-success btn-sm" title="Marcar Selecionadas como Não Lidas">
-                <i class="bi bi-envelope"></i>
-            </button>
-            <button id="delete-selected" class="btn btn-danger btn-sm" title="Excluir Selecionadas">
-                <i class="bi bi-trash"></i>
-            </button>
-            </div>
-            <style>
-                .clickable-cell {
-                    cursor: pointer;
-                    transition: background-color 0.3s;
-                }
-                .clickable-cell:hover {
-                    background-color: #f0f0f0;
-                }
-            </style>
-            <table class="table table-bordered table-striped mt-4" id="mensagens-table">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" id="select-all"></th>
-                        <th></th>
-                        <th>Assunto</th>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Mensagem</th>
-                        <th>Status</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($mensagens as $mensagem)
-                        <tr>
-                            <td><input type="checkbox" class="message-checkbox" data-id="{{ $mensagem->id }}"></td>
-                            <td>
-                                <i class="bi {{ $mensagem->read ? 'bi-envelope-open text-primary' : 'bi-envelope text-success' }} toggle-read" data-id="{{ $mensagem->id }}"></i>
-                            </td>
-                            <td class="clickable-cell" data-href="{{ route('mensagens.show', $mensagem->id) }}">{{ $mensagem->subject }}</td>
-                            <td class="clickable-cell" data-href="{{ route('mensagens.show', $mensagem->id) }}">{{ $mensagem->name }}</td>
-                            <td class="clickable-cell" data-href="{{ route('mensagens.show', $mensagem->id) }}">{{ $mensagem->email }}</td>
-                            <td class="clickable-cell" data-href="{{ route('mensagens.show', $mensagem->id) }}">{{ Str::limit($mensagem->message, 50) }}</td>
-                            <td>{{ $mensagem->read ? 'Lida' : 'Não Lida' }}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-                                        id="dropdownMenuButton{{ $mensagem->id }}" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="bi bi-gear"></i>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $mensagem->id }}">
-                                        <li>
-                                            <a class="dropdown-item d-flex align-items-center"
-                                                href="{{ route('mensagens.show', $mensagem->id) }}">
-                                                <i class="bi bi-eye text-secondary me-2"></i> Visualizar
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="dropdown-item d-flex align-items-center btn-mark-read"
-                                                data-url="{{ route('mensagens.markRead', $mensagem->id) }}">
-                                                <i class="bi bi-check-circle text-success me-2"></i> Marcar como Lida
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="dropdown-item d-flex align-items-center btn-mark-unread"
-                                                data-url="{{ route('mensagens.markUnread', $mensagem->id) }}">
-                                                <i class="bi bi-x-circle text-warning me-2"></i> Marcar como Não Lida
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="dropdown-item d-flex align-items-center btn-delete"
-                                                data-url="{{ route('mensagens.destroy', $mensagem->id) }}">
-                                                <i class="bi bi-trash text-danger me-2"></i> Deletar
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center">Não há mensagens 😢</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
 
-            {!! $mensagens->withQueryString()->links('pagination::bootstrap-5') !!}
+<div class="app-content">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12" style="max-width: 1200px;">
+                
+                <!-- Alertas de Sucesso/Erro -->
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                <!-- Busca e Filtros -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-search"></i> Buscar Mensagens
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="search" class="form-label">Buscar por:</label>
+                                <input type="text" class="form-control" id="search" placeholder="Nome, email, assunto ou mensagem...">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="date-filter" class="form-label">Período:</label>
+                                <select class="form-select" id="date-filter">
+                                    <option value="">Todos</option>
+                                    <option value="hoje">Hoje</option>
+                                    <option value="semana">Esta semana</option>
+                                    <option value="mes">Este mês</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                                    <i class="fas fa-eraser"></i> Limpar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Mensagens -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-envelope"></i> Lista de Mensagens
+                            @if($mensagens->total() > 0)
+                                <span class="badge bg-light text-dark ms-2">{{ $mensagens->total() }} total</span>
+                            @endif
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                    @if($mensagens->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="mensagens-table">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Assunto</th>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Data</th>
+                                        <th width="120">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($mensagens as $mensagem)
+                                        <tr>
+                                            <td>
+                                                <strong>{{ $mensagem->subject ?? $mensagem->assunto ?? 'Sem assunto' }}</strong>
+                                            </td>
+                                            <td>
+                                                <i class="fas fa-user me-1 text-muted"></i>{{ $mensagem->name ?? $mensagem->nome ?? 'N/A' }}
+                                            </td>
+                                            <td>
+                                                <i class="fas fa-at me-1 text-muted"></i>{{ $mensagem->email ?? 'N/A' }}
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>{{ $mensagem->created_at->format('d/m/Y H:i') }}
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="{{ route('mensagens.show', $mensagem->id) }}" 
+                                                       class="btn btn-sm btn-primary" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="Visualizar mensagem">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <form method="POST" action="{{ route('mensagens.destroy', $mensagem->id) }}" 
+                                                          style="display: inline;"
+                                                          onsubmit="return confirm('Tem certeza que deseja excluir esta mensagem?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" 
+                                                                class="btn btn-sm btn-danger" 
+                                                                data-bs-toggle="tooltip" 
+                                                                title="Excluir mensagem">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Paginação -->
+                        @if($mensagens->hasPages())
+                            <div class="d-flex justify-content-center mt-4">
+                                {{ $mensagens->links() }}
+                            </div>
+                        @endif
+                    @else
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox fa-4x text-muted mb-4"></i>
+                            <h4 class="text-muted">Nenhuma mensagem cadastrada</h4>
+                            <p class="text-muted">Ainda não há mensagens de contato no sistema.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </div>
+</div>
 
+@endsection
+
+@push('styles')
+<style>
+    .table-responsive {
+        border-radius: 0.375rem;
+    }
+    .badge {
+        font-size: 0.75em;
+    }
+</style>
+@endpush
+
+@push('scripts')
 <script>
-$(document).ready(function () {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+$(document).ready(function() {
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    $('#select-all').on('click', function() {
-        $('.message-checkbox').prop('checked', this.checked);
+    // Busca em tempo real
+    $('#search').on('keyup', function() {
+        filterMessages();
     });
 
-    $('body').on('click', '.toggle-read', function () {
-        var id = $(this).data('id');
-        var icon = $(this);
-        $.ajax({
-            url: '/admin/mensagens/' + id + '/toggleRead',
-            method: 'POST',
-            success: function (response) {
-                icon.toggleClass('bi-envelope bi-envelope-open');
-                location.reload();
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert('Ocorreu um erro ao tentar alterar o status da mensagem.');
-            }
-        });
-    });
-
-    $('#mark-read-selected').on('click', function () {
-        var ids = $('.message-checkbox:checked').map(function () {
-            return $(this).data('id');
-        }).get();
-        if (ids.length > 0) {
-            $.ajax({
-                url: '/admin/mensagens/markReadSelected',
-                method: 'POST',
-                data: { ids: ids },
-                success: function (response) {
-                    location.reload();
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                    alert('Ocorreu um erro ao tentar marcar as mensagens como lidas.');
-                }
-            });
-        }
-    });
-
-    $('#mark-unread-selected').on('click', function () {
-        var ids = $('.message-checkbox:checked').map(function () {
-            return $(this).data('id');
-        }).get();
-        if (ids.length > 0) {
-            $.ajax({
-                url: '/admin/mensagens/markUnreadSelected',
-                method: 'POST',
-                data: { ids: ids },
-                success: function (response) {
-                    location.reload();
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                    alert('Ocorreu um erro ao tentar marcar as mensagens como não lidas.');
-                }
-            });
-        }
-    });
-
-    $('#delete-selected').on('click', function () {
-        var ids = $('.message-checkbox:checked').map(function () {
-            return $(this).data('id');
-        }).get();
-        if (ids.length > 0) {
-            $.ajax({
-                url: '{{ route("mensagens.deleteSelected") }}',
-                method: 'POST',
-                data: { _method: 'DELETE', ids: ids },
-                success: function (response) {
-                    location.reload();
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText);
-                    alert('Ocorreu um erro ao tentar excluir as mensagens.');
-                }
-            });
-        }
-    });
-
-    $('body').on('click', '.btn-mark-read', function (e) {
-        e.preventDefault();
-        var url = $(this).data('url');
-        $.ajax({
-            url: url,
-            method: 'POST',
-            success: function (response) {
-                location.reload();
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert('Ocorreu um erro ao tentar marcar a mensagem como lida.');
-            }
-        });
-    });
-
-    $('body').on('click', '.btn-mark-unread', function (e) {
-        e.preventDefault();
-        var url = $(this).data('url');
-        $.ajax({
-            url: url,
-            method: 'POST',
-            success: function (response) {
-                location.reload();
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert('Ocorreu um erro ao tentar marcar a mensagem como não lida.');
-            }
-        });
-    });
-
-    $('body').on('click', '.btn-delete', function (e) {
-        e.preventDefault();
-        var url = $(this).data('url');
-        $.ajax({
-            url: url,
-            method: 'DELETE',
-            success: function (response) {
-                location.reload();
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-                alert('Ocorreu um erro ao tentar excluir a mensagem.');
-            }
-        });
-    });
-
-    // Make specific table cells clickable
-    $('body').on('click', '.clickable-cell', function () {
-        window.location = $(this).data('href');
+    // Filtros
+    $('#date-filter').on('change', function() {
+        filterMessages();
     });
 });
+
+function filterMessages() {
+    var searchTerm = $('#search').val().toLowerCase();
+    var dateFilter = $('#date-filter').val();
+
+    $('#mensagens-table tbody tr').each(function() {
+        var row = $(this);
+        var show = true;
+
+        // Filtro de busca
+        if (searchTerm) {
+            var text = row.text().toLowerCase();
+            if (text.indexOf(searchTerm) === -1) {
+                show = false;
+            }
+        }
+
+        // Mostrar/ocultar linha
+        row.toggle(show);
+    });
+}
+
+function clearFilters() {
+    $('#search').val('');
+    $('#date-filter').val('');
+    filterMessages();
+}
 </script>
-@endsection
+@endpush

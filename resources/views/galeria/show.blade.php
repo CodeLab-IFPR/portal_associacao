@@ -43,7 +43,7 @@
                 <h3>Outras mídias sobre o evento:</h3>
             </div>
 
-            @forelse($galeria->galerias as $midia)
+            @forelse($galeria->midias as $midia)
                 @if($midia->tipo == 'imagem')
                     <div class="col-lg-3 col-md-4 col-6 mb-4">
                         <a href="{{ asset($midia->caminho) }}" target="_blank">

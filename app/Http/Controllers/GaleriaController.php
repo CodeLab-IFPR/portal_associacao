@@ -146,7 +146,7 @@ class GaleriaController extends Controller implements HasMiddleware
 
     public function show(Galeria $galeria)
     {
-        $galeria->load('galerias');
+        $galeria->load('midias');
 
         return view('galeria.show', compact('galeria'));
     }

@@ -34,7 +34,8 @@ class ContactController extends Controller
         $mensagem = Contact::findOrFail($id);
         $this->deleteAttachments($mensagem);
         $mensagem->delete();
-        return response()->json(['success' => 'Mensagem excluída com sucesso.']);
+        
+        return redirect()->route('mensagens.index')->with('success', 'Mensagem excluída com sucesso.');
     }
 
     public function deleteSelected(Request $request)
