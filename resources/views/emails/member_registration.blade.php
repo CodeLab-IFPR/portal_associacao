@@ -44,7 +44,9 @@
 
         <p>Seu cadastro será analisado por nossa equipe administrativa, e você receberá uma notificação assim que for aprovado.</p>
 
-        <p>Importante: Por padrão, todos os novos cadastros ficam inativos até a aprovação por um administrador. Este processo garante a segurança e integridade da nossa comunidade.</p>
+        <p><strong>Importante:</strong> Por padrão, todos os novos cadastros ficam inativos até a aprovação por um administrador. Este processo garante a segurança e integridade da nossa comunidade.</p>
+
+        <p><strong>Após a aprovação:</strong> Quando seu cadastro for aprovado, você deverá utilizar a função <strong>"Recuperar Senha"</strong> na tela de login do sistema para criar sua senha de acesso. Utilize o e-mail cadastrado ({{ $user->email }}) para este processo.</p>
 
         <p>Caso tenha alguma dúvida, fique à vontade para entrar em contato conosco através do nosso formulário de contato.</p>
     </div>

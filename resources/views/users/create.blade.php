@@ -209,14 +209,6 @@ Membros - Cadastro
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="inputSenha" class="form-label"><strong>Senha:</strong></label>
-                    <input type="text" class="form-control @error('senha') is-invalid @enderror" name="senha" id="inputSenha"
-                        placeholder="Senha será gerada automaticamente" value="{{ old('senha') }}">
-                    @error('senha')
-                        <div class="form-text text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
                 </div>
             </div>
 

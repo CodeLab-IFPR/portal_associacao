@@ -37,7 +37,6 @@ class MemberRegistrationController extends Controller
             'telefone_comercial' => 'nullable|string|max:20',
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'email_alternativo' => 'nullable|email|max:255',
-            'senha' => 'nullable|string|max:255',
             
             // Endereço
             'cep' => 'required|string|max:10',
