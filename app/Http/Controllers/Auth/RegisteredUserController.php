@@ -68,7 +68,6 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'telefone_comercial' => 'nullable|string|max:20',
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'email_alternativo' => 'nullable|email|max:255',
-            'senha' => 'nullable|string|max:255',
             
             // Endereço
             'cep' => 'nullable|string|max:10',
@@ -176,7 +175,6 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'telefone_comercial' => 'nullable|string|max:20',
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'email_alternativo' => 'nullable|email|max:255',
-            'senha' => 'nullable|string|max:255',
             
             // Endereço
             'cep' => 'nullable|string|max:10',

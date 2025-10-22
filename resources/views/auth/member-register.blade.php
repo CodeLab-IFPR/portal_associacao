@@ -191,12 +191,17 @@
                                 @enderror
                             </div>
 
-                            <div class="col-12">
-                                <label class="form-label" for="senha">Senha *</label>
-                                <input type="text" class="form-control rounded" id="senha" name="senha" value="{{ old('senha') }}" placeholder="Sua senha será gerada automaticamente">
-                                @error('senha')
-                                    <div class="text-danger small mt-1">{{ $message }}</div>
-                                @enderror
+                        </div>
+                    </div>
+
+                    <!-- Informações sobre aprovação -->
+                    <div class="col-12">
+                        <div class="alert alert-info d-flex align-items-start" role="alert">
+                            <i class="ri-information-line me-3 fs-4"></i>
+                            <div>
+                                <h6 class="alert-heading mb-2">Sobre o processo de cadastro</h6>
+                                <p class="mb-2">Após o envio do formulário, seu cadastro será analisado pelos administradores da associação.</p>
+                                <p class="mb-0"><strong>Importante:</strong> Quando seu cadastro for aprovado, você receberá um e-mail de confirmação. Para acessar o sistema, utilize a função "Recuperar Senha" na tela de login para criar sua senha de acesso.</p>
                             </div>
                         </div>
                     </div>
