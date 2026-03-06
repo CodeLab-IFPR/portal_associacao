@@ -222,6 +222,10 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     
     // Rotas de Cargos (apenas para administradores)
     Route::resource('cargos', CargoController::class);
+
+    Route::prefix('invoices')->name('invoices.')->group(function () {
+        Route::get('/', [InvoiceController::class, 'index'])->name('index');
+    });
 });
 
 // Rotas públicas para validação de cartão
