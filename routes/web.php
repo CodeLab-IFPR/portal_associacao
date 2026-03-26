@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CartaoAssociadoController;
 use App\Http\Controllers\PasswordUpdateController;
 use App\Http\Controllers\CargoController;
+use App\Http\Controllers\InvoiceController;
 
 use App\Http\Controllers\MemberRegistrationController;
 
@@ -223,9 +224,19 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     // Rotas de Cargos (apenas para administradores)
     Route::resource('cargos', CargoController::class);
 
-    Route::prefix('invoices')->name('invoices.')->group(function () {
-        Route::get('/', [InvoiceController::class, 'index'])->name('index');
-    });
+    // Faturas
+    Route::resource('faturas', InvoiceController::class)
+    ->expect(['show'])
+    ->names([
+    'index'   => 'invoices.index',
+    'create'  => 'invoices.create',
+    'store'   => 'invoices.store',
+    //'show'    => 'invoices.show',
+    'edit'    => 'invoices.edit',
+    'update'  => 'invoices.update',
+    'destroy' => 'invoices.destroy',
+    ]);
+
 });
 
 // Rotas públicas para validação de cartão
