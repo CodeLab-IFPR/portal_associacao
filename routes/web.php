@@ -226,15 +226,14 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     // Faturas
     Route::resource('faturas', InvoiceController::class)
-    ->expect(['show'])
-    ->names([
-    'index'   => 'invoices.index',
-    'create'  => 'invoices.create',
-    'store'   => 'invoices.store',
-    //'show'    => 'invoices.show',
-    'edit'    => 'invoices.edit',
-    'update'  => 'invoices.update',
-    'destroy' => 'invoices.destroy',
+        ->except(['show'])
+        ->names([
+            'index'   => 'invoices.index',
+            'create'  => 'invoices.create',
+            'store'   => 'invoices.store',
+            'edit'    => 'invoices.edit',
+            'update'  => 'invoices.update',
+            'destroy' => 'invoices.destroy',
     ]);
 
 });

@@ -5,11 +5,15 @@ Faturas
 @endsection
 
 @section('content')
+
+{{-- Tom Select CSS --}}
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h3 class="mb-0">Criar Nova Fatura</h3>
+                <h3 class="mb-0">Nova Fatura</h3>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
@@ -40,10 +44,10 @@ Faturas
                 @endif
 
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header bg-primary text-white">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-receipt me-2"></i>
-                            Dados da Fatura
+                            Cadastrar Faturas
                         </h5>
                     </div>
                     <div class="card-body">
@@ -53,7 +57,7 @@ Faturas
                             {{-- Associados --}}
                             <div class="mb-3">
                                 <label for="user_ids" class="form-label"><strong>Associados*</strong></label>
-                                <select name="user_ids[]" id="user_ids" class="form-select" multiple required style="min-height: 150px;">
+                                <select name="user_ids[]" id="user_ids" multiple required>
                                     @foreach ($members as $member)
                                         <option value="{{ $member->id }}"
                                             {{ is_array(old('user_ids')) && in_array($member->id, old('user_ids')) ? 'selected' : '' }}>
@@ -61,7 +65,6 @@ Faturas
                                         </option>
                                     @endforeach
                                 </select>
-                                <div class="form-text">Segure <kbd>Ctrl</kbd> (ou <kbd>⌘</kbd> no Mac) para selecionar múltiplos associados.</div>
                                 @error('user_ids')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -166,7 +169,18 @@ Faturas
     </div>
 </div>
 
+{{-- Tom Select JS --}}
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
 <script>
+    // Multiselect com tags e busca
+    new TomSelect('#user_ids', {
+        plugins: ['remove_button'],
+        placeholder: 'Busque e selecione os associados...',
+        maxOptions: null,
+    });
+
+    // Cálculo do total em tempo real
     function updateTotal() {
         var amount = parseFloat(document.getElementById('installment_amount').value) || 0;
         var count  = parseInt(document.getElementById('installments_count').value)  || 0;
@@ -186,17 +200,12 @@ Faturas
     document.getElementById('installment_amount').addEventListener('input', updateTotal);
     document.getElementById('installments_count').addEventListener('input', updateTotal);
 
+    // Abrir datepicker ao focar
     (function setupDatePickerAutoOpen() {
         const el = document.getElementById('first_due_date');
-        if(!el) return;
-
-        const tryShowPicker = () => {
-            if(typeof el.showPicker === 'function') {
-                el.showPicker();
-            }
-        };
-
-        el.addEventListener('focus' , tryShowPicker);
+        if (!el) return;
+        const tryShowPicker = () => { if (typeof el.showPicker === 'function') el.showPicker(); };
+        el.addEventListener('focus', tryShowPicker);
         el.addEventListener('click', tryShowPicker);
     })();
 </script>
