@@ -23,9 +23,9 @@
     "src": "resources/css/libs.bundle.css",
     "isEntry": true
   },
-  "resources/css/styleLogin.css": {
-    "file": "assets/styleLogin-Dff976sg.css",
-    "src": "resources/css/styleLogin.css",
+  "resources/css/style-login.css": {
+    "file": "assets/style-login-Dff976sg.css",
+    "src": "resources/css/style-login.css",
     "isEntry": true
   },
   "resources/css/theme.bundle.css": {

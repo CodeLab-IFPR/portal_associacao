@@ -7,7 +7,7 @@
     <title>Redefinir Senha</title>
     @vite('resources/css/libs.bundle.css')    
     @vite('resources/css/theme.bundle.css') 
-    @vite('resources/css/styleLogin.css')    
+    @vite('resources/css/style-login.css')    
 </head>
 <body>
 <div class="container d-flex justify-content-center align-items-center min-vh-90">
