@@ -85,34 +85,36 @@ Faturas
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="dropdown text-center">
-                                            <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-                                                data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="fa fa-cog"></i>
+                                        <div class="invoice-actions" aria-label="Ações da fatura">
+                                            {{-- Visualizar (se a rota show estiver habilitada) --}}
+                                            <a href="{{ route('invoices.show', $invoice->id) }}"
+                                               class="action-icon text-info"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="top"
+                                               title="Visualizar">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+
+                                            {{-- Editar --}}
+                                            <a href="{{ route('invoices.edit', $invoice->id) }}"
+                                               class="action-icon text-warning"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="top"
+                                               title="Editar">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+
+                                            {{-- Excluir --}}
+                                            <button type="button"
+                                                class="action-icon text-danger btn-delete"
+                                                data-id="{{ $invoice->id }}"
+                                                data-nome="{{ $invoice->user->name }}"
+                                                data-total="R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Excluir">
+                                                <i class="bi bi-trash"></i>
                                             </button>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('invoices.show', $invoice->id) }}">
-                                                        <i class="bi bi-eye text-info me-2"></i> Visualizar
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('invoices.edit', $invoice->id) }}">
-                                                        <i class="bi bi-pencil-square text-warning me-2"></i> Editar
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <button type="button"
-                                                        class="dropdown-item d-flex align-items-center btn-delete"
-                                                        data-id="{{ $invoice->id }}"
-                                                        data-nome="{{ $invoice->user->name }}"
-                                                        data-total="R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}">
-                                                        <i class="bi bi-trash text-danger me-2"></i> Excluir
-                                                    </button>
-                                                </li>
-                                            </ul>
                                         </div>
                                     </td>
                                 </tr>
