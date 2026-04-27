@@ -7,7 +7,7 @@
   <title>Verificação de E-mail</title>
   @vite('resources/css/libs.bundle.css')    
   @vite('resources/css/theme.bundle.css') 
-  @vite('resources/css/style-login.css')    
+  @vite('resources/css/styleLogin.css')    
 </head>
 <body>
 <div class="container">

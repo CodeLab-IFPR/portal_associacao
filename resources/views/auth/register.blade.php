@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Formulário de Login e Registro</title>
   <!---Custom CSS File--->
-  @vite('resources/css/style-login.css')    
+  @vite('resources/css/styleLogin.css')    
 </head>
 <body>
   <div class="container">

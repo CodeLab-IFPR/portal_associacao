@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Formulário de Login e Registro</title>
-  @vite('resources/css/style-login.css')    
+  @vite('resources/css/styleLogin.css')    
 </head>
 <body>
   <div class="container">
