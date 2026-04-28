@@ -237,6 +237,9 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
             'destroy' => 'invoices.destroy',
     ]);
 
+    // Anexar boleto das parcelas
+    Route::patch('faturas/{invoice}/installments/{installment}/boleto', [InvoiceController::class, 'uploadBoleto'])
+        ->name('invoices.installments.boleto');
 });
 
 // Rotas públicas para validação de cartão

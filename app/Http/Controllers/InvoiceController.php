@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
@@ -203,5 +204,32 @@ class InvoiceController extends Controller
 
             return back()->with('error', 'Erro ao excluir parcela: ' . $e->getMessage());
         }
+    }
+
+    public function uploadBoleto(Request $request, Invoice $invoice, InvoiceInstallment $installment)
+    {
+        // Garantir que a parcela pertence à fatura (segurança básica)
+        if ($installment->invoice_id !== $invoice->id) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'boleto' => 'required|file|mimes:pdf|max:5120', // 5MB
+        ]);
+
+        $path = $validated['boleto']->store('boletos', 'public');
+
+        // Apagar boleto antigo
+        if ($installment->boleto_path) {
+            Storage::disk('public')->delete($installment->boleto_path);
+        }
+
+        $installment->update([
+            'boleto_path' => $path,
+        ]);
+
+        return redirect()
+            ->route('invoices.show', $invoice->id)
+            ->with('success', 'Boleto anexado com sucesso!');
     }
 }

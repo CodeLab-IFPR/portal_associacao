@@ -153,6 +153,17 @@ Fatura #{{ $invoice->id }}
                                                     data-number="{{ $installment->installment_number }}">
                                                     <i class="bi bi-x-circle-fill me-1"></i>
                                                 </button>
+
+                                                
+                                                {{-- Anexar boleto (PDF) --}}
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-primary btn-attach-boleto me-1"
+                                                    title="Anexar boleto (PDF)"
+                                                    data-id="{{ $installment->id }}"
+                                                    data-number="{{ $installment->installment_number }}">
+                                                    <i class="bi bi-paperclip"></i>
+                                                </button>
+
                                             </td>
                                         </tr>
                                     @empty
@@ -285,6 +296,47 @@ Fatura #{{ $invoice->id }}
     </div>
 </div>
 
+{{-- ======================================================
+     Modal: Anexar Boleto (PDF)
+     ====================================================== --}}
+<div class="modal fade" id="attachBoletoModal" tabindex="-1" aria-labelledby="attachBoletoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="attachBoletoModalLabel">
+                    <i class="bi bi-paperclip me-2"></i>Anexar Boleto (PDF) — Parcela <span id="attach-installment-number"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="attachBoletoForm" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PATCH')
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="boleto" class="form-label"><strong>Arquivo (PDF)*</strong></label>
+                        <input type="file"
+                               id="boleto"
+                               name="boleto"
+                               class="form-control"
+                               accept="application/pdf"
+                               required>
+                        <div class="form-text">Apenas PDF. Tamanho recomendado: até 5MB.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload me-1"></i>Anexar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
     // ── Editar parcela ──────────────────────────────────────
     document.querySelectorAll('.btn-edit-installment').forEach(function (btn) {
@@ -323,6 +375,27 @@ Fatura #{{ $invoice->id }}
                 '/admin/faturas/{{ $invoice->id }}/installments/' + id;
 
             new bootstrap.Modal(document.getElementById('deleteInstallmentModal')).show();
+        });
+    });
+
+    
+    // ── Anexar boleto (PDF) ────────────────────────────────
+    document.querySelectorAll('.btn-attach-boleto').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var id     = this.dataset.id;
+            var number = this.dataset.number;
+
+            document.getElementById('attach-installment-number').textContent = '#' + number;
+
+            // Ajusta action do form para o endpoint de upload
+            document.getElementById('attachBoletoForm').action =
+                '/admin/faturas/{{ $invoice->id }}/installments/' + id + '/boleto';
+
+            // limpa input anterior
+            const fileInput = document.getElementById('boleto');
+            if (fileInput) fileInput.value = '';
+
+            new bootstrap.Modal(document.getElementById('attachBoletoModal')).show();
         });
     });
 </script>
