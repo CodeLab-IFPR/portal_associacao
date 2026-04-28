@@ -76,9 +76,9 @@ Faturas
                                     <td>{{ \Carbon\Carbon::parse($invoice->first_due_date)->format('d/m/Y') }}</td>
                                     <td>
                                         <span class="badge
-                                            @if($invoice->status === 'pago') bg-success
+                                            @if($invoice->status === 'paga') bg-success
                                             @elseif($invoice->status === 'pendente') bg-warning text-dark
-                                            @elseif($invoice->status === 'vencido') bg-danger
+                                            @elseif($invoice->status === 'vencida') bg-danger
                                             @else bg-secondary
                                             @endif">
                                             {{ ucfirst($invoice->status) }}
@@ -86,7 +86,6 @@ Faturas
                                     </td>
                                     <td>
                                         <div class="invoice-actions" aria-label="Ações da fatura">
-                                            {{-- Visualizar (se a rota show estiver habilitada) --}}
                                             <a href="{{ route('invoices.show', $invoice->id) }}"
                                                class="action-icon text-info"
                                                data-bs-toggle="tooltip"
@@ -94,8 +93,6 @@ Faturas
                                                title="Visualizar">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-
-                                            {{-- Editar --}}
                                             <a href="{{ route('invoices.edit', $invoice->id) }}"
                                                class="action-icon text-warning"
                                                data-bs-toggle="tooltip"
@@ -103,8 +100,6 @@ Faturas
                                                title="Editar">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
-
-                                            {{-- Excluir --}}
                                             <button type="button"
                                                 class="action-icon text-danger btn-delete"
                                                 data-id="{{ $invoice->id }}"
@@ -137,6 +132,12 @@ Faturas
     </div>
 </div>
 
+{{-- Form de exclusão fora do modal para evitar problemas de submit --}}
+<form id="deleteForm" method="POST" style="display:none;">
+    @csrf
+    @method('DELETE')
+</form>
+
 {{-- Modal de Confirmação de Exclusão --}}
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -154,32 +155,39 @@ Faturas
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form id="deleteForm" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Excluir</button>
-                </form>
+                <button type="button" id="btn-confirm-delete" class="btn btn-danger">
+                    <i class="bi bi-trash me-1"></i>Excluir
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.querySelectorAll('.btn-delete').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var id    = this.dataset.id;
-            var nome  = this.dataset.nome;
-            var total = this.dataset.total;
+    document.addEventListener('DOMContentLoaded', function () {
 
-            document.getElementById('invoice-nome').textContent  = nome;
-            document.getElementById('invoice-total').textContent = total;
-
-            var form = document.getElementById('deleteForm');
-            form.action = '/admin/faturas/' + id;
-
-            var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-            modal.show();
+        // Inicializa tooltips (apenas nos ícones de ver e editar)
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+            new bootstrap.Tooltip(el);
         });
+
+        // Abre modal e guarda o id
+        document.querySelectorAll('.btn-delete').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.getElementById('invoice-nome').textContent  = this.dataset.nome;
+                document.getElementById('invoice-total').textContent = this.dataset.total;
+
+                document.getElementById('deleteForm').action = '/admin/faturas/' + this.dataset.id;
+
+                new bootstrap.Modal(document.getElementById('confirmDeleteModal')).show();
+            });
+        });
+
+        // Confirma e submete o form
+        document.getElementById('btn-confirm-delete').addEventListener('click', function () {
+            document.getElementById('deleteForm').submit();
+        });
+
     });
 </script>
 @endsection

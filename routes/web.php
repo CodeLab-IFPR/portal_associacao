@@ -226,6 +226,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     // Faturas
     Route::resource('faturas', InvoiceController::class)
+        ->parameters(['faturas' => 'invoice'])
         ->names([
             'index' => 'invoices.index',
             'create' => 'invoices.create',
