@@ -13,7 +13,13 @@ Faturas
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h3 class="mb-0">Nova Fatura</h3>
+                <div class="d-flex align-items-center gap-3">
+                    <h3 class="mb-0">Nova Fatura</h3>
+                    <div class="alert alert-info py-1 px-2 mb-0 small" id="total-summary" style="display:none;">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Total da fatura: <strong id="total-value">R$ 0,00</strong>
+                    </div>
+                </div>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
@@ -102,12 +108,6 @@ Faturas
                                 </div>
                             </div>
 
-                            {{-- Resumo do total --}}
-                            <div class="alert alert-info py-2 mb-3" id="total-summary" style="display:none;">
-                                <i class="bi bi-info-circle me-1"></i>
-                                Total da fatura: <strong id="total-value">R$ 0,00</strong>
-                            </div>
-
                             <div class="row">
                                 {{-- Data do Primeiro Vencimento --}}
                                 <div class="col-md-6 mb-3">
@@ -176,7 +176,7 @@ Faturas
     // Multiselect com tags e busca
     new TomSelect('#user_ids', {
         plugins: ['remove_button'],
-        placeholder: 'Busque e selecione os associados...',
+        placeholder: 'Selecione um ou mais associados...',
         maxOptions: null,
     });
 

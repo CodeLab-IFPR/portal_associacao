@@ -151,7 +151,7 @@ Fatura #{{ $invoice->id }}
                                                     title="Excluir parcela"
                                                     data-id="{{ $installment->id }}"
                                                     data-number="{{ $installment->installment_number }}">
-                                                    <i class="bi bi-trash"></i>
+                                                    <i class="bi bi-x-circle-fill me-1"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -277,7 +277,7 @@ Fatura #{{ $invoice->id }}
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash me-1"></i>Excluir
+                        <i class="bi bi-x-circle-fill me-1"></i>
                     </button>
                 </form>
             </div>

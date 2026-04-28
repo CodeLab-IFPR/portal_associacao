@@ -9,7 +9,13 @@ Faturas
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h3 class="mb-0">Editar Fatura</h3>
+                <div class="d-flex align-items-center gap-3">
+                    <h3 class="mb-0">Editar Fatura</h3>
+                    <div class="alert alert-warning py-1 px-2 mb-0 small">
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <strong>Atenção:</strong> Apenas as observações são editáveis.
+                    </div>
+                </div>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
@@ -55,12 +61,6 @@ Faturas
                         </h5>
                     </div>
                     <div class="card-body">
-
-                        {{-- Aviso: edição limitada --}}
-                        <div class="alert alert-warning py-2 mb-4">
-                            <i class="bi bi-exclamation-triangle me-1"></i>
-                            <strong>Atenção:</strong> A edição de faturas altera apenas as observações. Para modificar valores ou parcelas, exclua e recrie a fatura.
-                        </div>
 
                         <form action="{{ route('invoices.update', $invoice->id) }}" method="POST">
                             @csrf

@@ -108,7 +108,7 @@ Faturas
                                                 data-bs-toggle="tooltip"
                                                 data-bs-placement="top"
                                                 title="Excluir">
-                                                <i class="bi bi-trash"></i>
+                                                <i class="bi bi-x-circle-fill me-1"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -156,7 +156,7 @@ Faturas
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" id="btn-confirm-delete" class="btn btn-danger">
-                    <i class="bi bi-trash me-1"></i>Excluir
+                    <i class="bi bi-x-circle-fill me-1"></i>Excluir
                 </button>
             </div>
         </div>
