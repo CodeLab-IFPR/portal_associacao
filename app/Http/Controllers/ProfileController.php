@@ -41,7 +41,7 @@ class ProfileController extends Controller
     
             $uploader = new ImageUploader();
             $uploader->setCompression(30);
-            $uploader->setResolution(160);
+            $uploader->setResolution(480);
             $uploader->setDestinationPath('users/');
             $data['imagem'] = $uploader->upload(new \Illuminate\Http\File($imageFullPath), $user->imagem);
         } else {

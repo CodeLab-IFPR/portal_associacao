@@ -5,11 +5,11 @@
             <div class="text-center mb-4 position-relative">
                 <div class="d-inline-block position-relative">
                     @if($user->imagem && !old('cropped_image'))
-                        <img src="/imagens/users/{{ $user->imagem }}" width="160px" height="160px" class="rounded-circle" style="object-fit: cover;">
+                        <img src="/imagens/users/{{ $user->imagem }}" width="160px" height="160px" class="rounded-circle" style="object-fit: fill;">
                     @endif
                     <div id="croppedImageContainer" style="{{ old('cropped_image') ? '' : 'display: none;' }}">
                         <div id="croppedImagePreview" style="width: 160px; height: 160px; border: 1px solid #ddd; border-radius: 50%; overflow: hidden;">
-                            <img id="croppedImage" src="{{ old('cropped_image') }}" alt="Imagem recortada" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img id="croppedImage" src="{{ old('cropped_image') }}" alt="Imagem recortada" style="width: 100%; height: 100%; object-fit: fill;">
                         </div>
                     </div>
                     <!-- Ícone de lápis sobreposto -->

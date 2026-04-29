@@ -26,11 +26,11 @@
             <div class="text-center mb-4 position-relative">
                 <div class="d-inline-block position-relative">
                     @if($user->imagem && !old('cropped_image'))
-                        <img src="/imagens/users/{{ $user->imagem }}" width="160px" height="160px" class="rounded-circle" style="object-fit: cover;">
+                        <img src="/imagens/users/{{ $user->imagem }}" width="160px" height="160px" class="rounded-circle" style="object-fit: fill;"> 
                     @endif
                     <div id="croppedImageContainer" style="{{ old('cropped_image') ? '' : 'display: none;' }}">
                         <div id="croppedImagePreview" style="width: 160px; height: 160px; border: 1px solid #ddd; border-radius: 50%; overflow: hidden;">
-                            <img id="croppedImage" src="{{ old('cropped_image') }}" alt="Imagem recortada" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img id="croppedImage" src="{{ old('cropped_image') }}" alt="Imagem recortada" style="width: 100%; height: 100%; object-fit: fill;">
                         </div>
                     </div>
                     <!-- Ícone de lápis sobreposto -->
@@ -42,6 +42,7 @@
                 @error('imagem')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
+                <div id="image-format-alert" class="alert alert-danger mt-3 d-none" role="alert"></div>
             </div>
 
             <header class="text-center mb-4">
@@ -347,7 +348,7 @@
                         <div class="col-md-8">
                             <img src="" id="sample_image" style="max-width: 100%;">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4 d-flex justify-content-center ">
                             <div class="preview" style="width: 200px; height: 200px; overflow: hidden; border: 1px solid #ddd; border-radius: 50%;"></div>
                         </div>
                     </div>
@@ -551,6 +552,19 @@ $(document).ready(function(){
     var $modal = $('#modal');
     var image = document.getElementById('sample_image');
     var cropper;
+
+    function showImageFormatAlert(message) {
+        var alertEl = document.getElementById('image-format-alert');
+        if (!alertEl) {
+            return;
+        }
+
+        alertEl.textContent = message;
+        alertEl.classList.remove('d-none');
+        setTimeout(function () {
+            alertEl.classList.add('d-none');
+        }, 3000);
+    }
     
     $('.image').change(function(event){
         var files = event.target.files;
@@ -561,9 +575,19 @@ $(document).ready(function(){
         var reader;
         var file;
         var url;
+        var allowedTypes = ['image/jpeg', 'image/png'];
         
         if (files && files.length > 0) {
             file = files[0];
+            var fileType = (file.type || '').toLowerCase();
+            var fileName = (file.name || '').toLowerCase();
+            var isValidType = allowedTypes.includes(fileType) || fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png');
+
+            if (!isValidType) {
+                showImageFormatAlert('Formato invalido. Envie apenas imagens JPG/JPEG ou PNG.');
+                $(this).val('');
+                return;
+            }
             
             if (URL) {
                 done(URL.createObjectURL(file));
@@ -580,7 +604,9 @@ $(document).ready(function(){
     $modal.on('shown.bs.modal', function () {
         cropper = new Cropper(image, {
             aspectRatio: 1,
-            viewMode: 3,
+            viewMode: 2,
+            autoCropArea: 1,
+            background: false,
             preview: '.preview'
         });
     }).on('hidden.bs.modal', function () {
