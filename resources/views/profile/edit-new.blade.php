@@ -42,8 +42,25 @@
                 @error('imagem')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
+                @error('cropped_image')
+                    <div class="form-text text-danger">{{ $message }}</div>
+                @enderror
                 <div id="image-format-alert" class="alert alert-danger mt-3 d-none" role="alert"></div>
+                @if (session('status') === 'profile-image-updated')
+                    <div class="alert alert-success mt-3 d-flex align-items-center" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <div>
+                            <strong>Sucesso!</strong> Sua imagem foi atualizada com sucesso.
+                        </div>
+                    </div>
+                @endif
             </div>
+
+            <form id="profile-image-form" method="post" action="{{ route('profile.updateImage') }}">
+                @csrf
+                @method('patch')
+                <input type="hidden" name="cropped_image" id="cropped_image" value="{{ old('cropped_image') }}">
+            </form>
 
             <header class="text-center mb-4">
                 <h2 class="fs-4 fw-medium mb-3">{{ __('Informações do Perfil') }}</h2>
@@ -54,10 +71,9 @@
                 @csrf
             </form>
 
-            <form method="post" action="{{ route('profile.update') }}" class="mt-4" enctype="multipart/form-data">
+            <form method="post" action="{{ route('profile.update') }}" class="mt-4" enctype="multipart/form-data" id="profile-form">
                 @csrf
                 @method('patch')
-                <input type="hidden" name="cropped_image" id="cropped_image" value="{{ old('cropped_image') }}">
                 
                 <!-- Modalidade Principal -->
                 <div class="mb-4">
@@ -630,6 +646,11 @@ $(document).ready(function(){
                 $('#croppedImage').attr('src', base64data);
                 $('#croppedImageContainer').show();
                 $modal.modal('hide');
+
+                var profileImageForm = document.getElementById('profile-image-form');
+                if (profileImageForm) {
+                    profileImageForm.submit();
+                }
             }
         });
     });
