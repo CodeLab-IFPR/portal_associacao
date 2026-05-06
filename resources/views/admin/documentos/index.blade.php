@@ -66,7 +66,7 @@ Gestão de Documentos
                         <div class="col-md-2 text-center">
                             @if($user->imagem)
                                 <img src="/imagens/users/{{ $user->imagem }}" alt="{{ $user->alt }}" 
-                                     class="img-thumbnail rounded-circle" style="width: 80px; height: 80px; object-fit: cover;">
+                                     class="img-thumbnail rounded-circle" style="width: 80px; height: 80px; object-fit: fill;">
                             @else
                                 <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" 
                                      style="width: 80px; height: 80px; margin: 0 auto;">

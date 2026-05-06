@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CartaoAssociadoController;
 use App\Http\Controllers\PasswordUpdateController;
 use App\Http\Controllers\CargoController;
+use App\Http\Controllers\InvoiceController;
 
 use App\Http\Controllers\MemberRegistrationController;
 
@@ -201,6 +202,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/perfil', 'edit')->name('profile.edit');
         Route::patch('/perfil', 'update')->name('profile.update');
+        Route::patch('/perfil/imagem', 'updateImage')->name('profile.updateImage');
         Route::delete('/perfil', 'destroy')->name('profile.destroy');
     });
 
@@ -222,6 +224,23 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     
     // Rotas de Cargos (apenas para administradores)
     Route::resource('cargos', CargoController::class);
+
+    // Faturas
+    Route::resource('faturas', InvoiceController::class)
+        ->parameters(['faturas' => 'invoice'])
+        ->names([
+            'index' => 'invoices.index',
+            'create' => 'invoices.create',
+            'store' => 'invoices.store',
+            'show' => 'invoices.show',
+            'edit' => 'invoices.edit',
+            'update' => 'invoices.update',
+            'destroy' => 'invoices.destroy',
+    ]);
+
+    // Anexar boleto das parcelas
+    Route::patch('faturas/{invoice}/installments/{installment}/boleto', [InvoiceController::class, 'uploadBoleto'])
+        ->name('invoices.installments.boleto');
 });
 
 // Rotas públicas para validação de cartão

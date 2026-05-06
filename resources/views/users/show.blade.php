@@ -29,9 +29,20 @@
         <div class="card-header">
             <div class="d-flex align-items-center">
                 <div class="me-3">
-                    <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #6c757d; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-user text-white fa-2x"></i>
-                    </div>
+                    @if($user->imagem && file_exists(public_path('imagens/users/' . $user->imagem)))
+                        <div style="border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <img src="/imagens/users/{{ $user->imagem }}" 
+                                 alt="{{ $user->alt }}" 
+                                width="80px" 
+                                height="80px" 
+                                class="rounded-circle" 
+                                style="border: 2px solid #e9ecef;">
+                        </div>
+                        @else
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background-color: #6c757d; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user text-white fa-2x" ></i>
+                            </div>
+                    @endif
                 </div>
                 <h4 class="mb-0">{{ $user->nome ?? $user->name }} {{ $user->sobrenome }}</h4>
             </div>
