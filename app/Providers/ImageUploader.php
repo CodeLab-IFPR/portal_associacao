@@ -50,8 +50,8 @@ class ImageUploader
         $profileImage = date('YmdHis') . ".jpg";
         $manager = new ImageManager(new GdDriver());
 
-        $image = $manager->read($image->getRealPath())
-                         ->resize($this->resolution[0], $this->resolution[1]);
+        $image = $manager->read($image->getRealPath());
+        $image->scale(width: $this->resolution[0], height: $this->resolution[1]);
 
         $image->toJpeg($this->compression)->save(public_path($this->destinationPath) . '/' . $profileImage);
 

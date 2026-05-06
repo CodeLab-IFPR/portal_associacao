@@ -201,6 +201,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/perfil', 'edit')->name('profile.edit');
         Route::patch('/perfil', 'update')->name('profile.update');
+        Route::patch('/perfil/imagem', 'updateImage')->name('profile.updateImage');
         Route::delete('/perfil', 'destroy')->name('profile.destroy');
     });
 

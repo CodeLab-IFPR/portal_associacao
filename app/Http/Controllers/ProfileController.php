@@ -29,24 +29,7 @@ class ProfileController extends Controller
     {
         $data = $request->validated();
         $user = $request->user();
-    
-        if ($request->has('cropped_image') && $request->cropped_image) {
-            $image_parts = explode(";base64,", $request->cropped_image);
-            $image_type_aux = explode("image/", $image_parts[0]);
-            $image_type = $image_type_aux[1];
-            $image_base64 = base64_decode($image_parts[1]);
-            $imageName = uniqid() . '.png';
-            $imageFullPath = sys_get_temp_dir() . '/' . $imageName;
-            file_put_contents($imageFullPath, $image_base64);
-    
-            $uploader = new ImageUploader();
-            $uploader->setCompression(30);
-            $uploader->setResolution(160);
-            $uploader->setDestinationPath('users/');
-            $data['imagem'] = $uploader->upload(new \Illuminate\Http\File($imageFullPath), $user->imagem);
-        } else {
-            unset($data['imagem']);
-        }
+        unset($data['cropped_image'], $data['imagem']);
     
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -56,6 +39,51 @@ class ProfileController extends Controller
         $user->save();
     
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Update only the user's profile image.
+     */
+    public function updateImage(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'cropped_image' => ['required', 'string'],
+        ]);
+
+        $user = $request->user();
+        $imageParts = explode(';base64,', $request->cropped_image, 2);
+
+        if (count($imageParts) !== 2) {
+            return Redirect::route('profile.edit')
+                ->withErrors(['cropped_image' => 'Imagem invalida.']);
+        }
+
+        $imageTypeAux = explode('image/', $imageParts[0], 2);
+
+        if (count($imageTypeAux) !== 2) {
+            return Redirect::route('profile.edit')
+                ->withErrors(['cropped_image' => 'Imagem invalida.']);
+        }
+
+        $imageBase64 = base64_decode($imageParts[1]);
+
+        if ($imageBase64 === false) {
+            return Redirect::route('profile.edit')
+                ->withErrors(['cropped_image' => 'Imagem invalida.']);
+        }
+
+        $imageName = uniqid() . '.png';
+        $imageFullPath = sys_get_temp_dir() . '/' . $imageName;
+        file_put_contents($imageFullPath, $imageBase64);
+
+        $uploader = new ImageUploader();
+        $uploader->setCompression(30);
+        $uploader->setResolution(480);
+        $uploader->setDestinationPath('users/');
+        $user->imagem = $uploader->upload(new \Illuminate\Http\File($imageFullPath), $user->imagem);
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('status', 'profile-image-updated');
     }
 
     /**

@@ -181,7 +181,7 @@ class CartaoAssociadoController extends Controller
                             for ($y = 0; $y < $fotoSize - 8; $y++) {
                                 $maskColor = imagecolorat($maskCircular, $x, $y);
                                 if ($maskColor == $maskBg) {
-                                    imagesetpixel($fotoCircular, $x, $y, $branco);
+                                    imagesetpixel($fotoCircular, $x, $y, $fundoCartao);
                                 }
                             }
                         }

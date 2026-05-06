@@ -22,7 +22,7 @@
                              width="50px" 
                              height="50px" 
                              class="rounded-circle" 
-                             style="object-fit: cover; border: 2px solid #e9ecef;">
+                             style="object-fit: fill; border: 2px solid #e9ecef;">
                     @else
                         <div class="rounded-circle bg-light d-flex align-items-center justify-content-center text-muted mx-auto" 
                              style="width: 50px; height: 50px; border: 2px solid #e9ecef;">
