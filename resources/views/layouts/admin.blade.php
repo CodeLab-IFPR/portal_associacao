@@ -600,6 +600,14 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                             </a>
                         </li>
 
+                        <!-- Faturas -->
+                        <li class="nav-item">
+                            <a href="{{ route('invoices.index') }}" class="nav-link {{ request()->routeIs('invoices.*') ? 'active' : '' }}">
+                                <i class="bi bi-currency-dollar nav-icon"></i>
+                                <p>Faturas</p>
+                            </a>
+                        </li>
+
                     </ul>
                 </nav>
             </div>
