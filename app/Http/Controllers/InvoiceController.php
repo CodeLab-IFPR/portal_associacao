@@ -12,13 +12,27 @@ use Illuminate\Support\Facades\Storage;
 
 class InvoiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $invoices = Invoice::with(['user', 'installments'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = Invoice::with(['user', 'installments']);
 
-        return view('invoices.index', compact('invoices'));
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('month')) {
+            $query->whereRaw("DATE_FORMAT(first_due_date, '%Y-%m') = ?", [$request->month]);
+        }
+
+        $invoices = $query->orderBy('created_at', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
+        $availableMonths = Invoice::selectRaw("DISTINCT DATE_FORMAT(first_due_date, '%Y-%m') as ym")
+            ->orderByDesc('ym')
+            ->pluck('ym');
+
+        return view('invoices.index', compact('invoices', 'availableMonths'));
     }
 
     public function create()
