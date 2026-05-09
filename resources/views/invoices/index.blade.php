@@ -5,6 +5,16 @@ Faturas
 @endsection
 
 @section('content')
+@php
+    $mesesAbrev = [1=>'Jan',2=>'Fev',3=>'Mar',4=>'Abr',5=>'Mai',6=>'Jun',7=>'Jul',8=>'Ago',9=>'Set',10=>'Out',11=>'Nov',12=>'Dez'];
+    $monthOptions = collect($availableMonths ?? [])->map(function ($ym) use ($mesesAbrev) {
+        [$year, $month] = explode('-', $ym);
+        return [
+            'value' => $ym,
+            'label' => $mesesAbrev[(int)$month] . '/' . substr($year, -2),
+        ];
+    });
+@endphp
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
@@ -42,6 +52,40 @@ Faturas
             <a href="{{ route('invoices.create') }}" class="btn btn-outline-primary">
                 <i class="bi bi-plus-lg me-1"></i>Nova Fatura
             </a>
+            <form id="filterForm" method="GET" action="{{ route('invoices.index') }}" class="d-flex align-items-center gap-3 flex-wrap">
+                <div class="d-flex align-items-center">
+                    <label for="searchFilter" class="form-label mb-0 me-2 text-nowrap">Buscar:</label>
+                    <input type="text" id="searchFilter" name="search" class="form-control"
+                           value="{{ request('search') }}"
+                           placeholder="Associado ou valor (R$)"
+                           style="min-width: 220px;">
+                </div>
+                <div class="d-flex align-items-center">
+                    <label for="monthFilter" class="form-label mb-0 me-2 text-nowrap">Mês:</label>
+                    <select id="monthFilter" name="month" class="form-select">
+                        <option value="">Todos</option>
+                        @foreach($monthOptions as $opt)
+                            <option value="{{ $opt['value'] }}" @selected(request('month') === $opt['value'])>{{ $opt['label'] }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="d-flex align-items-center">
+                    <label for="statusFilter" class="form-label mb-0 me-2 text-nowrap">Status:</label>
+                    <select id="statusFilter" name="status" class="form-select">
+                        <option value="">Todos</option>
+                        <option value="pendente" @selected(request('status') === 'pendente')>Pendente</option>
+                        <option value="paga" @selected(request('status') === 'paga')>Paga</option>
+                        <option value="vencida" @selected(request('status') === 'vencida')>Vencida</option>
+                        <option value="cancelada" @selected(request('status') === 'cancelada')>Cancelada</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-funnel me-1"></i>Filtrar
+                </button>
+                @if(request('month') || request('status') || request('search'))
+                    <a href="{{ route('invoices.index') }}" class="btn btn-outline-secondary">Limpar</a>
+                @endif
+            </form>
         </div>
 
         <div class="card">
@@ -101,7 +145,7 @@ Faturas
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <button type="button"
-                                                class="action-icon text-danger btn-delete"
+                                                class="action-icon text-danger btn-delete bg-transparent"
                                                 data-id="{{ $invoice->id }}"
                                                 data-nome="{{ $invoice->user->name }}"
                                                 data-total="R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}"
@@ -115,7 +159,13 @@ Faturas
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-4">Nenhuma fatura encontrada.</td>
+                                    <td colspan="8" class="text-center py-4">
+                                        @if(request('month') || request('status') || request('search'))
+                                            Nenhuma fatura encontrada para os filtros selecionados.
+                                        @else
+                                            Nenhuma fatura encontrada.
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -166,12 +216,10 @@ Faturas
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        // Inicializa tooltips (apenas nos ícones de ver e editar)
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
             new bootstrap.Tooltip(el);
         });
 
-        // Abre modal e guarda o id
         document.querySelectorAll('.btn-delete').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 document.getElementById('invoice-nome').textContent  = this.dataset.nome;
@@ -183,10 +231,38 @@ Faturas
             });
         });
 
-        // Confirma e submete o form
         document.getElementById('btn-confirm-delete').addEventListener('click', function () {
             document.getElementById('deleteForm').submit();
         });
+
+        // Limpa o input de busca antes de enviar:
+        // - remove "R$", "$" e espaços
+        // - converte formato BR ("1.500,00" / "1.500") para padrão ("1500.00" / "1500")
+        // Se o resultado for numérico, o backend filtra por total; senão, por nome do associado.
+        const filterForm = document.getElementById('filterForm');
+        if (filterForm) {
+            filterForm.addEventListener('submit', function () {
+                const input = filterForm.querySelector('input[name="search"]');
+                if (!input || !input.value) return;
+
+                let cleaned = input.value
+                    .replace(/R\$/gi, '')
+                    .replace(/\$/g, '')
+                    .trim();
+
+                if (/^[\d.,]+$/.test(cleaned)) {
+                    if (cleaned.includes(',')) {
+                        // BR com decimais: "1.500,00" -> "1500.00"
+                        cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+                    } else if (/^\d{1,3}(\.\d{3})+$/.test(cleaned)) {
+                        // BR só com milhar, sem decimais: "1.500" -> "1500"
+                        cleaned = cleaned.replace(/\./g, '');
+                    }
+                }
+
+                input.value = cleaned;
+            });
+        }
 
     });
 </script>
