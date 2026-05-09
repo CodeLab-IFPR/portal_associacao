@@ -34,35 +34,44 @@ jobs:
       - name: rsync
         uses: Burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avzr --delete
+          switches: >-
+            -avzr --delete
+            --exclude=.env
+            --exclude=.git/
+            --exclude=/node_modules/
+            --exclude=/storage/framework/cache/*
+            --exclude=/storage/framework/sessions/*
+            --exclude=/storage/framework/views/*
+            --exclude=/storage/logs/*
+            --exclude=/storage/app/public/*
+            --exclude=/public/storage
+            --exclude=/tests/
           path: .
           remote_path: domains/amaer.com.br/public_html
           remote_host: ${{ secrets.SSH_HOST }}
           remote_port: ${{ secrets.SSH_PORT }}
           remote_user: ${{ secrets.SSH_USER }}
           remote_key: ${{ secrets.SSH_KEY }}
-          exclude: |
-            .env
-            .git/
-            /node_modules/
-            /storage/framework/cache/*
-            /storage/framework/sessions/*
-            /storage/framework/views/*
-            /storage/logs/*
-            /storage/app/public/*
-            /public/storage
-            /tests/
 
       - name: deploy
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          APP_ENV_FILE: ${{ secrets.APP_ENV_FILE }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
+          envs: APP_ENV_FILE
           script: |
             cd domains/amaer.com.br/public_html
+            if [ ! -f .env ]; then
+              echo "[deploy] .env nao encontrado, restaurando a partir do secret APP_ENV_FILE"
+              echo "$APP_ENV_FILE" > .env
+              chmod 600 .env
+            fi
             chmod -R 775 storage bootstrap/cache
+            php artisan config:clear
             php artisan migrate --force
             php artisan storage:link --force
             php artisan config:cache
