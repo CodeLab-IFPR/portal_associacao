@@ -19,7 +19,7 @@ jobs:
           extensions: mbstring, xml, bcmath, mysql, gd, zip, intl
 
       - name: instalar dependencias
-        run: composer install --no-dev --optimize-autoloader --no-interaction
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-audit
 
       - name: configurar node
         uses: actions/setup-node@v4
