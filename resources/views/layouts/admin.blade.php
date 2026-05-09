@@ -608,6 +608,14 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                             </a>
                         </li>
 
+                        <!-- Pendências (associado) -->
+                        <li class="nav-item">
+                            <a href="{{ route('pendencias.index') }}" class="nav-link {{ request()->routeIs('pendencias.*') ? 'active' : '' }}">
+                                <i class="bi bi-bell nav-icon"></i>
+                                <p>Pendências</p>
+                            </a>
+                        </li>
+
                     </ul>
                 </nav>
             </div>

@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceInstallment;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -14,23 +15,46 @@ class InvoiceController extends Controller
 {
     public function index(Request $request)
     {
+        $validated = $request->validate([
+            'status' => 'nullable|in:pendente,paga,vencida,cancelada',
+            'month'  => 'nullable|regex:/^\d{4}-(0[1-9]|1[0-2])$/',
+            'search' => 'nullable|string|max:255',
+        ]);
+
         $query = Invoice::with(['user', 'installments']);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        if (!empty($validated['status'])) {
+            $query->where('status', $validated['status']);
         }
 
-        if ($request->filled('month')) {
-            $query->whereRaw("DATE_FORMAT(first_due_date, '%Y-%m') = ?", [$request->month]);
+        if (!empty($validated['month'])) {
+            $start = Carbon::createFromFormat('Y-m-d', $validated['month'] . '-01')->startOfDay();
+            $end   = $start->copy()->endOfMonth();
+            $query->whereBetween('first_due_date', [$start, $end]);
+        }
+
+        if (!empty($validated['search'])) {
+            $search = trim($validated['search']);
+
+            if (is_numeric($search)) {
+                $query->where('total_amount', $search);
+            } else {
+                $escaped = addcslashes($search, '%_\\');
+                $query->whereHas('user', function ($q) use ($escaped) {
+                    $q->where('name', 'like', "%{$escaped}%");
+                });
+            }
         }
 
         $invoices = $query->orderBy('created_at', 'desc')
             ->paginate(15)
             ->withQueryString();
 
-        $availableMonths = Invoice::selectRaw("DISTINCT DATE_FORMAT(first_due_date, '%Y-%m') as ym")
-            ->orderByDesc('ym')
-            ->pluck('ym');
+        $availableMonths = Cache::remember('invoices.available_months', 300, function () {
+            return Invoice::selectRaw("DISTINCT DATE_FORMAT(first_due_date, '%Y-%m') as ym")
+                ->orderByDesc('ym')
+                ->pluck('ym');
+        });
 
         return view('invoices.index', compact('invoices', 'availableMonths'));
     }
@@ -74,6 +98,8 @@ class InvoiceController extends Controller
             }
 
             DB::commit();
+
+            Cache::forget('invoices.available_months');
 
             return redirect()->route('invoices.index')
                 ->with('success', 'Faturas criadas com sucesso!');
@@ -145,6 +171,8 @@ class InvoiceController extends Controller
     public function destroy(Invoice $invoice)
     {
         $invoice->delete();
+
+        Cache::forget('invoices.available_months');
 
         return redirect()->route('invoices.index')
             ->with('success', 'Fatura excluída com sucesso!');

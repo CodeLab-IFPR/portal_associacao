@@ -158,11 +158,22 @@ Fatura #{{ $invoice->id }}
                                                 {{-- Anexar boleto (PDF) --}}
                                                 <button type="button"
                                                     class="btn btn-sm btn-outline-primary btn-attach-boleto me-1"
-                                                    title="Anexar boleto (PDF)"
+                                                    title="{{ $installment->boleto_path ? 'Substituir boleto (PDF)' : 'Anexar boleto (PDF)' }}"
                                                     data-id="{{ $installment->id }}"
                                                     data-number="{{ $installment->installment_number }}">
                                                     <i class="bi bi-paperclip"></i>
                                                 </button>
+
+                                                {{-- Visualizar boleto (PDF) --}}
+                                                @if($installment->boleto_path)
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-info btn-preview-boleto me-1"
+                                                        title="Visualizar boleto"
+                                                        data-number="{{ $installment->installment_number }}"
+                                                        data-url="{{ asset('storage/' . $installment->boleto_path) }}">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                @endif
 
                                             </td>
                                         </tr>
@@ -337,6 +348,28 @@ Fatura #{{ $invoice->id }}
     </div>
 </div>
 
+{{-- ======================================================
+     Modal: Visualizar Boleto (PDF)
+     ====================================================== --}}
+<div class="modal fade" id="previewBoletoModal" tabindex="-1" aria-labelledby="previewBoletoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content" style="height: 90vh;">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="previewBoletoModalLabel">
+                    <i class="bi bi-eye me-2"></i>Boleto — Parcela <span id="preview-installment-number"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <iframe id="preview-boleto-iframe"
+                        src=""
+                        style="width: 100%; height: 100%; border: 0;"
+                        title="Pré-visualização do boleto"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // ── Editar parcela ──────────────────────────────────────
     document.querySelectorAll('.btn-edit-installment').forEach(function (btn) {
@@ -397,6 +430,24 @@ Fatura #{{ $invoice->id }}
 
             new bootstrap.Modal(document.getElementById('attachBoletoModal')).show();
         });
+    });
+
+    // ── Visualizar boleto (PDF) ────────────────────────────
+    document.querySelectorAll('.btn-preview-boleto').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var url    = this.dataset.url;
+            var number = this.dataset.number;
+
+            document.getElementById('preview-installment-number').textContent = '#' + number;
+            document.getElementById('preview-boleto-iframe').src = url;
+
+            new bootstrap.Modal(document.getElementById('previewBoletoModal')).show();
+        });
+    });
+
+    // Limpa o iframe ao fechar (libera o PDF da memória)
+    document.getElementById('previewBoletoModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('preview-boleto-iframe').src = '';
     });
 </script>
 @endsection
