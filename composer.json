@@ -69,6 +69,9 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
+        "audit": {
+            "ignore": ["PKSA-gytq-gtdp-3wb1", "PKSA-nhqw-xk85-x2jn"]
+        },
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
