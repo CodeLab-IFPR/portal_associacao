@@ -9,29 +9,29 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do código
+      - name: checkout
         uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: configurar php
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           extensions: mbstring, xml, bcmath, mysql, gd, zip, intl
 
-      - name: Install PHP Dependencies
+      - name: instalar dependencias
         run: composer install --no-dev --optimize-autoloader --no-interaction
 
-      - name: Setup Node.js
+      - name: configurar node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Build Assets
+      - name: build
         run: |
           npm install
           npm run build
 
-      - name: Deploy via Rsync
+      - name: rsync
         uses: Burnett01/rsync-deployments@7.0.1
         with:
           switches: -avzr --delete
@@ -53,7 +53,7 @@ jobs:
             /public/storage
             /tests/
 
-      - name: Finalize Deploy (SSH)
+      - name: deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
