@@ -45,6 +45,9 @@ jobs:
             --exclude=/storage/logs/*
             --exclude=/storage/app/public/*
             --exclude=/public/storage
+            --exclude=/public/imagens/
+            --exclude=/public/img/fotos/
+            --exclude=/public/uploads/
             --exclude=/tests/
           path: .
           remote_path: domains/amaer.com.br/public_html
