@@ -22,6 +22,7 @@ use App\Http\Controllers\CartaoAssociadoController;
 use App\Http\Controllers\PasswordUpdateController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PendenciaController;
 
 use App\Http\Controllers\MemberRegistrationController;
 
@@ -241,6 +242,10 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     // Anexar boleto das parcelas
     Route::patch('faturas/{invoice}/installments/{installment}/boleto', [InvoiceController::class, 'uploadBoleto'])
         ->name('invoices.installments.boleto');
+
+    // Pendências do associado logado
+    Route::get('/pendencias', [PendenciaController::class, 'index'])->name('pendencias.index');
+    Route::get('/pendencias/load-more', [PendenciaController::class, 'loadMore'])->name('pendencias.loadMore');
 });
 
 // Rotas públicas para validação de cartão
