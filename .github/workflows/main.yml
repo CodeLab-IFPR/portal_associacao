@@ -1,0 +1,70 @@
+name: deploy da branch main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: configurar php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, bcmath, mysql, gd, zip, intl
+
+      - name: instalar dependencias
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: configurar node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: build
+        run: |
+          npm install
+          npm run build
+
+      - name: rsync
+        uses: Burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+          path: .
+          remote_path: domains/amaer.com.br/public_html
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_KEY }}
+          exclude: |
+            .env
+            .git/
+            /node_modules/
+            /storage/framework/cache/*
+            /storage/framework/sessions/*
+            /storage/framework/views/*
+            /storage/logs/*
+            /storage/app/public/*
+            /public/storage
+            /tests/
+
+      - name: deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd domains/amaer.com.br/public_html
+            chmod -R 775 storage bootstrap/cache
+            php artisan migrate --force
+            php artisan storage:link --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
