@@ -47,9 +47,9 @@ class GaleriaController extends Controller implements HasMiddleware
         $anos = Galeria::selectRaw('YEAR(created_at) as ano')
             ->distinct()->orderBy('ano', 'desc')->pluck('ano');
 
-        $midias = Galeria::whereYear('created_at', $ano)->latest()->paginate(12);
+        $galerias = Galeria::whereYear('created_at', $ano)->latest()->paginate(12);
 
-        return view('galeria.index', compact('midias', 'anos', 'ano'));
+        return view('galeria.index', compact('galerias', 'anos', 'ano'));
     }
 
     public function create()
