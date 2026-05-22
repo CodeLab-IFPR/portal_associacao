@@ -15,7 +15,7 @@ Galeria
         </div>
     @endhasrole
 
-    @if($anos->isNotEmpty())
+    @if(!empty($anos) && $anos->isNotEmpty())
         <div class="d-flex justify-content-center mb-4">
             <div class="input-group" style="max-width: 200px; border-radius: 10px; overflow: hidden;">
                 <label class="input-group-text" for="anoSelect" style="border-radius: 10px 0 0 10px;">Ano</label>
@@ -33,8 +33,12 @@ Galeria
         </div>
     @endif
 
-    @if($galerias->isEmpty())
-        <p class="text-center">Não há mídias disponíveis no momento.</p>
+    @if(empty($galerias) || $galerias->isEmpty())
+        @if(!empty($ano))
+            <p class="text-center">Não encontramos mídias para o ano de {{ $ano }}. Que tal experimentar outro período?</p>
+        @else
+            <p class="text-center">Não há mídias disponíveis no momento.</p>
+        @endif
     @else
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
             @foreach($galerias as $galeria)

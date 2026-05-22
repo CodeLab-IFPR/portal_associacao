@@ -282,7 +282,7 @@ Sobre a AMAER
                     <div class="bg-white p-6 rounded-4 shadow">
                         <h4 class="fw-bold mb-4">Faça Parte da AMAER</h4>
                         <p class="text-muted mb-4">Junte-se a uma comunidade apaixonada por modelismo e descubra um mundo de possibilidades técnicas e recreativas.</p>
-                        <a href="{{ route('submission') }}" class="btn btn-primary btn-lg px-4">
+                        <a href="{{ route('register') }}" class="btn btn-primary btn-lg px-4">
                             <i class="ri-user-add-line me-2"></i>Quero me Associar
                         </a>
                         <p class="text-muted small mt-3 mb-0">Processo simples e rápido de associação</p>
