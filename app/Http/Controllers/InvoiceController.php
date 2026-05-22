@@ -20,7 +20,7 @@ class InvoiceController extends Controller implements HasMiddleware
         return [
             'auth',
             'verified',
-            new Middleware('role:admin|Admin'),
+            new Middleware('role:admin|Admin', except: ['index', 'show']),
         ];
     }
 
@@ -32,7 +32,14 @@ class InvoiceController extends Controller implements HasMiddleware
             'search' => 'nullable|string|max:255',
         ]);
 
+        $user    = $request->user();
+        $isAdmin = $user->hasRole('admin') || $user->hasRole('Admin');
+
         $query = Invoice::with(['user', 'installments']);
+
+        if (!$isAdmin) {
+            $query->where('user_id', $user->id);
+        }
 
         if (!empty($validated['status'])) {
             $query->where('status', $validated['status']);
@@ -44,7 +51,7 @@ class InvoiceController extends Controller implements HasMiddleware
             $query->whereBetween('first_due_date', [$start, $end]);
         }
 
-        if (!empty($validated['search'])) {
+        if ($isAdmin && !empty($validated['search'])) {
             $search = trim($validated['search']);
 
             if (is_numeric($search)) {
@@ -153,8 +160,15 @@ class InvoiceController extends Controller implements HasMiddleware
         };
     }
 
-    public function show(Invoice $invoice)
+    public function show(Request $request, Invoice $invoice)
     {
+        $user    = $request->user();
+        $isAdmin = $user->hasRole('admin') || $user->hasRole('Admin');
+
+        if (!$isAdmin && $invoice->user_id !== $user->id) {
+            abort(403);
+        }
+
         $invoice->load(['user', 'installments']);
 
         return view('invoices.show', compact('invoice'));

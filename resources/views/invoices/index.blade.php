@@ -14,6 +14,7 @@ Faturas
             'label' => $mesesAbrev[(int)$month] . '/' . substr($year, -2),
         ];
     });
+    $isAdmin = auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin');
 @endphp
 <div class="app-content-header">
     <div class="container-fluid">
@@ -49,10 +50,15 @@ Faturas
         @endif
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="{{ route('invoices.create') }}" class="btn btn-outline-primary">
-                <i class="bi bi-plus-lg me-1"></i>Nova Fatura
-            </a>
+            @if($isAdmin)
+                <a href="{{ route('invoices.create') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Nova Fatura
+                </a>
+            @else
+                <span></span>
+            @endif
             <form id="filterForm" method="GET" action="{{ route('invoices.index') }}" class="d-flex align-items-center gap-3 flex-wrap">
+                @if($isAdmin)
                 <div class="d-flex align-items-center">
                     <label for="searchFilter" class="form-label mb-0 me-2 text-nowrap">Buscar:</label>
                     <input type="text" id="searchFilter" name="search" class="form-control"
@@ -60,6 +66,7 @@ Faturas
                            placeholder="Associado ou valor (R$)"
                            style="min-width: 220px;">
                 </div>
+                @endif
                 <div class="d-flex align-items-center">
                     <label for="monthFilter" class="form-label mb-0 me-2 text-nowrap">Mês:</label>
                     <select id="monthFilter" name="month" class="form-select">
@@ -100,7 +107,9 @@ Faturas
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Associado</th>
+                                @if($isAdmin)
+                                    <th scope="col">Associado</th>
+                                @endif
                                 <th scope="col">Total</th>
                                 <th scope="col">Parcelas</th>
                                 <th scope="col">Periodicidade</th>
@@ -113,7 +122,9 @@ Faturas
                             @forelse ($invoices as $invoice)
                                 <tr>
                                     <td>{{ $invoice->id }}</td>
-                                    <td>{{ $invoice->user->name }}</td>
+                                    @if($isAdmin)
+                                        <td>{{ $invoice->user->name }}</td>
+                                    @endif
                                     <td>R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}</td>
                                     <td>{{ $invoice->installments_count }}x</td>
                                     <td>{{ ucfirst($invoice->periodicity) }}</td>
@@ -137,29 +148,31 @@ Faturas
                                                title="Visualizar">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="{{ route('invoices.edit', $invoice->id) }}"
-                                               class="action-icon text-warning"
-                                               data-bs-toggle="tooltip"
-                                               data-bs-placement="top"
-                                               title="Editar">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
-                                            <button type="button"
-                                                class="action-icon text-danger btn-delete bg-transparent"
-                                                data-id="{{ $invoice->id }}"
-                                                data-nome="{{ $invoice->user->name }}"
-                                                data-total="R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="top"
-                                                title="Excluir">
-                                                <i class="bi bi-x-circle-fill me-1"></i>
-                                            </button>
+                                            @if($isAdmin)
+                                                <a href="{{ route('invoices.edit', $invoice->id) }}"
+                                                   class="action-icon text-warning"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-placement="top"
+                                                   title="Editar">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                                <button type="button"
+                                                    class="action-icon text-danger btn-delete bg-transparent"
+                                                    data-id="{{ $invoice->id }}"
+                                                    data-nome="{{ $invoice->user->name }}"
+                                                    data-total="R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="Excluir">
+                                                    <i class="bi bi-x-circle-fill me-1"></i>
+                                                </button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-4">
+                                    <td colspan="{{ $isAdmin ? 8 : 7 }}" class="text-center py-4">
                                         @if(request('month') || request('status') || request('search'))
                                             Nenhuma fatura encontrada para os filtros selecionados.
                                         @else

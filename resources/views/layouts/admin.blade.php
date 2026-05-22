@@ -600,15 +600,13 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                             </a>
                         </li>
 
-                        <!-- Faturas (apenas Admin) -->
-                        @if(auth()->user()->hasRole('Admin'))
+                        <!-- Faturas -->
                         <li class="nav-item">
                             <a href="{{ route('invoices.index') }}" class="nav-link {{ request()->routeIs('invoices.*') ? 'active' : '' }}">
                                 <i class="bi bi-currency-dollar nav-icon"></i>
                                 <p>Faturas</p>
                             </a>
                         </li>
-                        @endif
 
                         <!-- Pendências (associado) -->
                         <li class="nav-item">
