@@ -20,6 +20,7 @@ export default defineConfig({
                 'resources/js/adminlte.js',
                 'resources/js/menu.js',
                 'resources/js/utils/viacep.js',
+                'resources/js/utils/masks.js',
                 // 'resources/fonts*',
             ],
             refresh: true,

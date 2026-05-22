@@ -10,9 +10,20 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class InvoiceController extends Controller
+class InvoiceController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            'auth',
+            'verified',
+            new Middleware('role:admin|Admin', except: ['index', 'show']),
+        ];
+    }
+
     public function index(Request $request)
     {
         $validated = $request->validate([
@@ -21,7 +32,14 @@ class InvoiceController extends Controller
             'search' => 'nullable|string|max:255',
         ]);
 
+        $user    = $request->user();
+        $isAdmin = $user->hasRole('admin') || $user->hasRole('Admin');
+
         $query = Invoice::with(['user', 'installments']);
+
+        if (!$isAdmin) {
+            $query->where('user_id', $user->id);
+        }
 
         if (!empty($validated['status'])) {
             $query->where('status', $validated['status']);
@@ -33,7 +51,7 @@ class InvoiceController extends Controller
             $query->whereBetween('first_due_date', [$start, $end]);
         }
 
-        if (!empty($validated['search'])) {
+        if ($isAdmin && !empty($validated['search'])) {
             $search = trim($validated['search']);
 
             if (is_numeric($search)) {
@@ -142,8 +160,15 @@ class InvoiceController extends Controller
         };
     }
 
-    public function show(Invoice $invoice)
+    public function show(Request $request, Invoice $invoice)
     {
+        $user    = $request->user();
+        $isAdmin = $user->hasRole('admin') || $user->hasRole('Admin');
+
+        if (!$isAdmin && $invoice->user_id !== $user->id) {
+            abort(403);
+        }
+
         $invoice->load(['user', 'installments']);
 
         return view('invoices.show', compact('invoice'));
