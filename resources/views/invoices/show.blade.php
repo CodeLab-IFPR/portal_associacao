@@ -5,6 +5,9 @@ Fatura #{{ $invoice->id }}
 @endsection
 
 @section('content')
+@php
+    $isAdmin = auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin');
+@endphp
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
@@ -132,37 +135,39 @@ Fatura #{{ $invoice->id }}
                                                     : '—' }}
                                             </td>
                                             <td class="text-center">
-                                                {{-- Editar parcela --}}
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-warning btn-edit-installment me-1"
-                                                    title="Editar parcela"
-                                                    data-id="{{ $installment->id }}"
-                                                    data-number="{{ $installment->installment_number }}"
-                                                    data-amount="{{ $installment->amount }}"
-                                                    data-due-date="{{ \Carbon\Carbon::parse($installment->due_date)->format('Y-m-d') }}"
-                                                    data-payment-date="{{ $installment->payment_date ? \Carbon\Carbon::parse($installment->payment_date)->format('Y-m-d') : '' }}"
-                                                    data-status="{{ $installment->status }}"
-                                                    data-installments-count="{{ $invoice->installments_count }}">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </button>
-                                                {{-- Excluir parcela --}}
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-danger btn-delete-installment"
-                                                    title="Excluir parcela"
-                                                    data-id="{{ $installment->id }}"
-                                                    data-number="{{ $installment->installment_number }}">
-                                                    <i class="bi bi-x-circle-fill me-1"></i>
-                                                </button>
+                                                @if($isAdmin)
+                                                    {{-- Editar parcela --}}
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-warning btn-edit-installment me-1"
+                                                        title="Editar parcela"
+                                                        data-id="{{ $installment->id }}"
+                                                        data-number="{{ $installment->installment_number }}"
+                                                        data-amount="{{ $installment->amount }}"
+                                                        data-due-date="{{ \Carbon\Carbon::parse($installment->due_date)->format('Y-m-d') }}"
+                                                        data-payment-date="{{ $installment->payment_date ? \Carbon\Carbon::parse($installment->payment_date)->format('Y-m-d') : '' }}"
+                                                        data-status="{{ $installment->status }}"
+                                                        data-installments-count="{{ $invoice->installments_count }}">
+                                                        <i class="bi bi-pencil-square"></i>
+                                                    </button>
+                                                    {{-- Excluir parcela --}}
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-danger btn-delete-installment"
+                                                        title="Excluir parcela"
+                                                        data-id="{{ $installment->id }}"
+                                                        data-number="{{ $installment->installment_number }}">
+                                                        <i class="bi bi-x-circle-fill me-1"></i>
+                                                    </button>
 
-                                                
-                                                {{-- Anexar boleto (PDF) --}}
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-primary btn-attach-boleto me-1"
-                                                    title="{{ $installment->boleto_path ? 'Substituir boleto (PDF)' : 'Anexar boleto (PDF)' }}"
-                                                    data-id="{{ $installment->id }}"
-                                                    data-number="{{ $installment->installment_number }}">
-                                                    <i class="bi bi-paperclip"></i>
-                                                </button>
+
+                                                    {{-- Anexar boleto (PDF) --}}
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-primary btn-attach-boleto me-1"
+                                                        title="{{ $installment->boleto_path ? 'Substituir boleto (PDF)' : 'Anexar boleto (PDF)' }}"
+                                                        data-id="{{ $installment->id }}"
+                                                        data-number="{{ $installment->installment_number }}">
+                                                        <i class="bi bi-paperclip"></i>
+                                                    </button>
+                                                @endif
 
                                                 {{-- Visualizar boleto (PDF) --}}
                                                 @if($installment->boleto_path)
@@ -193,9 +198,11 @@ Fatura #{{ $invoice->id }}
                     <a href="{{ route('invoices.index') }}" class="btn btn-outline-danger">
                         <i class="bi bi-arrow-left me-1"></i>Voltar
                     </a>
-                    <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-outline-warning">
-                        <i class="bi bi-pencil-square me-1"></i>Editar Fatura
-                    </a>
+                    @if($isAdmin)
+                        <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-outline-warning">
+                            <i class="bi bi-pencil-square me-1"></i>Editar Fatura
+                        </a>
+                    @endif
                 </div>
 
             </div>
