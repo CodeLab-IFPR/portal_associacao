@@ -10,9 +10,20 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class InvoiceController extends Controller
+class InvoiceController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            'auth',
+            'verified',
+            new Middleware('role:admin|Admin'),
+        ];
+    }
+
     public function index(Request $request)
     {
         $validated = $request->validate([
