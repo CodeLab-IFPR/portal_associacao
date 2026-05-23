@@ -7,38 +7,122 @@
     <title>Esqueceu a Senha?</title>
     @vite('resources/css/libs.bundle.css')    
     @vite('resources/css/theme.bundle.css') 
-    @vite('resources/css/styleLogin.css')    
+    @vite('resources/css/styleLogin.css')
+    @vite('resources/css/forgot-password.css')
 </head>
 <body>
-<div class="container d-flex justify-content-center align-items-center min-vh-90">
-    <div class="card p-4" style="max-width: 100%; width: 100%;">
-        <h1 class="text-center display-4">Esqueceu a Senha?</h1>
-        <hr>
-        <div class="mb-4 text-sm">
-            {{ __('Esqueceu sua senha? Não tem problema. Apenas nos informe seu endereço de e-mail e enviaremos um link de redefinição de senha que permitirá que você escolha uma nova.') }}
+
+<div class="recover-shell">
+
+    {{-- ── Coluna esquerda (imagem + brand) ── --}}
+    <section class="recover-left" aria-hidden="true">
+        <div class="recover-left-overlay"></div>
+        <div class="recover-left-content"></div>
+    </section>
+
+    {{-- ── Coluna direita (formulário) ── --}}
+    <section class="recover-right">
+        <div class="recover-right-inner">
+
+            <div class="recover-card">
+
+                {{-- Ícone envelope + cadeado --}}
+                <div class="card-icon-wrap" aria-hidden="true">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="M2 7l10 7 10-7"/>
+                        <circle cx="17" cy="13" r="3" stroke="#1a73e8" stroke-width="1.4"/>
+                        <path d="M17 15v1" stroke="#1a73e8" stroke-width="1.4"/>
+                    </svg>
+                </div>
+
+                <h1 class="card-title">Recuperar senha</h1>
+                <div class="card-title-bar"></div>
+
+                <p class="card-description">
+                    Informe seu e-mail cadastrado que enviaremos um<br>link de redefinição de senha para você.
+                </p>
+
+                <form method="POST" action="{{ route('password.email') }}">
+                    @csrf
+
+                    {{-- Campo e-mail --}}
+                    <div class="mb-3" style="margin-bottom:1rem;">
+                        <label for="email" class="form-label">E-mail</label>
+                        <div class="input-group @error('email') is-invalid-group @enderror">
+                            <span class="input-group-text">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b7a90" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+                                    <path d="M22 6l-10 7L2 6"/>
+                                </svg>
+                            </span>
+                            <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                class="form-control @error('email') is-invalid @enderror"
+                                placeholder="Digite seu e-mail"
+                                value="{{ old('email') }}"
+                                required
+                                autofocus
+                                autocomplete="username"
+                            >
+                        </div>
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Botão enviar --}}
+                    <button type="submit" class="btn-primary-custom">
+                        Enviar link de redefinição
+                    </button>
+
+                    {{-- Divisor --}}
+                    <div class="divider-or">ou</div>
+
+                    {{-- Voltar ao site --}}
+                    <a href="{{ route('home') }}" class="btn-outline-custom">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        Voltar ao site
+                    </a>
+
+                    {{-- Mensagem de sucesso --}}
+                    @if (session('status'))
+                        <div class="alert-success-custom" role="status" aria-live="polite">
+                            <span class="alert-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M9 12l2 2 4-4"/>
+                                </svg>
+                            </span>
+                            <div>
+                                <p class="alert-title">Link enviado com sucesso!</p>
+                                <p class="alert-body">Enviaremos um link de redefinição para seu e-mail em alguns minutos.</p>
+                            </div>
+                        </div>
+                    @endif
+
+                </form>
+            </div>
+
+            {{-- Rodapé --}}
+            <div class="recover-footer">
+                <p>
+                    Lembrou sua senha?
+                    <a href="{{ route('login') }}">Faça login</a>
+                </p>
+                <p>© 2024 AMAER - Todos os direitos reservados.</p>
+            </div>
+
         </div>
+    </section>
 
-        <!-- Session Status -->
-        <x-auth-session-status class="mb-4" :status="session('status')" />
-
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
-
-            <!-- Email Address -->
-            <div class="mb-3">
-                <x-input-label for="email" :value="__('E-mail')" />
-                <x-text-input id="email" class="form-control" type="email" name="email" :value="old('email')" required autofocus />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            </div>
-
-            <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-outline-primary">
-                    {{ __('Enviar Link de Redefinição') }}
-                </button>
-            </div>
-        </form>
-    </div>
 </div>
+
     @vite('resources/js/vendor.bundle.js')
     @vite('resources/js/theme.bundle.js')
 </body>
