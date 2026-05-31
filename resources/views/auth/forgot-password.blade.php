@@ -26,13 +26,11 @@
 
             <div class="recover-card">
 
-                {{-- Ícone envelope + cadeado --}}
+                {{-- Ícone envelope --}}
                 <div class="card-icon-wrap" aria-hidden="true">
                     <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <rect x="2" y="5" width="20" height="14" rx="2"/>
                         <path d="M2 7l10 7 10-7"/>
-                        <circle cx="17" cy="13" r="3" stroke="#1a73e8" stroke-width="1.4"/>
-                        <path d="M17 15v1" stroke="#1a73e8" stroke-width="1.4"/>
                     </svg>
                 </div>
 
