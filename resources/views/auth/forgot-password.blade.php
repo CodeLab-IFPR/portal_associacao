@@ -88,6 +88,23 @@
                         Voltar ao site
                     </a>
 
+                    {{-- Mensagem de erro geral (abaixo do botao Voltar ao site) --}}
+                    @if ($errors->any())
+                        <div class="alert-error-custom" role="alert" aria-live="polite">
+                            <span class="alert-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 8v4"/>
+                                    <path d="M12 16h.01"/>
+                                </svg>
+                            </span>
+                            <div>
+                                <span class="alert-title">Não foi possível enviar o link</span>
+                                <p class="alert-body">{{ $errors->first() }}</p>
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- Mensagem de sucesso --}}
                     @if (session('status'))
                         <div class="alert-success-custom" role="status" aria-live="polite">
