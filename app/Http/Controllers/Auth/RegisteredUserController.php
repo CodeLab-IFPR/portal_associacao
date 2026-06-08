@@ -60,6 +60,7 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'cpf' => 'required|unique:users,cpf',
             'rg' => 'nullable|string|max:20',
             'cargo_id' => 'nullable|exists:cargos,id',
+            'escolaridade' => 'nullable|in:Ensino Fundamental,Ensino Médio,Ensino Superior,Pós-graduação,Mestrado,Doutorado',
             
             // Contato
             'telefone_celular' => 'nullable|string|max:20',
@@ -147,7 +148,7 @@ class RegisteredUserController extends Controller implements HasMiddleware
     }
 
     public function edit(User $user): View
-    {   
+    {
         $user = User::findOrFail($user->id);
         $roles = Role::orderBy('name', 'ASC')->get();
         $tem_roles = $user->roles->pluck('id');
@@ -167,6 +168,7 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'cpf' => 'required|unique:users,cpf,' . $user->id,
             'rg' => 'nullable|string|max:20',
             'cargo_id' => 'nullable|exists:cargos,id',
+            'escolaridade' => 'nullable|in:Ensino Fundamental,Ensino Médio,Ensino Superior,Pós-graduação,Mestrado,Doutorado',
             
             // Contato
             'telefone_celular' => 'nullable|string|max:20',
