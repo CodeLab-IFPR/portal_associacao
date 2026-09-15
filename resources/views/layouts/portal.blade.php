@@ -83,6 +83,18 @@
             transition: all 0.3s ease;
         }
 
+        footer {
+            width: 100%;
+        }
+
+        footer .container {
+            width: 90%;
+            max-width: 90%;
+            margin: 0 auto;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
         footer .footer-nav li a:hover {
             padding-left: 0.5rem;
             transition: all 0.3s ease;
@@ -198,12 +210,13 @@
 <footer class="bg-dark py-8">
     <div class="container">
         <!-- Seção principal do footer -->
-        <div class="row g-4 mb-6">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-6">
             <!-- Logo e descrição -->
-            <div class="col-lg-4 col-md-6">
-                <div class="d-flex align-items-center mb-4">
+            <div class="col text-center">
+                <div class="d-flex align-items-center justify-content-center mb-4">
                     <span class="f-w-7 d-block text-success me-3">
-                        <img class="img-fluid d-table mx-auto bg-white rounded-2 p-1" src="{{ asset('img/amaer-ico.png') }}" alt="AMAER Logo">
+                        <img class="img-fluid bg-white rounded-2 p-1"src="{{ asset('img/amaer-ico.png') }}"
+                             alt="AMAER Logo">
                     </span>
                     <div>
                         <h5 class="text-white fw-bold mb-1">AMAER</h5>
@@ -211,55 +224,58 @@
                     </div>
                 </div>
                 <p class="text-white-50 mb-4">Promovendo o aeromodelismo e automodelismo em Paranavaí - PR com segurança, educação e diversão para toda a família.</p>
-                <div class="d-flex gap-3">
-                    <a href="#" class="text-white-50 hover-text-primary transition-all">
-                        <i class="ri-facebook-fill fs-5"></i>
-                    </a>
-                    <a href="#" class="text-white-50 hover-text-primary transition-all">
-                        <i class="ri-instagram-line fs-5"></i>
-                    </a>
-                    <a href="#" class="text-white-50 hover-text-primary transition-all">
-                        <i class="ri-youtube-line fs-5"></i>
-                    </a>
-                    <a href="#" class="text-white-50 hover-text-primary transition-all">
-                        <i class="ri-mail-line fs-5"></i>
-                    </a>
-                </div>
             </div>
 
             <!-- Links rápidos -->
-            <div class="col-lg-2 col-md-3 col-sm-6">
+            <div class="col text-center">
                 <h6 class="text-white fw-bold mb-4">Portal</h6>
                 <ul class="list-unstyled footer-nav">
-                    <li class="mb-2"><a href="{{ route('about') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Sobre Nós</a></li>
-                    <li class="mb-2"><a href="{{ route('member.register.form') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Seja Membro</a></li>
-                    <li class="mb-2"><a href="{{ route('noticias.cards') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Notícias</a></li>
+                    <li class="mb-2"><a href="{{ route('about') }}"
+                           class="text-white-50 text-decoration-none hover-text-white transition-all">Sobre Nós</a></li><li class="mb-2"><a href="{{ route('member.register.form') }}"class="text-white-50 text-decoration-none hover-text-white transition-all">Seja Membro</a></li>
+                    <li class="mb-2"><a href="{{ route('noticias.cards') }}"class="text-white-50 text-decoration-none hover-text-white transition-all">Notícias</a></li>
                     <li class="mb-2"><a href="{{ route('galeria.indexPublic') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Galeria</a></li>
                 </ul>
             </div>
 
             <!-- Navegação -->
-            <div class="col-lg-2 col-md-3 col-sm-6">
+            <div class="col text-center">
                 <h6 class="text-white fw-bold mb-4">Navegação</h6>
                 <ul class="list-unstyled footer-nav">
-                    <li class="mb-2"><a href="{{ route('home') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Home</a></li>
-                    <li class="mb-2"><a href="{{ route('contact') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Contato</a></li>
-                    <li class="mb-2"><a href="{{ route('admin') }}" class="text-white-50 text-decoration-none hover-text-white transition-all">Área do Associado</a></li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-text-white transition-all">Projetos</a></li>
+                    <li class="mb-2"><a href="{{ route('home') }}"class="text-white-50 text-decoration-none hover-text-white transition-all">Home</a></li>
+                    <li class="mb-2"><a href="{{ route('contact') }}"class="text-white-50 text-decoration-none hover-text-white transition-all">Contato</a></li>
+                    <li class="mb-2"><a href="{{ route('admin') }}"
+                           class="text-white-50 text-decoration-none hover-text-white transition-all">
+                            Área do Associado
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#"
+                           class="text-white-50 text-decoration-none hover-text-white transition-all">
+                            Projetos
+                        </a>
+                    </li>
                 </ul>
             </div>
 
             <!-- Contato e informações -->
-            <div class="col-lg-4 col-md-6">
-                <h6 class="text-white fw-bold mb-4">Contato & Localização</h6>
+            <div class="col text-center">
+                <h6 class="text-white fw-bold mb-4">
+                    Contato & Localização
+                </h6>
                 <div class="mb-3">
-                    <div class="d-flex align-items-start mb-2">
+                    <div class="d-flex align-items-start justify-content-center mb-2">
                         <i class="ri-map-pin-line text-primary me-2 mt-1"></i>
-                        <span class="text-white-50 small">Maringá - PR<br>Brasil</span>
+                        <span class="text-white-50 small">
+                            Maringá - PR<br>
+                            Brasil
+                        </span>
                     </div>
-                    <div class="d-flex align-items-center mb-2">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
                         <i class="ri-mail-line text-primary me-2"></i>
-                        <a href="mailto:contato@amaer.com.br" class="text-white-50 text-decoration-none hover-text-white transition-all small">contato@amaer.com.br</a>
+                        <a href="mailto:contato@amaer.com.br"
+                           class="text-white-50 text-decoration-none hover-text-white transition-all small">
+                            contato@amaer.com.br
+                        </a>
                     </div>
                     <div class="d-flex align-items-center mb-3">
                         <i class="ri-phone-line text-primary me-2"></i>
@@ -267,21 +283,6 @@
                     </div>
                 </div>
 
-                <h6 class="text-white fw-bold mb-3 mt-4">Horário de Funcionamento</h6>
-                <div class="text-white-50 small">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span>Sábados:</span>
-                        <span>08:00 - 17:00</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-1">
-                        <span>Domingos:</span>
-                        <span>08:00 - 16:00</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Segunda - Sexta:</span>
-                        <span>Consultar</span>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -290,16 +291,31 @@
             <div class="col-12">
                 <div class="border-top border-white-10 pt-4">
                     <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <h6 class="text-white fw-bold mb-3">Links Legais</h6>
-                            <div class="d-flex flex-wrap gap-3">
-                                <a href="#" class="text-white-50 text-decoration-none hover-text-white transition-all small">Política de Privacidade</a>
-                                <a href="#" class="text-white-50 text-decoration-none hover-text-white transition-all small">Termos & Condições</a>
-                                <a href="#" class="text-white-50 text-decoration-none hover-text-white transition-all small">LGPD</a>
-                                <a href="https://ifpr.edu.br/paranavai/" target="_blank" class="text-white-50 text-decoration-none hover-text-white transition-all small">IFPR Paranavaí</a>
+                        <div class="col-md-6 text-center">
+                            <h6 class="text-white fw-bold mb-3">
+                                Links Legais
+                            </h6>
+                            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                                <a href="#"
+                                   class="text-white-50 text-decoration-none hover-text-white transition-all small">
+                                    Política de Privacidade
+                                </a>
+                                <a href="#"
+                                   class="text-white-50 text-decoration-none hover-text-white transition-all small">
+                                    Termos & Condições
+                                </a>
+                                <a href="#"
+                                   class="text-white-50 text-decoration-none hover-text-white transition-all small">
+                                    LGPD
+                                </a>
+                                <a href="https://ifpr.edu.br/paranavai/"
+                                   target="_blank"
+                                   class="text-white-50 text-decoration-none hover-text-white transition-all small">
+                                    IFPR Paranavaí
+                                </a>
                             </div>
                         </div>
-                        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                        <div class="col-md-6 text-center mt-3 mt-md-0">
                             <div class="text-white-50 small">
                                 <div><a href="https://codelabifpr.com.br" target="_blank" class="text-white-50 text-decoration-none hover-text-white transition-all ">Desenvolvido com ❤️ pelo CodeLab IFPR</a></div>
                                 <div class="mt-1">Todos os direitos reservados © AMAER 2024</div>
@@ -321,7 +337,7 @@
                         data-bs-dismiss="modal" aria-label="Close"><i class="ri-close-fill"></i></button>
                     <div id="player" class="modal-video-player plyr__video-embed">
                         <iframe src="" allowfullscreen allowtransparency allow="autoplay"></iframe>
-                    </div>
+                                        </div>
                 </div>
             </div>
         </div>
