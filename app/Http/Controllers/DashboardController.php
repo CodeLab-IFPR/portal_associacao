@@ -2,80 +2,78 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use App\Models\Ata;
+use App\Models\Documento;
+use App\Models\Invoice;
+use App\Models\Noticias;
+use App\Models\User;
 
 class DashboardController extends Controller  {
 
     public function index()
     {
-        $activities = DB::select("
-            (
-                SELECT
-                    'USUARIO' AS tipo,
-                    CONCAT('Novo usuário cadastrado: ', u.name) AS descricao,
-                    u.created_at AS data
-                FROM users u
-            )
+        $usuarios = User::select('id', 'name', 'created_at')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn ($u) => (object) [
+                'tipo'      => 'USUARIO',
+                'descricao' => "Novo usuário cadastrado: {$u->name}",
+                'data'      => $u->created_at,
+            ]);
 
-            UNION ALL
+        $atas = Ata::select('id', 'titulo', 'created_at')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn ($a) => (object) [
+                'tipo'      => 'ATA',
+                'descricao' => "Nova ATA criada: {$a->titulo}",
+                'data'      => $a->created_at,
+            ]);
 
-            (
-                SELECT
-                    'ATA' AS tipo,
-                    CONCAT('Nova ATA criada: ', a.titulo) AS descricao,
-                    a.created_at AS data
-                FROM atas a
-            )
+        $documentos = Documento::with('user:id,name')
+            ->select('id', 'user_id', 'tipo_documento', 'nome_original', 'created_at')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn ($d) => (object) [
+                'tipo'      => 'DOCUMENTO',
+                'descricao' => 'Documento enviado por ' . optional($d->user)->name
+                    . ': ' . ($d->tipo_documento ?? $d->nome_original),
+                'data'      => $d->created_at,
+            ]);
 
-            UNION ALL
+        $faturas = Invoice::with('user:id,name')
+            ->select('id', 'user_id', 'total_amount', 'created_at')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn ($i) => (object) [
+                'tipo'      => 'FATURA',
+                'descricao' => 'Cobrança criada para ' . optional($i->user)->name
+                    . ' - R$ ' . number_format($i->total_amount, 2),
+                'data'      => $i->created_at,
+            ]);
 
-            (
-                SELECT
-                    'DOCUMENTO' AS tipo,
-                    CONCAT(
-                        'Documento enviado por ',
-                        u.name,
-                        ': ',
-                        COALESCE(d.tipo_documento, d.nome_original)
-                    ) AS descricao,
-                    d.created_at AS data
-                FROM documentos d
-                INNER JOIN users u ON u.id = d.user_id
-            )
+        $noticias = Noticias::select('id', 'titulo', 'created_at')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn ($n) => (object) [
+                'tipo'      => 'NOTICIA',
+                'descricao' => "Nova notícia publicada: {$n->titulo}",
+                'data'      => $n->created_at,
+            ]);
 
-            UNION ALL
-
-            (
-                SELECT
-                    'FATURA' AS tipo,
-                    CONCAT(
-                        'Cobrança criada para ',
-                        u.name,
-                        ' - R$ ',
-                        FORMAT(i.total_amount, 2)
-                    ) AS descricao,
-                    i.created_at AS data
-                FROM invoices i
-                INNER JOIN users u ON u.id = i.user_id
-            )
-
-            UNION ALL
-
-            (
-                SELECT
-                    'NOTICIA' AS tipo,
-                    CONCAT(
-                        'Nova notícia publicada: ',
-                        n.titulo
-                    ) AS descricao,
-                    n.created_at AS data
-                FROM noticias n
-            )
-
-            ORDER BY data DESC
-            LIMIT 5
-        ");
+        $activities = $usuarios
+            ->merge($atas)
+            ->merge($documentos)
+            ->merge($faturas)
+            ->merge($noticias)
+            ->sortByDesc('data')
+            ->take(5)
+            ->values();
 
         $icons = [
             'USUARIO' => [
@@ -101,8 +99,6 @@ class DashboardController extends Controller  {
         ];
 
         foreach ($activities as $activity) {
-
-            $activity->data = Carbon::parse($activity->data);
 
             $activity->icon = $icons[$activity->tipo]['icon']
                 ?? 'fas fa-circle';
@@ -137,30 +133,31 @@ class DashboardController extends Controller  {
 
             $labelsMeses = $meses->pluck('label')->values()->toArray();
 
-            $pagas = $meses->map(function ($m) {
-                return \App\Models\Invoice::where('status', 'paga')
-                    ->whereMonth('updated_at', $m['mes'])
-                    ->whereYear('updated_at', $m['ano'])
+            $invoices = Invoice::select('status', 'total_amount', 'first_due_date', 'updated_at')->get();
+
+            $porStatus = $invoices->groupBy('status');
+
+            $pagas = $meses->map(function ($m) use ($porStatus) {
+                return $porStatus->get('paga', collect())
+                    ->filter(fn ($invoice) => $invoice->updated_at->month === $m['mes'] && $invoice->updated_at->year === $m['ano'])
                     ->sum('total_amount');
             })->values()->toArray();
 
-            $pendentes = $meses->map(function ($m) {
-                return \App\Models\Invoice::where('status', 'pendente')
-                    ->whereMonth('first_due_date', $m['mes'])
-                    ->whereYear('first_due_date', $m['ano'])
+            $pendentes = $meses->map(function ($m) use ($porStatus) {
+                return $porStatus->get('pendente', collect())
+                    ->filter(fn ($invoice) => $invoice->first_due_date->month === $m['mes'] && $invoice->first_due_date->year === $m['ano'])
                     ->sum('total_amount');
             })->values()->toArray();
 
-            $vencidas = $meses->map(function ($m) {
-                return \App\Models\Invoice::where('status', 'vencida')
-                    ->whereMonth('first_due_date', $m['mes'])
-                    ->whereYear('first_due_date', $m['ano'])
+            $vencidas = $meses->map(function ($m) use ($porStatus) {
+                return $porStatus->get('vencida', collect())
+                    ->filter(fn ($invoice) => $invoice->first_due_date->month === $m['mes'] && $invoice->first_due_date->year === $m['ano'])
                     ->sum('total_amount');
             })->values()->toArray();
 
-            $totalVencida  = \App\Models\Invoice::where('status', 'vencida')->sum('total_amount');
-            $totalPendente = \App\Models\Invoice::where('status', 'pendente')->sum('total_amount');
-            $totalPaga     = \App\Models\Invoice::where('status', 'paga')->sum('total_amount');
+            $totalVencida  = $porStatus->get('vencida', collect())->sum('total_amount');
+            $totalPendente = $porStatus->get('pendente', collect())->sum('total_amount');
+            $totalPaga     = $porStatus->get('paga', collect())->sum('total_amount');
 
         return view('admin.index', compact('months', 'activities', 'labelsMeses', 'pagas', 'pendentes', 'vencidas', 'totalVencida', 'totalPendente', 'totalPaga'));
     }

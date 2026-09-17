@@ -60,6 +60,7 @@ class MembroController extends Controller
             'github' => 'nullable|url',
             'alt' => 'required|min:5|max:255',
             'imagem' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'profissao' => 'nullable|string|max:255',
             'escolaridade' => 'nullable|in:Ensino Fundamental,Ensino Médio,Ensino Superior,Pós-graduação,Mestrado,Doutorado',
         ]);
     

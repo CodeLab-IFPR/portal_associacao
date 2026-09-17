@@ -60,6 +60,7 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'cpf' => 'required|unique:users,cpf',
             'rg' => 'nullable|string|max:20',
             'cargo_id' => 'nullable|exists:cargos,id',
+            'profissao' => 'nullable|string|max:255',
             'escolaridade' => 'nullable|in:Ensino Fundamental,Ensino Médio,Ensino Superior,Pós-graduação,Mestrado,Doutorado',
             
             // Contato
@@ -168,6 +169,7 @@ class RegisteredUserController extends Controller implements HasMiddleware
             'cpf' => 'required|unique:users,cpf,' . $user->id,
             'rg' => 'nullable|string|max:20',
             'cargo_id' => 'nullable|exists:cargos,id',
+            'profissao' => 'nullable|string|max:255',
             'escolaridade' => 'nullable|in:Ensino Fundamental,Ensino Médio,Ensino Superior,Pós-graduação,Mestrado,Doutorado',
             
             // Contato
