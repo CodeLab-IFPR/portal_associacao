@@ -7,7 +7,25 @@ Fatura #{{ $invoice->id }}
 @section('content')
 @php
     $isAdmin = auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin');
+    $feedbackMessage = session('success') ?? session('error') ?? ($errors->any() ? $errors->first() : null);
+    $feedbackType = session('success') ? 'success' : 'danger';
 @endphp
+@if($feedbackMessage)
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+        <div id="invoice-feedback-toast"
+             class="toast align-items-center text-bg-{{ $feedbackType }} border-0"
+             role="{{ $feedbackType === 'success' ? 'status' : 'alert' }}"
+             aria-live="{{ $feedbackType === 'success' ? 'polite' : 'assertive' }}"
+             aria-atomic="true"
+             data-bs-delay="5000">
+            <div class="d-flex">
+                <div class="toast-body">{{ $feedbackMessage }}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast" aria-label="Fechar notificação"></button>
+            </div>
+        </div>
+    </div>
+@endif
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
@@ -115,18 +133,19 @@ Fatura #{{ $invoice->id }}
                                 </thead>
                                 <tbody>
                                     @forelse ($invoice->installments->sortBy('installment_number') as $installment)
+                                        @php($installmentStatus = $installment->effective_status)
                                         <tr>
                                             <td>{{ $installment->installment_number }}</td>
                                             <td>{{ \Carbon\Carbon::parse($installment->due_date)->format('d/m/Y') }}</td>
                                             <td>R$ {{ number_format($installment->amount, 2, ',', '.') }}</td>
                                             <td>
                                                 <span class="badge
-                                                    @if($installment->status === 'paga') bg-success
-                                                    @elseif($installment->status === 'pendente') bg-warning text-dark
-                                                    @elseif($installment->status === 'vencida') bg-danger
+                                                    @if($installmentStatus === 'paga') bg-success
+                                                    @elseif($installmentStatus === 'pendente') bg-warning text-dark
+                                                    @elseif($installmentStatus === 'vencida') bg-danger
                                                     @else bg-secondary
                                                     @endif">
-                                                    {{ ucfirst($installment->status) }}
+                                                    {{ ucfirst($installmentStatus) }}
                                                 </span>
                                             </td>
                                             <td>
@@ -145,7 +164,7 @@ Fatura #{{ $invoice->id }}
                                                         data-amount="{{ $installment->amount }}"
                                                         data-due-date="{{ \Carbon\Carbon::parse($installment->due_date)->format('Y-m-d') }}"
                                                         data-payment-date="{{ $installment->payment_date ? \Carbon\Carbon::parse($installment->payment_date)->format('Y-m-d') : '' }}"
-                                                        data-status="{{ $installment->status }}"
+                                                        data-status="{{ $installmentStatus }}"
                                                         data-installments-count="{{ $invoice->installments_count }}">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </button>
@@ -378,6 +397,13 @@ Fatura #{{ $invoice->id }}
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const feedbackToast = document.getElementById('invoice-feedback-toast');
+        if (feedbackToast) {
+            new bootstrap.Toast(feedbackToast).show();
+        }
+    });
+
     // ── Editar parcela ──────────────────────────────────────
     document.querySelectorAll('.btn-edit-installment').forEach(function (btn) {
         btn.addEventListener('click', function () {
