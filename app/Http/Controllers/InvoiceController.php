@@ -28,7 +28,7 @@ class InvoiceController extends Controller implements HasMiddleware
     {
         $validated = $request->validate([
             'status' => 'nullable|in:pendente,paga,vencida,cancelada',
-            'month'  => 'nullable|regex:/^\d{4}-(0[1-9]|1[0-2])$/',
+            'month'  => ['nullable', 'regex:/^\d{4}-(0[1-9]|1[0-2])$/'],
             'search' => 'nullable|string|max:255',
         ]);
 
