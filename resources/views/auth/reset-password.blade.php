@@ -26,6 +26,14 @@
         .password-requirements li.is-valid {
             color: #198754;
         }
+        .password-field {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-field .form-control {
+            padding-right: 2.75rem;
+        }
     </style>
 </head>
 <body>
@@ -58,7 +66,12 @@
             <!-- Senha -->
             <div class="mb-3">
                 <x-input-label for="password" :value="__('Senha')" />
-                <x-text-input id="password" class="form-control" type="password" name="password" required autocomplete="new-password" aria-describedby="password-requirements" />
+                <div class="password-field">
+                    <x-text-input id="password" class="form-control" type="password" name="password" required autocomplete="new-password" aria-describedby="password-requirements" />
+                    <button type="button" class="login-form__toggle" data-toggle-password="password" aria-label="Mostrar senha" aria-pressed="false">
+                        <i class="bi bi-eye" aria-hidden="true"></i>
+                    </button>
+                </div>
                 <ul id="password-requirements" class="password-requirements" aria-live="polite">
                     <li data-rule="length"><i class="bi bi-x-circle" aria-hidden="true"></i> Mínimo de 8 caracteres</li>
                     <li data-rule="uppercase"><i class="bi bi-x-circle" aria-hidden="true"></i> Pelo menos 1 letra maiúscula</li>
@@ -72,7 +85,12 @@
             <!-- Confirmar Senha -->
             <div class="mb-3">
                 <x-input-label for="password_confirmation" :value="__('Confirmar Senha')" />
-                <x-text-input id="password_confirmation" class="form-control" type="password" name="password_confirmation" required autocomplete="new-password" aria-describedby="password-match" />
+                <div class="password-field">
+                    <x-text-input id="password_confirmation" class="form-control" type="password" name="password_confirmation" required autocomplete="new-password" aria-describedby="password-match" />
+                    <button type="button" class="login-form__toggle" data-toggle-password="password_confirmation" aria-label="Mostrar senha" aria-pressed="false">
+                        <i class="bi bi-eye" aria-hidden="true"></i>
+                    </button>
+                </div>
                 <ul id="password-match" class="password-requirements" aria-live="polite">
                     <li data-rule="match"><i class="bi bi-x-circle" aria-hidden="true"></i> As senhas devem ser iguais</li>
                 </ul>
@@ -122,6 +140,19 @@
                 });
                 submit.disabled = !allValid;
             }
+
+            document.querySelectorAll('[data-toggle-password]').forEach((toggle) => {
+                const input = document.getElementById(toggle.dataset.togglePassword);
+                const icon = toggle.querySelector('i');
+                toggle.addEventListener('click', () => {
+                    const show = input.type === 'password';
+                    input.type = show ? 'text' : 'password';
+                    icon.classList.toggle('bi-eye', !show);
+                    icon.classList.toggle('bi-eye-slash', show);
+                    toggle.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+                    toggle.setAttribute('aria-pressed', String(show));
+                });
+            });
 
             password.addEventListener('input', validate);
             confirmation.addEventListener('input', validate);
