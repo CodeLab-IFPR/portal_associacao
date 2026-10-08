@@ -243,6 +243,13 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::patch('faturas/{invoice}/installments/{installment}/boleto', [InvoiceController::class, 'uploadBoleto'])
         ->name('invoices.installments.boleto');
 
+    // Baixa rápida de pendência
+    Route::patch('/pendencias/installments/{installment}/baixar', [PendenciaController::class, 'settleInstallment'])
+        ->name('pendencias.installments.settle');
+
+    Route::patch('faturas/{invoice}/installments/{installment}', [InvoiceController::class, 'updateInstallment'])
+    ->name('invoices.installments.update');
+
     // Pendências do associado logado
     Route::get('/pendencias', [PendenciaController::class, 'index'])->name('pendencias.index');
     Route::get('/pendencias/load-more', [PendenciaController::class, 'loadMore'])->name('pendencias.loadMore');
