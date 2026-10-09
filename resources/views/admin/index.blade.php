@@ -22,9 +22,10 @@ Dashboard
     <div class="container-fluid">
 
         <!-- Estatísticas Rápidas -->
+        @php($colCard = $isAdmin ? 'col-lg-3 col-md-6' : 'col-md-4')
         <div class="row mt-4">
 
-            <div class="col-lg-3 col-md-6 mb-4">
+            <div class="{{ $colCard }} mb-4">
                 <div class="card shadow-sm border-0 rounded-4 h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
@@ -59,7 +60,7 @@ Dashboard
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6 mb-4">
+            <div class="{{ $colCard }} mb-4">
                 <div class="card shadow-sm border-0 rounded-4 h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
@@ -89,7 +90,8 @@ Dashboard
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6 mb-4">
+            @if($isAdmin)
+            <div class="{{ $colCard }} mb-4">
                 <div class="card shadow-sm border-0 rounded-4 h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
@@ -114,26 +116,19 @@ Dashboard
                             {{ $membrosNovosMes }}
                         </h4>
 
-                        @if($isAdmin)
-
-                            <a href="{{ route('users.index') }}"
-                            class="btn btn-outline-success w-100 rounded-3">
-                                Ver Membros
-                                <i class="fas fa-chevron-right ms-2"></i>
-                            </a>
-
-                        @else
-                            <button class="btn btn-outline-secondary w-100 rounded-3" disabled>
-                                Acesso Restrito
-                            </button>
-                        @endif
+                        <a href="{{ route('users.index') }}"
+                        class="btn btn-outline-success w-100 rounded-3">
+                            Ver Membros
+                            <i class="fas fa-chevron-right ms-2"></i>
+                        </a>
 
                     </div>
                 </div>
             </div>
+            @endif
 
             <!-- ATAs -->
-            <div class="col-lg-3 col-md-6 mb-4">
+            <div class="{{ $colCard }} mb-4">
                 <div class="card shadow-sm border-0 rounded-4 h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
@@ -369,7 +364,7 @@ Dashboard
 
                     <div class="card-body p-0">
 
-                        @foreach($activities as $activity)
+                        @forelse($activities as $activity)
 
                             <div class="d-flex align-items-center justify-content-between px-3 py-3 border-bottom">
 
@@ -391,7 +386,9 @@ Dashboard
 
                             </div>
 
-                        @endforeach
+                        @empty
+                            <div class="text-center text-muted px-3 py-4">Nenhuma atividade recente.</div>
+                        @endforelse
 
                     </div>
 
@@ -412,13 +409,20 @@ Dashboard
                     </div>
 
                     <div class="card-body">
-                        <canvas id="graficoFaturas"
-                            data-labels='@json($labelsMeses)'
-                            data-pagas='@json($pagas)'
-                            data-pendentes='@json($pendentes)'
-                            data-vencidas='@json($vencidas)'
-                            style="height:320px;">
-                        </canvas>
+                        @if(array_sum($pagas) + array_sum($pendentes) + array_sum($vencidas) > 0)
+                            <canvas id="graficoFaturas"
+                                data-labels='@json($labelsMeses)'
+                                data-pagas='@json($pagas)'
+                                data-pendentes='@json($pendentes)'
+                                data-vencidas='@json($vencidas)'
+                                style="height:320px;">
+                            </canvas>
+                        @else
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-chart-bar fa-2x mb-3 opacity-25"></i>
+                                <div>Nenhuma movimentação nos últimos 6 meses.</div>
+                            </div>
+                        @endif
                     </div>
                 </div>
 

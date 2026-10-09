@@ -75,8 +75,11 @@ class DashboardController extends Controller
 
         [$labelsMeses, $pagas, $pendentes, $vencidas] = $this->graficoUltimosMeses($parcelas);
 
-        $membrosAtivos   = User::where('ativo', true)->count();
-        $membrosNovosMes = User::whereYear('created_at', now()->year)->whereMonth('created_at', now()->month)->count();
+        // Card de membros só aparece para admin
+        $membrosAtivos   = $isAdmin ? User::where('ativo', true)->count() : 0;
+        $membrosNovosMes = $isAdmin
+            ? User::whereYear('created_at', now()->year)->whereMonth('created_at', now()->month)->count()
+            : 0;
         $totalAtas       = Ata::count();
         $ultimaAta       = Ata::latest()->first();
 

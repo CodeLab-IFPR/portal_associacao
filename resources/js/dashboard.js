@@ -9,15 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const pendente = parseFloat(elResumo.dataset.pendente) || 0;
         const paga     = parseFloat(elResumo.dataset.paga) || 0;
 
+        // Sem valores o Chart.js não desenha o anel; mostra um anel cinza no lugar
+        const vazio = vencida + pendente + paga === 0;
+
         new Chart(elResumo, {
             type: 'doughnut',
             data: {
-                labels: ['Vencidas', 'Pendentes', 'Pagas (este mês)'],
+                labels: vazio ? [''] : ['Vencidas', 'Pendentes', 'Pagas (este mês)'],
                 datasets: [{
-                    data: [vencida, pendente, paga],
-                    backgroundColor: ['#dc3545', '#ffc107', '#198754'],
+                    data: vazio ? [1] : [vencida, pendente, paga],
+                    backgroundColor: vazio ? ['#e9ecef'] : ['#dc3545', '#ffc107', '#198754'],
                     borderWidth: 0,
-                    hoverOffset: 8,
+                    hoverOffset: vazio ? 0 : 8,
                 }]
             },
             options: {
@@ -25,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
+                        enabled: !vazio,
                         callbacks: {
                             label: ctx => ' R$ ' + ctx.parsed.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
                         }
