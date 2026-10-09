@@ -5,9 +5,65 @@ Fatura #{{ $invoice->id }}
 @endsection
 
 @section('content')
+<style>
+    .installment-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .installment-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .installment-actions .btn {
+        min-width: 2.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-width: 1px;
+        border-style: solid;
+    }
+
+    @media (max-width: 575.98px) {
+        .installment-table {
+            font-size: 0.82rem;
+        }
+
+        .installment-actions {
+            gap: 0.35rem;
+        }
+
+        .installment-actions .btn {
+            min-width: 2rem;
+            padding: 0.35rem 0.5rem;
+        }
+    }
+</style>
 @php
     $isAdmin = auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin');
+    $feedbackMessage = session('success') ?? session('error') ?? ($errors->any() ? $errors->first() : null);
+    $feedbackType = session('success') ? 'success' : 'danger';
 @endphp
+@if($feedbackMessage)
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+        <div id="invoice-feedback-toast"
+             class="toast align-items-center text-bg-{{ $feedbackType }} border-0"
+             role="{{ $feedbackType === 'success' ? 'status' : 'alert' }}"
+             aria-live="{{ $feedbackType === 'success' ? 'polite' : 'assertive' }}"
+             aria-atomic="true"
+             data-bs-delay="5000">
+            <div class="d-flex">
+                <div class="toast-body">{{ $feedbackMessage }}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast" aria-label="Fechar notificação"></button>
+            </div>
+        </div>
+    </div>
+@endif
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
@@ -101,8 +157,8 @@ Fatura #{{ $invoice->id }}
                         </h5>
                     </div>
                     <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover mb-0">
+                        <div class="table-responsive installment-table-wrapper">
+                            <table class="table table-bordered table-hover align-middle mb-0 installment-table">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -115,18 +171,19 @@ Fatura #{{ $invoice->id }}
                                 </thead>
                                 <tbody>
                                     @forelse ($invoice->installments->sortBy('installment_number') as $installment)
+                                        @php($installmentStatus = $installment->effective_status)
                                         <tr>
                                             <td>{{ $installment->installment_number }}</td>
                                             <td>{{ \Carbon\Carbon::parse($installment->due_date)->format('d/m/Y') }}</td>
                                             <td>R$ {{ number_format($installment->amount, 2, ',', '.') }}</td>
                                             <td>
                                                 <span class="badge
-                                                    @if($installment->status === 'paga') bg-success
-                                                    @elseif($installment->status === 'pendente') bg-warning text-dark
-                                                    @elseif($installment->status === 'vencida') bg-danger
+                                                    @if($installmentStatus === 'paga') bg-success
+                                                    @elseif($installmentStatus === 'pendente') bg-warning text-dark
+                                                    @elseif($installmentStatus === 'vencida') bg-danger
                                                     @else bg-secondary
                                                     @endif">
-                                                    {{ ucfirst($installment->status) }}
+                                                    {{ ucfirst($installmentStatus) }}
                                                 </span>
                                             </td>
                                             <td>
@@ -135,51 +192,52 @@ Fatura #{{ $invoice->id }}
                                                     : '—' }}
                                             </td>
                                             <td class="text-center">
-                                                @if($isAdmin)
-                                                    {{-- Editar parcela --}}
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-warning btn-edit-installment me-1"
-                                                        title="Editar parcela"
-                                                        data-id="{{ $installment->id }}"
-                                                        data-number="{{ $installment->installment_number }}"
-                                                        data-amount="{{ $installment->amount }}"
-                                                        data-due-date="{{ \Carbon\Carbon::parse($installment->due_date)->format('Y-m-d') }}"
-                                                        data-payment-date="{{ $installment->payment_date ? \Carbon\Carbon::parse($installment->payment_date)->format('Y-m-d') : '' }}"
-                                                        data-status="{{ $installment->status }}"
-                                                        data-installments-count="{{ $invoice->installments_count }}">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                    </button>
-                                                    {{-- Excluir parcela --}}
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-danger btn-delete-installment"
-                                                        title="Excluir parcela"
-                                                        data-id="{{ $installment->id }}"
-                                                        data-number="{{ $installment->installment_number }}">
-                                                        <i class="bi bi-x-circle-fill me-1"></i>
-                                                    </button>
+                                                <div class="installment-actions" aria-label="Ações da parcela">
+                                                    @if($isAdmin)
+                                                        {{-- Editar parcela --}}
+                                                        <button type="button"
+                                                            class="btn btn-outline-warning btn-sm px-2 btn-edit-installment"
+                                                            title="Editar parcela"
+                                                            data-id="{{ $installment->id }}"
+                                                            data-number="{{ $installment->installment_number }}"
+                                                            data-amount="{{ $installment->amount }}"
+                                                            data-due-date="{{ \Carbon\Carbon::parse($installment->due_date)->format('Y-m-d') }}"
+                                                            data-payment-date="{{ $installment->payment_date ? \Carbon\Carbon::parse($installment->payment_date)->format('Y-m-d') : '' }}"
+                                                            data-status="{{ $installmentStatus }}"
+                                                            data-installments-count="{{ $invoice->installments_count }}">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </button>
 
+                                                        {{-- Excluir parcela --}}
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger btn-sm px-2 btn-delete-installment"
+                                                            title="Excluir parcela"
+                                                            data-id="{{ $installment->id }}"
+                                                            data-number="{{ $installment->installment_number }}">
+                                                            <i class="bi bi-x-circle-fill"></i>
+                                                        </button>
 
-                                                    {{-- Anexar boleto (PDF) --}}
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-primary btn-attach-boleto me-1"
-                                                        title="{{ $installment->boleto_path ? 'Substituir boleto (PDF)' : 'Anexar boleto (PDF)' }}"
-                                                        data-id="{{ $installment->id }}"
-                                                        data-number="{{ $installment->installment_number }}">
-                                                        <i class="bi bi-paperclip"></i>
-                                                    </button>
-                                                @endif
+                                                        {{-- Anexar boleto (PDF) --}}
+                                                        <button type="button"
+                                                            class="btn btn-outline-primary btn-sm px-2 btn-attach-boleto"
+                                                            title="{{ $installment->boleto_path ? 'Substituir boleto (PDF)' : 'Anexar boleto (PDF)' }}"
+                                                            data-id="{{ $installment->id }}"
+                                                            data-number="{{ $installment->installment_number }}">
+                                                            <i class="bi bi-paperclip"></i>
+                                                        </button>
+                                                    @endif
 
-                                                {{-- Visualizar boleto (PDF) --}}
-                                                @if($installment->boleto_path)
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-info btn-preview-boleto me-1"
-                                                        title="Visualizar boleto"
-                                                        data-number="{{ $installment->installment_number }}"
-                                                        data-url="{{ asset('storage/' . $installment->boleto_path) }}">
-                                                        <i class="bi bi-eye"></i>
-                                                    </button>
-                                                @endif
-
+                                                    {{-- Visualizar boleto (PDF) --}}
+                                                    @if($installment->boleto_path)
+                                                        <button type="button"
+                                                            class="btn btn-outline-info btn-sm px-2 btn-preview-boleto"
+                                                            title="Visualizar boleto"
+                                                            data-number="{{ $installment->installment_number }}"
+                                                            data-url="{{ asset('storage/' . $installment->boleto_path) }}">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    @endif
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -378,6 +436,13 @@ Fatura #{{ $invoice->id }}
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const feedbackToast = document.getElementById('invoice-feedback-toast');
+        if (feedbackToast) {
+            new bootstrap.Toast(feedbackToast).show();
+        }
+    });
+
     // ── Editar parcela ──────────────────────────────────────
     document.querySelectorAll('.btn-edit-installment').forEach(function (btn) {
         btn.addEventListener('click', function () {

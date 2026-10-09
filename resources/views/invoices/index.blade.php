@@ -5,6 +5,44 @@ Faturas
 @endsection
 
 @section('content')
+<style>
+    .invoice-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .invoice-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .invoice-actions .btn {
+        min-width: 2.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-width: 1px;
+        border-style: solid;
+    }
+
+    @media (max-width: 575.98px) {
+        .invoice-table {
+            font-size: 0.82rem;
+        }
+
+        .invoice-actions {
+            gap: 0.35rem;
+        }
+
+        .invoice-actions .btn {
+            min-width: 2rem;
+            padding: 0.35rem 0.5rem;
+        }
+    }
+</style>
 @php
     $mesesAbrev = [1=>'Jan',2=>'Fev',3=>'Mar',4=>'Abr',5=>'Mai',6=>'Jun',7=>'Jul',8=>'Ago',9=>'Set',10=>'Out',11=>'Nov',12=>'Dez'];
     $monthOptions = collect($availableMonths ?? [])->map(function ($ym) use ($mesesAbrev) {
@@ -102,8 +140,8 @@ Faturas
                 </h5>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover mb-0">
+                <div class="table-responsive invoice-table-wrapper">
+                    <table class="table table-bordered table-hover align-middle mb-0 invoice-table">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
@@ -115,7 +153,7 @@ Faturas
                                 <th scope="col">Periodicidade</th>
                                 <th scope="col">1º Vencimento</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Ações</th>
+                                <th scope="col" class="text-center">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -142,7 +180,7 @@ Faturas
                                     <td>
                                         <div class="invoice-actions" aria-label="Ações da fatura">
                                             <a href="{{ route('invoices.show', $invoice->id) }}"
-                                               class="action-icon text-info"
+                                               class="btn btn-outline-info btn-sm px-2"
                                                data-bs-toggle="tooltip"
                                                data-bs-placement="top"
                                                title="Visualizar">
@@ -150,21 +188,21 @@ Faturas
                                             </a>
                                             @if($isAdmin)
                                                 <a href="{{ route('invoices.edit', $invoice->id) }}"
-                                                   class="action-icon text-warning"
+                                                   class="btn btn-outline-warning btn-sm px-2"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-placement="top"
                                                    title="Editar">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
                                                 <button type="button"
-                                                    class="action-icon text-danger btn-delete bg-transparent"
+                                                    class="btn btn-outline-danger btn-sm px-2 btn-delete"
                                                     data-id="{{ $invoice->id }}"
                                                     data-nome="{{ $invoice->user->name }}"
                                                     data-total="R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-placement="top"
                                                     title="Excluir">
-                                                    <i class="bi bi-x-circle-fill me-1"></i>
+                                                    <i class="bi bi-trash"></i>
                                                 </button>
                                             @endif
                                         </div>
