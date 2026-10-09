@@ -35,24 +35,24 @@ Dashboard
 
                             <div>
                                 <h2 class="fw-bold text-danger mb-0">
-                                    {{ \App\Models\Invoice::where('status', 'vencida')->count() }}
+                                    {{ $qtdVencidas }}
                                 </h2>
 
-                                <small class="text-muted">Faturas Vencidas</small>
+                                <small class="text-muted">Parcelas Vencidas</small>
                             </div>
 
                         </div>
 
                         <hr>
 
-                        <small class="text-muted d-block mb-1">Total em aberto</small>
+                        <small class="text-muted d-block mb-1">Total vencido</small>
 
                         <h4 class="fw-bold text-danger mb-4">
-                            R$ {{ number_format(\App\Models\Invoice::where('status', 'vencida')->sum('total_amount'), 2, ',', '.') }}
+                            R$ {{ number_format($totalVencida, 2, ',', '.') }}
                         </h4>
 
-                        <a href="{{ route('invoices.index', ['status' => 'vencida']) }}"
-                        class="btn btn-outline-danger w-100 rounded-3">Ir para Faturas
+                        <a href="{{ route('pendencias.index', ['status' => 'vencida']) }}"
+                        class="btn btn-outline-danger w-100 rounded-3">Ver Pendências
                             <i class="fas fa-chevron-right ms-2"></i>
                         </a>
                     </div>
@@ -68,8 +68,8 @@ Dashboard
                             </div>
 
                             <div>
-                                <h2 class="fw-bold text-warning mb-0">{{ \App\Models\Invoice::where('status', 'pendente')->count() }}</h2>
-                                <small class="text-muted">Faturas Pendentes</small>
+                                <h2 class="fw-bold text-warning mb-0">{{ $qtdPendentes }}</h2>
+                                <small class="text-muted">Parcelas Pendentes</small>
                             </div>
                         </div>
                         <hr>
@@ -77,11 +77,11 @@ Dashboard
                         <small class="text-muted d-block mb-1">Total pendente</small>
 
                         <h4 class="fw-bold text-warning mb-4">
-                            R$ {{ number_format(\App\Models\Invoice::where('status', 'pendente')->sum('total_amount'), 2, ',', '.') }}
+                            R$ {{ number_format($totalPendente, 2, ',', '.') }}
                         </h4>
 
-                        <a href="{{ route('invoices.index', ['status' => 'pendente']) }}"
-                        class="btn btn-outline-warning w-100 rounded-3">Ir para Faturas
+                        <a href="{{ route('pendencias.index', ['status' => 'pendente']) }}"
+                        class="btn btn-outline-warning w-100 rounded-3">Ver Pendências
                             <i class="fas fa-chevron-right ms-2"></i>
                         </a>
 
@@ -98,7 +98,7 @@ Dashboard
                             </div>
                             <div>
                                 <h2 class="fw-bold text-success mb-0">
-                                    {{ \App\Models\User::where('ativo', true)->count() }}
+                                    {{ $membrosAtivos }}
                                 </h2>
 
                                 <small class="text-muted">Membros Ativos</small>
@@ -111,10 +111,10 @@ Dashboard
                         <small class="text-muted d-block mb-1">Novos este mês</small>
 
                         <h4 class="fw-bold text-success mb-4">
-                            {{ \App\Models\User::whereMonth('created_at', now()->month)->count() }}
+                            {{ $membrosNovosMes }}
                         </h4>
 
-                        @if(auth()->user()->hasRole('Admin') && auth()->user()->getRoleNames()->contains('Admin'))
+                        @if($isAdmin)
 
                             <a href="{{ route('users.index') }}"
                             class="btn btn-outline-success w-100 rounded-3">
@@ -141,7 +141,7 @@ Dashboard
                                 <i class="fas fa-file-alt text-primary fs-4"></i>
                             </div>
                             <div>
-                                <h2 class="fw-bold text-primary mb-0">{{ \App\Models\Ata::count() }}</h2>
+                                <h2 class="fw-bold text-primary mb-0">{{ $totalAtas }}</h2>
 
                                 <small class="text-muted">ATAs Registradas</small>
                             </div>
@@ -152,11 +152,7 @@ Dashboard
                         <small class="text-muted d-block mb-1">Última adicionada</small>
 
                         <h5 class="fw-bold text-primary mb-4">
-                            @if(\App\Models\Ata::latest()->first())
-                                {{ \App\Models\Ata::latest()->first()->created_at->format('d/m/Y') }}
-                            @else
-                                --
-                            @endif
+                            {{ $ultimaAta?->created_at?->format('d/m/Y') ?? '--' }}
 
                         </h5>
 
@@ -186,21 +182,21 @@ Dashboard
                         <canvas id="graficoResumo"
                             data-vencida="{{ $totalVencida }}"
                             data-pendente="{{ $totalPendente }}"
-                            data-paga="{{ $totalPaga }}">
+                            data-paga="{{ $totalPagaMes }}">
                         </canvas>
                         <div class="d-flex justify-content-between mb-2 mt-3">
                             <span><i class="fas fa-circle text-danger me-2"></i>Vencidas</span>
-                            <strong>R$ {{ number_format(\App\Models\Invoice::where('status', 'vencida')->sum('total_amount'), 2, ',', '.') }}</strong>
+                            <strong>R$ {{ number_format($totalVencida, 2, ',', '.') }}</strong>
                         </div>
 
                         <div class="d-flex justify-content-between mb-2">
                             <span><i class="fas fa-circle text-warning me-2"></i>Pendentes</span>
-                            <strong>R$ {{ number_format(\App\Models\Invoice::where('status', 'pendente')->sum('total_amount'), 2, ',', '.') }}</strong>
+                            <strong>R$ {{ number_format($totalPendente, 2, ',', '.') }}</strong>
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <span><i class="fas fa-circle text-success me-2"></i>Pagas</span>
-                            <strong>R$ {{ number_format(\App\Models\Invoice::where('status', 'paga')->sum('total_amount'), 2, ',', '.') }}</strong>
+                            <span><i class="fas fa-circle text-success me-2"></i>Pagas (este mês)</span>
+                            <strong>R$ {{ number_format($totalPagaMes, 2, ',', '.') }}</strong>
                         </div>
 
                     </div>
@@ -220,39 +216,43 @@ Dashboard
 
                     <div class="card-body p-0">
 
-                        @foreach(\App\Models\Invoice::where('status', 'pendente')->orderBy('first_due_date')->take(6)->get() as $invoice)
+                        @forelse($proximosVencimentos as $parcela)
                             <div class="d-flex align-items-center justify-content-between px-3 py-3 border-bottom">
                                 <div class="text-center me-1 align-self-end" style="min-width: 45px;">
-                                    <div class="fw-bold fs-5 lh-1">{{ $invoice->first_due_date->format('d') }}</div>
+                                    <div class="fw-bold fs-5 lh-1">{{ $parcela->due_date->format('d') }}</div>
 
                                     <small class="text-uppercase text-muted fw-semibold">
-                                        {{ $months[$invoice->first_due_date->format('M')] }}
+                                        {{ $months[$parcela->due_date->format('M')] }}
                                     </small>
                                 </div>
 
                                 <div class="flex-grow-1 overflow-hidden" style="min-width: 0; max-width: 50%;">
-                                    <div class="fs-6 fw-semibold text-truncate">{{ $invoice->user->name }}</div>
+                                    <div class="fs-6 fw-semibold text-truncate">{{ optional($parcela->invoice->user)->name }}</div>
 
-                                    <small class="text-muted">{{ ucfirst($invoice->periodicity) }}</small>
+                                    <small class="text-muted">
+                                        Parcela {{ $parcela->installment_number }}/{{ $parcela->invoice->installments_count }}
+                                        · {{ ucfirst($parcela->invoice->periodicity) }}
+                                    </small>
                                 </div>
 
                                 <div class="text-end ms-4">
                                     <div class="fw-medium">
-                                        R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}
+                                        R$ {{ number_format($parcela->amount, 2, ',', '.') }}
                                     </div>
 
                                     <span class="badge rounded-pill text-bg-warning fw-normal">A vencer</span>
                                 </div>
                             </div>
-
-                        @endforeach
+                        @empty
+                            <div class="text-center text-muted px-3 py-4">Nenhum vencimento próximo.</div>
+                        @endforelse
 
                         <div class="text-center py-3 fs-6">
 
-                            <a href="{{ route('invoices.index') }}"
+                            <a href="{{ route('pendencias.index', ['status' => 'pendente']) }}"
                             class="text-decoration-none small fw-semibold">
 
-                                Ver todas as faturas
+                                Ver todas as pendências
                                 <i class="fas fa-chevron-right ms-1"></i>
                             </a>
 
@@ -279,23 +279,25 @@ Dashboard
 
                         <div class="list-group list-group-flush">
 
-                            <a href="{{ route('users.create') }}"
-                            class="list-group-item list-group-item-action rounded mb-2 border">
-                                <i class="fas fa-users text-success me-2"></i>
-                                Cadastrar Membro
-                            </a>
+                            @if($isAdmin)
+                                <a href="{{ route('users.create') }}"
+                                class="list-group-item list-group-item-action rounded mb-2 border">
+                                    <i class="fas fa-users text-success me-2"></i>
+                                    Cadastrar Membro
+                                </a>
 
-                            <a href="{{ route('admin.atas.create') }}"
-                            class="list-group-item list-group-item-action rounded mb-2 border">
-                                <i class="fas fa-file-signature text-primary me-2"></i>
-                                Adicionar ATA
-                            </a>
+                                <a href="{{ route('admin.atas.create') }}"
+                                class="list-group-item list-group-item-action rounded mb-2 border">
+                                    <i class="fas fa-file-signature text-primary me-2"></i>
+                                    Adicionar ATA
+                                </a>
 
-                            <a href="{{ route('noticias.create') }}"
-                            class="list-group-item list-group-item-action rounded mb-2 border">
-                                <i class="fas fa-newspaper text-info me-2"></i>
-                                Adicionar Notícias
-                            </a>
+                                <a href="{{ route('noticias.create') }}"
+                                class="list-group-item list-group-item-action rounded mb-2 border">
+                                    <i class="fas fa-newspaper text-info me-2"></i>
+                                    Adicionar Notícias
+                                </a>
+                            @endif
 
                             <a href="{{ route('documentos.index') }}"
                             class="list-group-item list-group-item-action rounded mb-2 border">
@@ -309,12 +311,19 @@ Dashboard
                                 Ver Faturas
                             </a>
 
-                            <a href="{{ route('users.index') }}"
+                            <a href="{{ route('pendencias.index') }}"
                             class="list-group-item list-group-item-action rounded mb-2 border">
-                                <i class="fas fa-users text-success me-2"></i>
-                                Ver Membros
+                                <i class="fas fa-bell text-warning me-2"></i>
+                                Ver Pendências
                             </a>
 
+                            @if($isAdmin)
+                                <a href="{{ route('users.index') }}"
+                                class="list-group-item list-group-item-action rounded mb-2 border">
+                                    <i class="fas fa-users text-success me-2"></i>
+                                    Ver Membros
+                                </a>
+                            @endif
 
                             <a href="{{ route('admin.atas.index') }}"
                             class="list-group-item list-group-item-action rounded mb-2 border">
@@ -322,17 +331,19 @@ Dashboard
                                 Ver ATAs
                             </a>
 
-                            <a href="{{ route('noticias.index') }}"
-                            class="list-group-item list-group-item-action rounded mb-2 border">
-                                <i class="fas fa-newspaper text-info me-2"></i>
-                                Ver Notícias
-                            </a>
+                            @if($isAdmin)
+                                <a href="{{ route('noticias.index') }}"
+                                class="list-group-item list-group-item-action rounded mb-2 border">
+                                    <i class="fas fa-newspaper text-info me-2"></i>
+                                    Ver Notícias
+                                </a>
 
-                            <a href="{{ route('galeria.indexAdmin') }}"
-                            class="list-group-item list-group-item-action rounded border">
-                                <i class="fas fa-images text-secondary me-2"></i>
-                                Ver Galeria
-                            </a>
+                                <a href="{{ route('galeria.indexAdmin') }}"
+                                class="list-group-item list-group-item-action rounded mb-2 border">
+                                    <i class="fas fa-images text-secondary me-2"></i>
+                                    Ver Galeria
+                                </a>
+                            @endif
 
                         </div>
 
@@ -375,7 +386,7 @@ Dashboard
                                 </div>
 
                                 <small class="text-muted text-nowrap ms-3">
-                                    {{ $activity->data->format('d/m/Y H:i') }}
+                                    {{ $activity->data?->format('d/m/Y H:i') }}
                                 </small>
 
                             </div>

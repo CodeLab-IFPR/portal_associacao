@@ -5,14 +5,144 @@ namespace App\Http\Controllers;
 use App\Models\Ata;
 use App\Models\Documento;
 use App\Models\Invoice;
+use App\Models\InvoiceInstallment;
 use App\Models\Noticias;
 use App\Models\User;
+use Illuminate\Http\Request;
 
-class DashboardController extends Controller  {
+class DashboardController extends Controller
+{
+    private const MONTHS = [
+        'Jan' => 'JAN',
+        'Feb' => 'FEV',
+        'Mar' => 'MAR',
+        'Apr' => 'ABR',
+        'May' => 'MAI',
+        'Jun' => 'JUN',
+        'Jul' => 'JUL',
+        'Aug' => 'AGO',
+        'Sep' => 'SET',
+        'Oct' => 'OUT',
+        'Nov' => 'NOV',
+        'Dec' => 'DEZ'
+    ];
 
-    public function index()
+    private const ICONS = [
+        'USUARIO' => [
+            'icon' => 'fas fa-users',
+            'color' => 'text-success'
+        ],
+        'ATA' => [
+            'icon' => 'fas fa-file-signature',
+            'color' => 'text-primary'
+        ],
+        'DOCUMENTO' => [
+            'icon' => 'fas fa-folder-open',
+            'color' => 'text-warning'
+        ],
+        'FATURA' => [
+            'icon' => 'fas fa-file-invoice-dollar',
+            'color' => 'text-danger'
+        ],
+        'NOTICIA' => [
+            'icon' => 'fas fa-newspaper',
+            'color' => 'text-info'
+        ],
+    ];
+
+    public function index(Request $request)
     {
-        $usuarios = User::select('id', 'name', 'created_at')
+        $user = $request->user();
+        $isAdmin = $this->isAdmin($user);
+
+        // Membro comum só enxerga as próprias parcelas (mesma regra de Faturas e Pendências)
+        $parcelas = InvoiceInstallment::where('status', '!=', 'cancelada')
+            ->when(!$isAdmin, fn ($q) => $q->whereHas('invoice', fn ($i) => $i->where('user_id', $user->id)));
+
+        $qtdVencidas   = (clone $parcelas)->withEffectiveStatus('vencida')->count();
+        $totalVencida  = (float) (clone $parcelas)->withEffectiveStatus('vencida')->sum('amount');
+        $qtdPendentes  = (clone $parcelas)->withEffectiveStatus('pendente')->count();
+        $totalPendente = (float) (clone $parcelas)->withEffectiveStatus('pendente')->sum('amount');
+        $totalPagaMes  = (float) (clone $parcelas)->where('status', 'paga')
+            ->whereBetween('payment_date', [now()->startOfMonth()->toDateString(), now()->endOfMonth()->toDateString()])
+            ->sum('amount');
+
+        $proximosVencimentos = (clone $parcelas)->withEffectiveStatus('pendente')
+            ->with('invoice.user')
+            ->orderBy('due_date')
+            ->take(6)
+            ->get();
+
+        [$labelsMeses, $pagas, $pendentes, $vencidas] = $this->graficoUltimosMeses($parcelas);
+
+        $membrosAtivos   = User::where('ativo', true)->count();
+        $membrosNovosMes = User::whereYear('created_at', now()->year)->whereMonth('created_at', now()->month)->count();
+        $totalAtas       = Ata::count();
+        $ultimaAta       = Ata::latest()->first();
+
+        $activities = $this->atividadesRecentes($user, $isAdmin);
+        $months = self::MONTHS;
+
+        return view('admin.index', compact(
+            'isAdmin', 'months', 'activities',
+            'qtdVencidas', 'totalVencida', 'qtdPendentes', 'totalPendente', 'totalPagaMes',
+            'proximosVencimentos', 'labelsMeses', 'pagas', 'pendentes', 'vencidas',
+            'membrosAtivos', 'membrosNovosMes', 'totalAtas', 'ultimaAta'
+        ));
+    }
+
+    private function isAdmin($user): bool
+    {
+        return $user && ($user->hasRole('admin') || $user->hasRole('Admin'));
+    }
+
+    /**
+     * Valores dos últimos 6 meses: pagas pelo mês do pagamento,
+     * pendentes e vencidas pelo mês do vencimento da parcela.
+     */
+    private function graficoUltimosMeses($parcelas): array
+    {
+        $meses = collect(range(5, 0))->map(function ($i) {
+            $data = now()->subMonths($i);
+            return [
+                'label' => self::MONTHS[$data->format('M')] . '/' . $data->format('Y'),
+                'chave' => $data->format('Y-m'),
+            ];
+        });
+
+        $inicio = now()->subMonths(5)->startOfMonth()->toDateString();
+        $fim    = now()->endOfMonth()->toDateString();
+
+        $pagasPorMes = (clone $parcelas)->where('status', 'paga')
+            ->whereBetween('payment_date', [$inicio, $fim])
+            ->get(['amount', 'payment_date'])
+            ->groupBy(fn ($p) => $p->payment_date->format('Y-m'))
+            ->map->sum('amount');
+
+        $abertas = (clone $parcelas)->whereIn('status', InvoiceInstallment::OPEN_STATUSES)
+            ->whereBetween('due_date', [$inicio, $fim])
+            ->get(['amount', 'due_date', 'status'])
+            ->groupBy('effective_status');
+
+        $somaPorMes = fn ($status) => $abertas->get($status, collect())
+            ->groupBy(fn ($p) => $p->due_date->format('Y-m'))
+            ->map->sum('amount');
+
+        $pendentesPorMes = $somaPorMes('pendente');
+        $vencidasPorMes  = $somaPorMes('vencida');
+
+        return [
+            $meses->pluck('label')->all(),
+            $meses->map(fn ($m) => (float) $pagasPorMes->get($m['chave'], 0))->all(),
+            $meses->map(fn ($m) => (float) $pendentesPorMes->get($m['chave'], 0))->all(),
+            $meses->map(fn ($m) => (float) $vencidasPorMes->get($m['chave'], 0))->all(),
+        ];
+    }
+
+    private function atividadesRecentes($user, bool $isAdmin)
+    {
+        // Cadastros de usuários só aparecem para admin
+        $usuarios = !$isAdmin ? collect() : User::select('id', 'name', 'created_at')
             ->latest()
             ->take(5)
             ->get()
@@ -34,6 +164,7 @@ class DashboardController extends Controller  {
 
         $documentos = Documento::with('user:id,name')
             ->select('id', 'user_id', 'tipo_documento', 'nome_original', 'created_at')
+            ->when(!$isAdmin, fn ($q) => $q->where('user_id', $user->id))
             ->latest()
             ->take(5)
             ->get()
@@ -46,13 +177,14 @@ class DashboardController extends Controller  {
 
         $faturas = Invoice::with('user:id,name')
             ->select('id', 'user_id', 'total_amount', 'created_at')
+            ->when(!$isAdmin, fn ($q) => $q->where('user_id', $user->id))
             ->latest()
             ->take(5)
             ->get()
             ->map(fn ($i) => (object) [
                 'tipo'      => 'FATURA',
                 'descricao' => 'Cobrança criada para ' . optional($i->user)->name
-                    . ' - R$ ' . number_format($i->total_amount, 2),
+                    . ' - R$ ' . number_format($i->total_amount, 2, ',', '.'),
                 'data'      => $i->created_at,
             ]);
 
@@ -66,100 +198,17 @@ class DashboardController extends Controller  {
                 'data'      => $n->created_at,
             ]);
 
-        $activities = $usuarios
+        return $usuarios
             ->merge($atas)
             ->merge($documentos)
             ->merge($faturas)
             ->merge($noticias)
             ->sortByDesc('data')
             ->take(5)
-            ->values();
-
-        $icons = [
-            'USUARIO' => [
-                'icon' => 'fas fa-users',
-                'color' => 'text-success'
-            ],
-            'ATA' => [
-                'icon' => 'fas fa-file-signature',
-                'color' => 'text-primary'
-            ],
-            'DOCUMENTO' => [
-                'icon' => 'fas fa-folder-open',
-                'color' => 'text-warning'
-            ],
-            'FATURA' => [
-                'icon' => 'fas fa-file-invoice-dollar',
-                'color' => 'text-danger'
-            ],
-            'NOTICIA' => [
-                'icon' => 'fas fa-newspaper',
-                'color' => 'text-info'
-            ],
-        ];
-
-        foreach ($activities as $activity) {
-
-            $activity->icon = $icons[$activity->tipo]['icon']
-                ?? 'fas fa-circle';
-
-            $activity->color = $icons[$activity->tipo]['color']
-                ?? 'text-secondary';
-        }
-
-            $months = [
-                'Jan' => 'JAN',
-                'Feb' => 'FEV',
-                'Mar' => 'MAR',
-                'Apr' => 'ABR',
-                'May' => 'MAI',
-                'Jun' => 'JUN',
-                'Jul' => 'JUL',
-                'Aug' => 'AGO',
-                'Sep' => 'SET',
-                'Oct' => 'OUT',
-                'Nov' => 'NOV',
-                'Dec' => 'DEZ'
-            ];
-
-            $meses = collect(range(5, 0))->map(function ($i) use ($months) {
-                $data = now()->subMonths($i);
-                return [
-                    'label' => $months[$data->format('M')] . '/' . $data->format('Y'),
-                    'mes'   => $data->month,
-                    'ano'   => $data->year,
-                ];
+            ->values()
+            ->each(function ($activity) {
+                $activity->icon  = self::ICONS[$activity->tipo]['icon'] ?? 'fas fa-circle';
+                $activity->color = self::ICONS[$activity->tipo]['color'] ?? 'text-secondary';
             });
-
-            $labelsMeses = $meses->pluck('label')->values()->toArray();
-
-            $invoices = Invoice::select('status', 'total_amount', 'first_due_date', 'updated_at')->get();
-
-            $porStatus = $invoices->groupBy('status');
-
-            $pagas = $meses->map(function ($m) use ($porStatus) {
-                return $porStatus->get('paga', collect())
-                    ->filter(fn ($invoice) => $invoice->updated_at->month === $m['mes'] && $invoice->updated_at->year === $m['ano'])
-                    ->sum('total_amount');
-            })->values()->toArray();
-
-            $pendentes = $meses->map(function ($m) use ($porStatus) {
-                return $porStatus->get('pendente', collect())
-                    ->filter(fn ($invoice) => $invoice->first_due_date->month === $m['mes'] && $invoice->first_due_date->year === $m['ano'])
-                    ->sum('total_amount');
-            })->values()->toArray();
-
-            $vencidas = $meses->map(function ($m) use ($porStatus) {
-                return $porStatus->get('vencida', collect())
-                    ->filter(fn ($invoice) => $invoice->first_due_date->month === $m['mes'] && $invoice->first_due_date->year === $m['ano'])
-                    ->sum('total_amount');
-            })->values()->toArray();
-
-            $totalVencida  = $porStatus->get('vencida', collect())->sum('total_amount');
-            $totalPendente = $porStatus->get('pendente', collect())->sum('total_amount');
-            $totalPaga     = $porStatus->get('paga', collect())->sum('total_amount');
-
-        return view('admin.index', compact('months', 'activities', 'labelsMeses', 'pagas', 'pendentes', 'vencidas', 'totalVencida', 'totalPendente', 'totalPaga'));
     }
-
 }
