@@ -94,12 +94,12 @@ Fatura #{{ $invoice->id }}
                             Fatura #{{ $invoice->id }}
                         </h5>
                         <span class="badge
-                            @if($invoice->status === 'paga') bg-success
-                            @elseif($invoice->status === 'pendente') bg-warning text-dark
-                            @elseif($invoice->status === 'vencida') bg-danger
+                            @if($invoice->effective_status === 'paga') bg-success
+                            @elseif($invoice->effective_status === 'pendente') bg-warning text-dark
+                            @elseif($invoice->effective_status === 'vencida') bg-danger
                             @else bg-secondary
                             @endif fs-6">
-                            {{ ucfirst($invoice->status) }}
+                            {{ ucfirst($invoice->effective_status) }}
                         </span>
                     </div>
                     <div class="card-body">
@@ -203,8 +203,7 @@ Fatura #{{ $invoice->id }}
                                                             data-amount="{{ $installment->amount }}"
                                                             data-due-date="{{ \Carbon\Carbon::parse($installment->due_date)->format('Y-m-d') }}"
                                                             data-payment-date="{{ $installment->payment_date ? \Carbon\Carbon::parse($installment->payment_date)->format('Y-m-d') : '' }}"
-                                                            data-status="{{ $installmentStatus }}"
-                                                            data-installments-count="{{ $invoice->installments_count }}">
+                                                            data-status="{{ $installmentStatus }}">
                                                             <i class="bi bi-pencil-square"></i>
                                                         </button>
 
@@ -287,20 +286,13 @@ Fatura #{{ $invoice->id }}
 
                     <div class="row">
                         {{-- Valor --}}
-                        <div class="col-md-6 mb-3">
+                        <div class="col-12 mb-3">
                             <label for="edit-amount" class="form-label"><strong>Valor (R$)*</strong></label>
                             <div class="input-group">
                                 <span class="input-group-text">R$</span>
                                 <input type="number" id="edit-amount" name="amount"
                                     class="form-control" min="0.01" step="0.01" required>
                             </div>
-                        </div>
-
-                        {{-- Quantidade de Parcelas --}}
-                        <div class="col-md-6 mb-3">
-                            <label for="edit-installments-count" class="form-label"><strong>Qtd. de Parcelas*</strong></label>
-                            <input type="number" id="edit-installments-count" name="installments_count"
-                                class="form-control" min="1" max="60" required>
                         </div>
                     </div>
 
@@ -452,14 +444,12 @@ Fatura #{{ $invoice->id }}
             var dueDate          = this.dataset.dueDate;
             var paymentDate      = this.dataset.paymentDate;
             var status           = this.dataset.status;
-            var installmentsCount = this.dataset.installmentsCount;
 
             document.getElementById('edit-installment-number').textContent = '#' + number;
             document.getElementById('edit-amount').value            = amount;
             document.getElementById('edit-due-date').value          = dueDate;
             document.getElementById('edit-payment-date').value      = paymentDate;
             document.getElementById('edit-status').value            = status;
-            document.getElementById('edit-installments-count').value = installmentsCount;
 
             document.getElementById('editInstallmentForm').action =
                 '/admin/faturas/{{ $invoice->id }}/installments/' + id;

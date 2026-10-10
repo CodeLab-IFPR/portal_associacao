@@ -144,6 +144,19 @@ it('fatura com todas as parcelas pagas aparece no filtro de pagas', function () 
         ->assertViewHas('invoices', fn ($faturas) => $faturas->pluck('id')->contains($this->d['ids']['invoice']));
 });
 
+it('o status da fatura acompanha as parcelas', function () {
+    $fatura = Invoice::find($this->d['ids']['invoice']);
+    expect($fatura->effective_status)->toBe('pendente');
+
+    InvoiceInstallment::whereKey($this->d['ids']['invoice_parcela_1'])->update(['due_date' => now()->subDay()]);
+    expect($fatura->fresh()->effective_status)->toBe('vencida');
+
+    InvoiceInstallment::where('invoice_id', $fatura->id)->update(['status' => 'paga', 'payment_date' => now()]);
+    expect($fatura->fresh()->effective_status)->toBe('paga');
+
+    $this->actingAs($this->d['admin'])->get("/admin/faturas/{$fatura->id}")->assertOk()->assertSee('Paga');
+});
+
 it('membro vê apenas as próprias faturas', function () {
     $this->actingAs($this->d['membro'])
         ->get('/admin/faturas')
