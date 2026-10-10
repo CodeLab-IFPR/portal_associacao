@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Models\LancamentoServico;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
-use Illuminate\Support\Facades\Log;
 
 class LancamentoServicoController extends Controller implements HasMiddleware
 {
@@ -73,9 +72,9 @@ class LancamentoServicoController extends Controller implements HasMiddleware
 
     public function store(Request $request)
     {
-        $request->validate([
-            'projeto_id' => 'required|integer',
-            'servico_id' => 'required|integer',
+        $validated = $request->validate([
+            'projeto_id' => 'required|integer|exists:projetos,id',
+            'servico_id' => 'required|integer|exists:servicos,id',
             'data_inicio' => 'required|date',
             'data_final' => 'required|date|after_or_equal:data_inicio',
             'horas_trabalhadas' => 'required|numeric',
@@ -84,6 +83,8 @@ class LancamentoServicoController extends Controller implements HasMiddleware
         ],[
             'projeto_id.required' => 'O campo projeto é obrigatório.',
             'servico_id.required' => 'O campo serviço é obrigatório.',
+            'projeto_id.exists' => 'Projeto não encontrado.',
+            'servico_id.exists' => 'Serviço não encontrado.',
             'data_inicio.required' => 'O campo data de início é obrigatório.',
             'data_final.required' => 'O campo data final é obrigatório.',
             'data_final.after_or_equal' => 'A data final deve ser igual ou posterior à data de início.',
@@ -93,12 +94,8 @@ class LancamentoServicoController extends Controller implements HasMiddleware
             'descricao.max' => 'A descrição deve ter até 300 caracteres.',
         ]);
 
-        $data = $request->all();
-        $data['user_id'] = auth()->id(); // Adiciona o user_id do usuário autenticado
-
-        Log::info('Dados recebidos para criação de lançamento:', $data);
-
-        LancamentoServico::create($data);
+        // Só os campos validados; o lançamento é sempre de quem está logado
+        LancamentoServico::create($validated + ['user_id' => auth()->id()]);
 
         return redirect()->route('lancamentos.index')
                          ->with('success', 'Lançamento criado com sucesso.');
@@ -111,6 +108,8 @@ class LancamentoServicoController extends Controller implements HasMiddleware
 
     public function edit(LancamentoServico $lancamento)
     {
+        $this->autorizarDono($lancamento);
+
         $projetos = Projeto::all();
         $servicos = Servico::all();
         return view('lancamentos.edit', compact('lancamento', 'projetos', 'servicos'));
@@ -118,9 +117,11 @@ class LancamentoServicoController extends Controller implements HasMiddleware
 
     public function update(Request $request, LancamentoServico $lancamento)
     {
-        $request->validate([
-            'projeto_id' => 'required|integer',
-            'servico_id' => 'required|integer',
+        $this->autorizarDono($lancamento);
+
+        $validated = $request->validate([
+            'projeto_id' => 'required|integer|exists:projetos,id',
+            'servico_id' => 'required|integer|exists:servicos,id',
             'data_inicio' => 'required|date',
             'data_final' => 'required|date|after_or_equal:data_inicio',
             'horas_trabalhadas' => 'required|numeric',
@@ -129,6 +130,8 @@ class LancamentoServicoController extends Controller implements HasMiddleware
         ],[
             'projeto_id.required' => 'O campo projeto é obrigatório.',
             'servico_id.required' => 'O campo serviço é obrigatório.',
+            'projeto_id.exists' => 'Projeto não encontrado.',
+            'servico_id.exists' => 'Serviço não encontrado.',
             'data_inicio.required' => 'O campo data de início é obrigatório.',
             'data_final.required' => 'O campo data final é obrigatório.',
             'data_final.after_or_equal' => 'A data final deve ser igual ou posterior à data de início.',
@@ -138,7 +141,8 @@ class LancamentoServicoController extends Controller implements HasMiddleware
             'descricao.max' => 'A descrição deve ter até 300 caracteres.',
         ]);
 
-        $lancamento->update($request->all());
+        // Só os campos do formulário: user_id e certificado_gerado não vêm do request
+        $lancamento->update($validated);
 
         return redirect()->route('lancamentos.index')
                          ->with('success', 'Lançamento atualizado com sucesso.');
@@ -222,5 +226,15 @@ class LancamentoServicoController extends Controller implements HasMiddleware
         }
     
         return redirect()->route('certificados.create', ['data' => json_encode($certificadosData)]);
+    }
+
+    /** Associado só mexe nos próprios lançamentos; admin mexe em todos. */
+    private function autorizarDono(LancamentoServico $lancamento): void
+    {
+        $user = auth()->user();
+
+        if (!$user->hasRole('Admin') && !$user->hasRole('admin') && $lancamento->user_id !== $user->id) {
+            abort(403, 'Você não tem permissão para alterar este lançamento.');
+        }
     }
 }

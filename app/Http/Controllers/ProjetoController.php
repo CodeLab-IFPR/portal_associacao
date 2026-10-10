@@ -15,7 +15,7 @@ class ProjetoController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:Visualizar Projeto', only: ['index', 'show']),
+            new Middleware('permission:Visualizar Projeto', only: ['index']),
             new Middleware('permission:Criar Projeto', only: ['create', 'store']),
             new Middleware('permission:Editar Projeto', only: ['edit', 'update']),
             new Middleware('permission:Deletar Projeto', only: ['destroy']),
@@ -69,7 +69,7 @@ class ProjetoController extends Controller implements HasMiddleware
 
         if ($request->hasFile('imagem')) {
             $file = $request->file('imagem');
-            $fileName = date('YmdHis') . '.' . $file->getClientOriginalExtension();
+            $fileName = date('YmdHis') . '.' . $file->guessExtension();
             $file->move(public_path('imagens/projetos'), $fileName);
             $projeto->imagem = 'imagens/projetos/' . $fileName;
             $projeto->save();
@@ -79,11 +79,6 @@ class ProjetoController extends Controller implements HasMiddleware
         
         return redirect()->route('projetos.index')
             ->with('success', 'Projeto criado com sucesso.');
-    }
-    
-    public function show(Projeto $projeto): View
-    {
-        return view('projetos.show', compact('projeto'));
     }
     
     public function edit(Projeto $projeto): View
@@ -116,7 +111,7 @@ class ProjetoController extends Controller implements HasMiddleware
 
         if ($request->hasFile('imagem')) {
             $file = $request->file('imagem');
-            $fileName = date('YmdHis') . '.' . $file->getClientOriginalExtension();
+            $fileName = date('YmdHis') . '.' . $file->guessExtension();
             $file->move(public_path('imagens/projetos'), $fileName);
             $projeto->imagem = 'imagens/projetos/' . $fileName;
             $projeto->save();

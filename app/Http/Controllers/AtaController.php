@@ -16,7 +16,8 @@ class AtaController extends Controller implements HasMiddleware
         return [
             'auth',
             'verified',
-            new Middleware('role:admin|Admin', except: ['index', 'show']),
+            // Associados veem e baixam as ATAs; só admin cadastra, edita e exclui
+            new Middleware('role:admin|Admin', except: ['index', 'show', 'download']),
         ];
     }
 

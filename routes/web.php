@@ -67,7 +67,6 @@ Route::resource('certificados', CertificadoController::class);
 Route::get('certificados/{id}/download', [CertificadoController::class, 'download'])->name('certificados.download');
 Route::get('/certificados/{certificado}/view', [CertificadoController::class, 'viewCertificate'])->name('certificados.view');
 Route::delete('certificados/{certificado}', [CertificadoController::class, 'destroy'])->name('certificados.destroy');
-Route::post('/certificados/generate', [CertificadoController::class, 'generateFromTasks'])->name('certificados.generate');
 Route::get('/certificados/create', [CertificadoController::class, 'create'])->name('certificados.create');
 Route::post('/certificados', [CertificadoController::class, 'store'])->name('certificados.store');
 
@@ -80,11 +79,6 @@ Route::get('/galeria', [GaleriaController::class, 'index'])->name('galeria.publi
 Route::get('/galeria/ano/{ano}', [GaleriaController::class, 'peloAno'])->name('galeria.ano');
 Route::get('/galeria/{galeria}', [GaleriaController::class, 'show'])->name('galeria.show');
 Route::get('/galeria', [GaleriaController::class, 'indexPublic'])->name('galeria.indexPublic');
-
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('frase-inicio/editar', [App\Http\Controllers\Admin\FraseInicioController::class, 'editar'])->name('frase_inicio.editar');
-    Route::put('frase-inicio/atualizar', [App\Http\Controllers\Admin\FraseInicioController::class, 'atualizar'])->name('frase_inicio.atualizar');
-});
 
 // Rotas Administrativas
 Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
@@ -102,7 +96,6 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     // Rotas de certificados (admin)
     Route::resource('certificados', CertificadoController::class)->except(['show']);
-    Route::post('/certificados/generate', [CertificadoController::class, 'generateFromTasks'])->name('certificados.generate');
 
     // Rotas de documentos
     Route::resource('documentos', \App\Http\Controllers\DocumentoController::class);
@@ -136,9 +129,10 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     });
 
     // Outras rotas administrativas
-    Route::resource('projetos', ProjetoController::class);
+    // projetos.show e tags.show não têm tela
+    Route::resource('projetos', ProjetoController::class)->except(['show']);
     Route::resource('servicos', ServicoController::class);
-    Route::resource('tags', TagController::class);
+    Route::resource('tags', TagController::class)->except(['show']);
 
     Route::group(['prefix' => 'lancamentos'], function(){
         Route::get('/', [LancamentoServicoController::class, 'index'])->name('lancamentos.index');
@@ -225,8 +219,8 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::put('frase-inicio/atualizar', [FraseInicioController::class, 'atualizar'])->name('admin.frase_inicio.atualizar');
     Route::post('lancamentos/generate-certificates', [LancamentoServicoController::class, 'generateCertificates'])->name('lancamentos.generateCertificates');
     
-    // Rotas de Cargos (apenas para administradores)
-    Route::resource('cargos', CargoController::class);
+    // Rotas de Cargos (apenas para administradores; cargos.show não tem tela)
+    Route::resource('cargos', CargoController::class)->except(['show']);
 
     // Faturas
     Route::resource('faturas', InvoiceController::class)

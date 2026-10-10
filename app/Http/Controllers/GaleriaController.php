@@ -19,7 +19,7 @@ class GaleriaController extends Controller implements HasMiddleware
             new Middleware('permission:Visualizar Galeria', only: ['indexAdmin']),
             new Middleware('permission:Criar Galeria', only: ['create', 'store']),
             new Middleware('permission:Editar Galeria', only: ['edit', 'update']),
-            new Middleware('permission:Deletar Galeria', only: ['destroy'])
+            new Middleware('permission:Deletar Galeria', only: ['destroy', 'destroyMedia'])
         ];
     }
     public function indexAdmin()
@@ -87,7 +87,7 @@ class GaleriaController extends Controller implements HasMiddleware
             $mainImagePath = null;
             if ($request->hasFile('imagem_principal')) {
                 $file = $request->file('imagem_principal');
-                $mainImageName = Str::slug($request->titulo) . '-main-' . time() . '.' . $file->getClientOriginalExtension();
+                $mainImageName = Str::slug($request->titulo) . '-main-' . time() . '.' . $file->guessExtension();
                 $file->move(public_path('img/fotos'), $mainImageName);
                 $mainImagePath = 'img/fotos/' . $mainImageName;
             }
@@ -104,7 +104,7 @@ class GaleriaController extends Controller implements HasMiddleware
 
             if ($request->tipo_midia === 'imagem' && $request->hasFile('arquivos')) {
                 foreach ($request->file('arquivos') as $key => $mediaFile) {
-                    $mediaFileName = Str::slug($request->titulo) . '-item-' . time() . '-' . ($key + 1) . '.' . $mediaFile->getClientOriginalExtension();
+                    $mediaFileName = Str::slug($request->titulo) . '-item-' . time() . '-' . ($key + 1) . '.' . $mediaFile->guessExtension();
                     $mediaFile->move(public_path('img/fotos'), $mediaFileName);
                     $mediaPath = 'img/fotos/' . $mediaFileName;
 
@@ -213,14 +213,14 @@ class GaleriaController extends Controller implements HasMiddleware
                         File::delete(public_path($galeria->caminho));
                     }
                     $file = $request->file('imagem_principal');
-                    $mainImageName = Str::slug($request->titulo) . '-main-' . time() . '.' . $file->getClientOriginalExtension();
+                    $mainImageName = Str::slug($request->titulo) . '-main-' . time() . '.' . $file->guessExtension();
                     $file->move(public_path('img/fotos'), $mainImageName);
                     $galeria->caminho = 'img/fotos/' . $mainImageName;
                 }
 
                 if ($request->hasFile('arquivos')) {
                     foreach ($request->file('arquivos') as $key => $mediaFile) {
-                        $mediaFileName = Str::slug($request->titulo) . '-item-' . time() . '-' . ($key + 1) . '.' . $mediaFile->getClientOriginalExtension();
+                        $mediaFileName = Str::slug($request->titulo) . '-item-' . time() . '-' . ($key + 1) . '.' . $mediaFile->guessExtension();
                         $mediaFile->move(public_path('img/fotos'), $mediaFileName);
                         GaleriaMidia::create([
                             'galeria_id' => $galeria->id,
@@ -255,9 +255,10 @@ class GaleriaController extends Controller implements HasMiddleware
             return response()->json(['success' => true, 'message' => 'Arquivo excluído com sucesso!']);
 
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao excluir o arquivo: ' . $e->getMessage()
+                'message' => 'Não foi possível excluir o arquivo. Tente novamente.'
             ], 500);
         }
     }
