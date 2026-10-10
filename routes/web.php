@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CartaoAssociadoController;
 use App\Http\Controllers\PasswordUpdateController;
 use App\Http\Controllers\CargoController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PendenciaController;
 
@@ -85,9 +86,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // Rotas Administrativas
 Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     // Rota principal do admin (dashboard)
-    Route::get('/', function () {
-        return view('admin.index');
-    })->name('admin');
+    Route::get('/', [DashboardController::class, 'index'])->name('admin');
 
     // não tava achando a rota do indexAdmin então tive que tirar do grupo
     Route::get('/galeria', [GaleriaController::class, 'indexAdmin'])->name('galeria.indexAdmin');

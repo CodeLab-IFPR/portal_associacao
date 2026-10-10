@@ -39,6 +39,8 @@ class ProfileUpdateRequest extends FormRequest
             'bairro' => ['nullable', 'string', 'max:100'],
             'estado' => ['nullable', 'string', 'max:100'],
             'cidade' => ['nullable', 'string', 'max:100'],
+            'profissao' => ['nullable', 'string', 'max:255'],
+            'escolaridade' => ['nullable', 'in:Ensino Fundamental,Ensino Médio,Ensino Superior,Pós-graduação,Mestrado,Doutorado'],
         ];
     }
 }

@@ -624,12 +624,11 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
         <main class="app-main">
             @yield('content')
         </main>
-        <footer class="app-footer">
-            <div class="float-end d-none d-sm-inline">Anything you want</div><strong>
-                Copyright &copy; 2014-2024&nbsp;
-                <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
+        <footer class="app-footer text-center">
+            <strong>
+                Copyright &copy; 2026&nbsp; AMAER
             </strong>
-            All rights reserved.
+            - Todos os direitos reservados.
         </footer>
     </div>
     <style>
@@ -738,6 +737,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
         integrity="sha256-YMa+wAM6QkVyz999odX7lPRxkoYAan8suedu4k2Zur8=" crossorigin="anonymous"></script>
         @vite('resources/js/adminlte.js')
         @vite('resources/js/menu.js')
+        @vite('resources/js/dashboard.js')
             <script>
                 const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
                 const Default = {

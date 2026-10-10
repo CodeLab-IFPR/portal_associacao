@@ -9,7 +9,7 @@
     "isEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-CUmQ25Yf.css",
+    "file": "assets/app-6bbadzM7.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -70,6 +70,12 @@
     "file": "assets/app-CH09qwMe.js",
     "name": "app",
     "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard.js": {
+    "file": "assets/dashboard-DIP7G2OP.js",
+    "name": "dashboard",
+    "src": "resources/js/dashboard.js",
     "isEntry": true
   },
   "resources/js/datatables.min.js": {
