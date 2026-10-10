@@ -48,12 +48,13 @@ Route::get('/noticias/cards', [NoticiasController::class, 'cards'])->name('notic
 Route::get('/noticias/{noticia}', [NoticiasController::class, 'show'])->name('noticias.show');
 
 // Rotas públicas de certificados
+// O PDF é identificado pelo código impresso no certificado, não pelo id sequencial
 Route::get('/certificados/emitir', [CertificadoController::class, 'emitir'])->name('certificados.emitir');
-Route::post('/certificados/buscar', [CertificadoController::class, 'buscarCertificados'])->name('certificados.buscar');
-Route::get('/certificados/{certificado}/view', [CertificadoController::class, 'viewCertificate'])->name('certificados.view');
-Route::get('/certificados/{certificado}/download', [CertificadoController::class, 'downloadCertificate'])->name('certificados.download');
+Route::post('/certificados/buscar', [CertificadoController::class, 'buscarCertificados'])->middleware('throttle:20,1')->name('certificados.buscar');
+Route::get('/certificados/{certificado:token}/view', [CertificadoController::class, 'viewCertificate'])->name('certificados.view');
+Route::get('/certificados/{certificado:token}/download', [CertificadoController::class, 'downloadCertificate'])->name('certificados.download');
 Route::get('/certificados/validar', [CertificadoController::class, 'showValidationForm'])->name('certificados.validar');
-Route::post('/certificados/validar', [CertificadoController::class, 'validarCertificado'])->name('certificados.validar.post');
+Route::post('/certificados/validar', [CertificadoController::class, 'validarCertificado'])->middleware('throttle:20,1')->name('certificados.validar.post');
 
 // Rotas para submissão de formulários públicos
 // Formulários públicos: até 5 envios por minuto por IP, contra spam
@@ -64,8 +65,6 @@ Route::middleware('throttle:5,1')->group(function () {
 });
 
 Route::resource('certificados', CertificadoController::class);
-Route::get('certificados/{id}/download', [CertificadoController::class, 'download'])->name('certificados.download');
-Route::get('/certificados/{certificado}/view', [CertificadoController::class, 'viewCertificate'])->name('certificados.view');
 Route::delete('certificados/{certificado}', [CertificadoController::class, 'destroy'])->name('certificados.destroy');
 Route::get('/certificados/create', [CertificadoController::class, 'create'])->name('certificados.create');
 Route::post('/certificados', [CertificadoController::class, 'store'])->name('certificados.store');

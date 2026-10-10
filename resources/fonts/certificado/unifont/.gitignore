@@ -1,0 +1,4 @@
+# Cache de métricas gerado pelo tFPDF
+*.mtx.php
+*.cw.dat
+*.cw127.php

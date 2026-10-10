@@ -8,7 +8,7 @@ class Certificado extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['users_id', 'token', 'descricao', 'horas', 'data'];
+    protected $fillable = ['user_id', 'token', 'descricao', 'horas', 'data'];
 
     public function user()
     {

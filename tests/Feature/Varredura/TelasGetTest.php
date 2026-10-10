@@ -38,7 +38,12 @@ function urlDaRota(Rota $rota, array $ids, int $userId): string
 {
     $uri = $rota->uri();
 
-    return '/' . ltrim(preg_replace_callback('/\{(\w+)\??\}/', function ($m) use ($uri, $ids, $userId) {
+    return '/' . ltrim(preg_replace_callback('/\{(\w+)\??\}/', function ($m) use ($rota, $uri, $ids, $userId) {
+        // Rotas que identificam o certificado pelo código impresso nele
+        if ($m[1] === 'certificado' && $rota->bindingFieldFor('certificado') === 'token') {
+            return \Illuminate\Support\Facades\DB::table('certificados')->where('id', $ids['certificado'])->value('token');
+        }
+
         return match ($m[1]) {
             'user' => $userId,
             'hash' => 'hash-invalido',

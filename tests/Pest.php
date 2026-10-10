@@ -54,6 +54,8 @@ function usarPublicTemporario(): string
     foreach (['imagens/noticias', 'imagens/parceiros', 'imagens/users', 'imagens/projetos', 'img/fotos', 'anexos_submissions'] as $sub) {
         \Illuminate\Support\Facades\File::ensureDirectoryExists("$dir/$sub");
     }
+    // Modelo usado para gerar o PDF dos certificados
+    \Illuminate\Support\Facades\File::copyDirectory(public_path('certificate'), "$dir/certificate");
 
     $cwd = getcwd();
     chdir($dir);

@@ -194,13 +194,14 @@ it('admin exclui evento da galeria', function () {
 
 // ── Certificados ─────────────────────────────────────────────────
 
-it('admin edita certificado', function () {
+it('admin edita certificado e troca o associado', function () {
     $resposta = $this->put('/admin/certificados/' . $this->d['ids']['certificado'], [
-        'user_id' => $this->d['membro']->id, 'descricao' => 'Participação no festival', 'horas' => 8, 'data' => '2026-08-10',
+        'user_id' => $this->d['outro']->id, 'descricao' => 'Participação no festival', 'horas' => 8, 'data' => '2026-08-10',
     ]);
 
     expect($resposta->status())->toBeLessThan(500, 'Erro 500: ' . $resposta->exception?->getMessage());
-    expect(Certificado::find($this->d['ids']['certificado'])->horas)->toBe(8);
+    $certificado = Certificado::find($this->d['ids']['certificado']);
+    expect($certificado->horas)->toBe(8)->and($certificado->user_id)->toBe($this->d['outro']->id);
 });
 
 it('admin cria certificado manual', function () {
@@ -209,6 +210,22 @@ it('admin cria certificado manual', function () {
     ]])->assertRedirect(route('certificados.index'));
 
     expect(Certificado::where('descricao', 'Oficina de solda')->exists())->toBeTrue();
+});
+
+it('visitante abre e baixa o PDF do certificado pelo código', function () {
+    auth()->logout();
+    $token = Certificado::find($this->d['ids']['certificado'])->token;
+
+    $this->get("/certificados/$token/view")->assertOk()->assertHeader('Content-Type', 'application/pdf');
+    $download = $this->get("/certificados/$token/download")->assertOk();
+    expect($download->headers->get('Content-Disposition'))->toContain('attachment')
+        ->and(substr($download->getContent(), 0, 4))->toBe('%PDF');
+});
+
+it('não dá para baixar certificados de outros trocando o número na URL', function () {
+    auth()->logout();
+
+    $this->get('/certificados/' . $this->d['ids']['certificado'] . '/download')->assertNotFound();
 });
 
 it('visitante valida certificado pelo token sem ver dados pessoais do associado', function () {

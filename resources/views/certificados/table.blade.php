@@ -28,7 +28,7 @@
                                     <i class="bi bi-gear"></i>
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $certificado->id }}">
-                                <a class="dropdown-item d-flex align-items-center external-link" href="{{ route('certificados.view', $certificado->id) }}">
+                                <a class="dropdown-item d-flex align-items-center external-link" href="{{ route('certificados.view', $certificado) }}">
                                     <i class="bi bi-eye text-secondary me-2"></i> Visualizar
                                 </a>
                                     <li>

@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "bacon/bacon-qr-code": "^3.0",
         "barryvdh/laravel-dompdf": "^3.0",
         "barryvdh/laravel-snappy": "^1.0",
         "intervention/image": "^3.11",
@@ -15,6 +16,7 @@
         "mpdf/mpdf": "^8.2",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
+        "setasign/tfpdf": "^1.33",
         "spatie/laravel-permission": "^6.10",
         "webklex/laravel-imap": "^4.1",
         "webklex/php-imap": "^4.1"
