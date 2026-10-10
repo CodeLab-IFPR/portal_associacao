@@ -103,9 +103,6 @@ class RegisteredUserController extends Controller implements HasMiddleware
         // Enviar email de verificação
         event(new Registered($user));
     
-        // Enviar email de verificação
-        event(new Registered($user));
-    
         // Enviar email de forma assíncrona usando um job
         SendPasswordJob::dispatch($user, $password);
     

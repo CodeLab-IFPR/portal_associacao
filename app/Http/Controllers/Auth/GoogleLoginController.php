@@ -25,6 +25,10 @@ class GoogleLoginController extends Controller
                 return redirect()->route('login')->with('error', 'Usuário não autorizado, falar com o administrador.');
             }
 
+            if (!$user->acessoLiberado()) {
+                return redirect()->route('login')->with('error', 'Seu acesso está inativo. Se você acabou de se cadastrar, aguarde a aprovação da associação.');
+            }
+
             // Gerar uma senha Google se não existir
             if (!$user->passwordGoogle) {
                 $user->passwordGoogle = bcrypt(uniqid());

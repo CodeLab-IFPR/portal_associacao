@@ -76,6 +76,15 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    /**
+     * Associado aprovado pela administração. O cadastro público cria o
+     * usuário inativo até a aprovação; nulo segue o padrão da coluna (ativo).
+     */
+    public function acessoLiberado(): bool
+    {
+        return $this->ativo === null || (bool) $this->ativo;
+    }
+
     public function certificados()
     {
         return $this->hasMany(Certificado::class, 'user_id');

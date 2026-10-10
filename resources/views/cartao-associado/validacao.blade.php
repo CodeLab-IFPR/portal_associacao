@@ -110,7 +110,7 @@
                                         <div class="col-md-6">
                                             <p class="mb-2"><strong>Categoria:</strong> {{ $usuario->categoria ?? 'Aeromodelismo' }}</p>
                                             <p class="mb-2"><strong>Status:</strong> 
-                                                <span class="badge bg-success">{{ $usuario->status ?? 'Ativo' }}</span>
+                                                <span class="badge {{ $usuario->acessoLiberado() ? 'bg-success' : 'bg-secondary' }}">{{ $usuario->acessoLiberado() ? 'Ativo' : 'Inativo' }}</span>
                                             </p>
                                         </div>
                                     </div>
