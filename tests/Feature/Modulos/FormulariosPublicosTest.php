@@ -42,7 +42,26 @@ it('fale conosco limita envios repetidos (anti-spam)', function () {
     expect($ultima->status())->toBe(429);
 });
 
+it('fale conosco não anexa arquivos do servidor indicados pelo visitante', function () {
+    $this->post('/send-message', [
+        'name' => 'Atacante', 'email' => 'x@example.com', 'message' => 'Oi',
+        'attachments' => json_encode(['../.env']),
+    ]);
+
+    Mail::assertSent(\App\Mail\ContactMessage::class, fn ($mail) => empty($mail->data['attachments']));
+});
+
 // ── Submissão de demanda ─────────────────────────────────────────
+
+it('submissão não anexa arquivos do servidor indicados pelo visitante', function () {
+    $this->post('/submit-demand', [
+        'name' => 'Atacante', 'email' => 'x@example.com', 'demand_description' => 'x', 'expected_utility' => 'x',
+        'attachments' => json_encode(['../.env']),
+    ]);
+
+    Mail::assertSent(\App\Mail\DemandSubmission::class, fn ($mail) => empty($mail->data['attachments']));
+    expect(Submission::first()?->attachments)->toBeNull();
+});
 
 it('visitante envia demanda com anexo PDF', function () {
     $this->from('/submission')

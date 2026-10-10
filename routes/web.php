@@ -56,9 +56,12 @@ Route::get('/certificados/validar', [CertificadoController::class, 'showValidati
 Route::post('/certificados/validar', [CertificadoController::class, 'validarCertificado'])->name('certificados.validar.post');
 
 // Rotas para submissão de formulários públicos
-Route::post('/submit-demand', [SubmissionController::class, 'submit'])->name('submit-demand');
-Route::post('/send-message', [ContactController::class, 'sendMessage'])->name('send-message');
-Route::post('/submit', [SubmissionController::class, 'submit'])->name('submission.submit');
+// Formulários públicos: até 5 envios por minuto por IP, contra spam
+Route::middleware('throttle:5,1')->group(function () {
+    Route::post('/submit-demand', [SubmissionController::class, 'submit'])->name('submit-demand');
+    Route::post('/send-message', [ContactController::class, 'sendMessage'])->name('send-message');
+    Route::post('/submit', [SubmissionController::class, 'submit'])->name('submission.submit');
+});
 
 Route::resource('certificados', CertificadoController::class);
 Route::get('certificados/{id}/download', [CertificadoController::class, 'download'])->name('certificados.download');
