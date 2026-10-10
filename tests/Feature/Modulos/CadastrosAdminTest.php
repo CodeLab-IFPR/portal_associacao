@@ -186,6 +186,21 @@ it('admin cadastra evento de vídeo do YouTube', function () {
     expect(\App\Models\Galeria::where('titulo', 'Vídeo do voo')->value('caminho'))->toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 });
 
+it('trocar evento de vídeo para fotos exige a imagem principal', function () {
+    $this->post('/admin/galeria', [
+        'titulo' => 'Era vídeo', 'data_inicio_evento' => '2026-08-10', 'tipo_midia' => 'video',
+        'link_youtube' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    ]);
+    $galeria = \App\Models\Galeria::where('titulo', 'Era vídeo')->firstOrFail();
+
+    $resposta = $this->put("/admin/galeria/{$galeria->id}", [
+        'titulo' => 'Era vídeo', 'data_inicio_evento' => '2026-08-10', 'tipo_midia' => 'imagem',
+    ]);
+
+    $resposta->assertSessionHasErrors('imagem_principal');
+    expect($galeria->fresh()->tipo)->toBe('video');
+});
+
 it('admin exclui evento da galeria', function () {
     $this->delete('/admin/galeria/' . $this->d['ids']['galeria'])->assertRedirect();
 

@@ -120,14 +120,21 @@ class NoticiasController extends Controller implements HasMiddleware
 
     public function update(Request $request, $id): RedirectResponse
     {
+        // Campos enviados não podem ficar vazios (no banco são obrigatórios)
         $request->validate([
-            'titulo' => 'nullable|min:5|max:255',
-            'autor' => 'nullable|min:3|max:255',
-            'conteudo' => 'nullable|min:15',
-            'categoria' => 'nullable|string|max:255',
-            'alt' => 'nullable|string|max:255',
+            'titulo' => 'sometimes|required|min:5|max:255',
+            'autor' => 'sometimes|required|min:3|max:255',
+            'conteudo' => 'sometimes|required|min:15',
+            'categoria' => 'sometimes|required|string|max:255',
+            'alt' => 'sometimes|required|string|max:255',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ],[
+            'titulo.required' => 'O campo título é obrigatório.',
+            'titulo.min' => 'O campo título deve ter no mínimo 5 caracteres.',
+            'autor.required' => 'O campo autor é obrigatório.',
+            'conteudo.required' => 'O campo conteúdo é obrigatório.',
+            'categoria.required' => 'O campo categoria é obrigatório.',
+            'alt.required' => 'O campo alt é obrigatório.',
             'titulo.max' => 'O campo título deve ter no máximo 255 caracteres.',
             'autor.min' => 'O campo autor deve ter no mínimo 3 caracteres.',
             'autor.max' => 'O campo autor deve ter no máximo 255 caracteres.',

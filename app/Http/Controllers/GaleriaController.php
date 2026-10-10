@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class GaleriaController extends Controller implements HasMiddleware
 {
@@ -97,7 +98,8 @@ class GaleriaController extends Controller implements HasMiddleware
                 'descricao' => $request->descricao,
                 'data_inicio_evento' => $request->data_inicio_evento,
                 'data_fim_evento' => $request->data_fim_evento,
-                'caminho' => $mainImagePath,
+                // caminho é obrigatório: imagem principal ou, no vídeo, o link do YouTube
+                'caminho' => $request->tipo_midia === 'video' ? $request->link_youtube : $mainImagePath,
                 'ano' => date('Y', strtotime($request->data_inicio_evento)),
                 'tipo' => $request->tipo_midia
             ]);
@@ -115,11 +117,6 @@ class GaleriaController extends Controller implements HasMiddleware
                     ]);
                 }
             } elseif ($request->tipo_midia === 'video') {
-
-
-
-                $galeria->update(['caminho' => $request->link_youtube]);
-
                 GaleriaMidia::create([
                     'galeria_id' => $galeria->id,
                     'tipo' => 'video',
@@ -162,9 +159,15 @@ class GaleriaController extends Controller implements HasMiddleware
             'descricao' => 'nullable|string',
             'tipo_midia' => 'required|string|in:imagem,video',
             'link_youtube' => ['required_if:tipo_midia,video', 'nullable', 'url', 'regex:#^(https?\:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[a-zA-Z0-9_-]+#'],
-            'imagem_principal' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096',
+            // Trocar de vídeo para fotos exige uma nova imagem principal (caminho é obrigatório)
+            'imagem_principal' => [
+                Rule::requiredIf($galeria->tipo === 'video' && $request->tipo_midia === 'imagem'),
+                'nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096',
+            ],
             'arquivos' => 'nullable|array',
             'arquivos.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'imagem_principal.required' => 'Envie a imagem principal ao trocar o evento de vídeo para fotos.',
         ]);
 
         DB::beginTransaction();
