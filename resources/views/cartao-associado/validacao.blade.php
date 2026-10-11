@@ -120,7 +120,7 @@
                                             <p class="mb-2"><strong>Data de Ingresso:</strong> {{ $usuario->created_at->format('d/m/Y') }}</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p class="mb-2"><strong>Validade:</strong> {{ $usuario->created_at->addYears(2)->format('d/m/Y') }}</p>
+                                            <p class="mb-2"><strong>Validade:</strong> {{ $usuario->validadeDoCartao()->format('d/m/Y') }}</p>
                                         </div>
                                     </div>
                                     <p class="text-muted mt-2 mb-0">

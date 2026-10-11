@@ -85,6 +85,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->ativo === null || (bool) $this->ativo;
     }
 
+    /** Validade do cartão do associado: 1 ano a partir do ingresso. */
+    public function validadeDoCartao(): \Illuminate\Support\Carbon
+    {
+        return $this->created_at->copy()->addYear();
+    }
+
     public function certificados()
     {
         return $this->hasMany(Certificado::class, 'user_id');

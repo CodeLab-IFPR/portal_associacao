@@ -243,7 +243,7 @@ class CartaoAssociadoController extends Controller
             imagestring($img, 4, 50, $infoStartY + $lineHeight + 15, $ingresso, $preto);
             
             // Validade
-            $validade = $user->created_at->addYears(2)->format('d/m/Y');
+            $validade = $user->validadeDoCartao()->format('d/m/Y');
             imagestring($img, 3, $width - 200, $infoStartY + $lineHeight, 'Validade:', $cinzaTexto);
             imagestring($img, 4, $width - 200, $infoStartY + $lineHeight + 15, $validade, $preto);
             

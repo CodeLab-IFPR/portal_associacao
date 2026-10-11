@@ -95,7 +95,7 @@ Cartão do Associado
                                             </div>
                                             <div>
                                                 <div style="font-size: 12px; opacity: 0.9; margin-bottom: 2px;">Validade</div>
-                                                <div style="font-size: 16px; font-weight: bold;">{{ $user->created_at->addYears(2)->format('d/m/Y') }}</div>
+                                                <div style="font-size: 16px; font-weight: bold;">{{ $user->validadeDoCartao()->format('d/m/Y') }}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -132,7 +132,7 @@ Cartão do Associado
                         <div class="mt-4 p-3 bg-light rounded">
                             <h5>Informações do Cartão</h5>
                             <ul class="mb-0">
-                                <li>Este cartão é válido por 1 anos a partir da data de ingresso na associação</li>
+                                <li>Este cartão é válido por 1 ano a partir da data de ingresso na associação</li>
                                 <li>O QR Code permite validação da autenticidade do cartão</li>
                                 <li>Mantenha sempre seu cartão atualizado junto à administração</li>
                             </ul>

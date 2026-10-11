@@ -209,6 +209,17 @@ it('membro abre o próprio cartão', function () {
     $this->actingAs($this->d['membro'])->get('/admin/cartao-associado')->assertOk()->assertSee('Membro Teste');
 });
 
+it('cartão e validação mostram validade de 1 ano a partir do ingresso', function () {
+    $m = $this->d['membro']->fresh();
+    $validade = $m->created_at->copy()->addYear()->format('d/m/Y');
+
+    $this->actingAs($m)->get('/admin/cartao-associado')
+        ->assertOk()->assertSee($validade)->assertSee('válido por 1 ano a partir');
+
+    $this->get("/validar-cartao/{$m->id}/" . md5($m->email . $m->created_at))
+        ->assertOk()->assertSee($validade);
+});
+
 it('QR code do cartão valida o associado', function () {
     $m = $this->d['membro'];
 
