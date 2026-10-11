@@ -1,3 +1,4 @@
+<div class="table-responsive">
 <table class="table table-bordered table-striped mt-4" id="certificados-table">
             <thead>
                 <tr>
@@ -63,5 +64,6 @@
                 @endforelse
             </tbody>
         </table>
+</div>
 
 {!! $certificados->withQueryString()->links('pagination::bootstrap-5') !!}

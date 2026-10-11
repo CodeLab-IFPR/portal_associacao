@@ -819,7 +819,8 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
             </script>
             <script>
                 document.getElementById('inputImagem')?.addEventListener('change', function () {
-                    if (this.files.length > 0) {
+                    // Só abre o recorte nas telas que têm o modal (notícias, por exemplo, não têm)
+                    if (this.files.length > 0 && document.getElementById('image')) {
                         var file = this.files[0];
                         var done = function (url) {
                             document.getElementById('image').src = url;
@@ -842,8 +843,8 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
             <script>
                 document.getElementById('inputImagem')?.addEventListener('change', function (event) {
                     const [file] = event.target.files;
-                    if (file) {
-                        const preview = document.getElementById('newImagePreview');
+                    const preview = document.getElementById('newImagePreview');
+                    if (file && preview) {
                         preview.innerHTML =
                             `<p class="mt-2"><strong>Nova imagem:</strong></p><img src="${URL.createObjectURL(file)}" width="160px" class="mt-2">`;
                     }
