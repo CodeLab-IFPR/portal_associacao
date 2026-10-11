@@ -93,3 +93,9 @@ it('membro exclui o próprio documento e o arquivo é apagado', function () {
     expect(Documento::find($doc->id))->toBeNull();
     Storage::disk('private')->assertMissing($doc->caminho_arquivo);
 });
+
+it('depois de enviar, o associado vê a confirmação na lista de documentos', function () {
+    $this->actingAs($this->d['membro'])->followingRedirects()
+        ->post('/admin/documentos', ['arquivo' => pdfFalso(), 'tipo_documento' => 'RG'])
+        ->assertSee('Documento enviado com sucesso! Aguarde a aprovação.');
+});

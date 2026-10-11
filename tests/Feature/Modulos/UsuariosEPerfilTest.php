@@ -188,6 +188,21 @@ it('associado inativo (ainda não aprovado) não consegue entrar', function () {
     $this->assertGuest();
 });
 
+it('a tela de login mostra o aviso de acesso inativo, não "senha incorreta"', function () {
+    $inativo = User::factory()->create(['ativo' => false, 'password' => Hash::make('Senha@123')]);
+
+    $this->from('/login')->followingRedirects()
+        ->post('/login', ['email' => $inativo->email, 'password' => 'Senha@123'])
+        ->assertSee('Seu acesso está inativo')
+        ->assertDontSee('Email ou senha incorretos');
+});
+
+it('a tela de login mostra "Email ou senha incorretos" para senha errada', function () {
+    $this->from('/login')->followingRedirects()
+        ->post('/login', ['email' => $this->d['membro']->email, 'password' => 'errada'])
+        ->assertSee('Email ou senha incorretos');
+});
+
 // ── Cartão do associado ──────────────────────────────────────────
 
 it('membro abre o próprio cartão', function () {

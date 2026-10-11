@@ -31,6 +31,17 @@ Galeria Admin
             <p class="text-muted">{{ __("Visualize e gerencie todas as mídias da galeria.") }}</p>
         </header>
 
+        @if(session('success'))
+            <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="alert-content">
+                    <strong>{{ session('success') }}</strong>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+            </div>
+        @endif
+
         <!-- Seção de Ações -->
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">

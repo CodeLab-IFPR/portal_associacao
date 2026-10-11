@@ -93,3 +93,20 @@ it('submissão não aceita arquivo executável (.php) na pasta pública', functi
     $phpPublicos = glob(public_path('anexos_submissions/*.php'));
     expect($phpPublicos)->toBeEmpty('Arquivo .php foi salvo em pasta pública: ' . implode(', ', array_map('basename', $phpPublicos)));
 });
+
+it('fale conosco e demanda mostram a confirmação na tela', function () {
+    $this->from('/contato')->followingRedirects()
+        ->post('/send-message', ['name' => 'Ana', 'email' => 'ana@example.com', 'message' => 'Olá'])
+        ->assertSee('Mensagem enviada com sucesso!');
+
+    $this->from('/submission')->followingRedirects()
+        ->post('/submit-demand', ['name' => 'Ana', 'email' => 'ana@example.com', 'demand_description' => 'x', 'expected_utility' => 'y'])
+        ->assertSee('Submissão enviada com sucesso!');
+});
+
+it('fale conosco mostra os erros de validação na tela', function () {
+    $this->from('/contato')->followingRedirects()
+        ->post('/send-message', ['email' => 'ana@example.com'])
+        ->assertSee('Informe seu nome.')
+        ->assertSee('Escreva sua mensagem.');
+});

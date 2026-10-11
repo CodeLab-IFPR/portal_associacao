@@ -26,6 +26,17 @@
             <p class="text-muted">{{ __("Configure as informações principais que serão exibidas na página inicial do site.") }}</p>
         </header>
 
+        @if(session('success'))
+            <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="alert-content">
+                    <strong>{{ session('success') }}</strong>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+            </div>
+        @endif
+
         <form action="{{ route('admin.frase_inicio.atualizar') }}" method="POST">
             @csrf
             @method('PUT')

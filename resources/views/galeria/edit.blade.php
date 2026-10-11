@@ -10,6 +10,10 @@
 
         <div class="card shadow-sm">
             <div class="card-body">
+                @if(session('error'))
+                    <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+                @endif
+
                 <form id="edit-media-form" action="{{ route('galeria.update', $galeria->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
