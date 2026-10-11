@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Projeto;
 use App\Models\Tag;
+use App\Models\LancamentoServico;
 use App\Http\Controllers\Concerns\PaginaListagem;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
@@ -128,6 +129,16 @@ class ProjetoController extends Controller implements HasMiddleware
 
     public function destroy(Projeto $projeto)
     {
+        // Os lançamentos de horas são apagados em cascata pelo banco: não deixa
+        // excluir um projeto que ainda tem horas lançadas pelos associados
+        $lancamentos = LancamentoServico::where('projeto_id', $projeto->id)->count();
+        if ($lancamentos > 0) {
+            $mensagem = "Este projeto tem {$lancamentos} lançamento(s) de horas e não pode ser excluído.";
+            return request()->ajax()
+                ? response()->json(['error' => $mensagem], 422)
+                : redirect()->route('projetos.index')->with('error', $mensagem);
+        }
+
         try {
             $projeto->delete();
 

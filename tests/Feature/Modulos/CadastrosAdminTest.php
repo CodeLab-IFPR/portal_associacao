@@ -263,3 +263,22 @@ it('visitante encontra certificados digitando o CPF com pontuação', function (
 
     $this->postJson('/certificados/buscar', ['cpf' => $formatado])->assertOk()->assertJsonCount(1, 'certificados');
 });
+
+// ── Exclusão de projeto/serviço com horas lançadas ───────────────
+
+it('não exclui projeto que tem horas lançadas (o banco apagaria as horas em cascata)', function () {
+    $resposta = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
+        ->delete('/admin/projetos/' . $this->d['ids']['projeto']);
+
+    $resposta->assertStatus(422)->assertJsonPath('error', fn ($msg) => str_contains($msg, 'lançamento'));
+    expect(Projeto::find($this->d['ids']['projeto']))->not->toBeNull()
+        ->and(LancamentoServico::find($this->d['ids']['lancamento']))->not->toBeNull();
+});
+
+it('não exclui serviço que tem horas lançadas', function () {
+    $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
+        ->delete('/admin/servicos/' . $this->d['ids']['servico'])
+        ->assertStatus(422);
+
+    expect(DB::table('servicos')->where('id', $this->d['ids']['servico'])->exists())->toBeTrue();
+});

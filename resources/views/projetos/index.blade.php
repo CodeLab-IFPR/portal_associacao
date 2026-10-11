@@ -103,7 +103,7 @@
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText);
-                    alert('Ocorreu um erro ao tentar excluir o projeto.');
+                    alert(xhr.responseJSON?.error || 'Ocorreu um erro ao tentar excluir o projeto.');
                 }
             });
         });
