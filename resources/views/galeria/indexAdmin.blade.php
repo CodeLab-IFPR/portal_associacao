@@ -114,7 +114,7 @@ Galeria Admin
 
         var table = $('#galeria-datatable').DataTable({
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json',
+                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/pt-BR.json',
                 "decimal": "",
                 "emptyTable": "Nenhum dado disponível na tabela",
                 "info": "Mostrando _START_ até _END_ de _TOTAL_ registros",
