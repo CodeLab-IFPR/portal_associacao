@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Projeto;
 use App\Models\Tag;
+use App\Http\Controllers\Concerns\PaginaListagem;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -12,6 +13,8 @@ use Illuminate\Routing\Controllers\Middleware;
 
 class ProjetoController extends Controller implements HasMiddleware
 {
+    use PaginaListagem;
+
     public static function middleware(): array
     {
         return [
@@ -23,7 +26,7 @@ class ProjetoController extends Controller implements HasMiddleware
     }
     public function index(): View
     {
-        $projetos = Projeto::paginate(10);
+        $projetos = $this->paginarListagem(Projeto::orderBy('id'), 'projetos.index', 10);
         return view('projetos.index', compact('projetos'));
     }
 
@@ -128,7 +131,7 @@ class ProjetoController extends Controller implements HasMiddleware
         try {
             $projeto->delete();
 
-            $projetos = Projeto::paginate(10);
+            $projetos = $this->paginarListagem(Projeto::orderBy('id'), 'projetos.index', 10);
 
             if (request()->ajax()) {
                 return response()->json([

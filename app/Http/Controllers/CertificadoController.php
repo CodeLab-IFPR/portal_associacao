@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Tarefa;
 use App\Models\Servico;
 use App\Support\CertificadoPdf;
+use App\Http\Controllers\Concerns\PaginaListagem;
 use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Writer as QrCodeWriter;
 use Illuminate\View\View;
@@ -21,6 +22,8 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 
 class CertificadoController extends Controller implements HasMiddleware
 {
+    use PaginaListagem;
+
     public static function middleware(): array
     {
         return [
@@ -106,21 +109,7 @@ class CertificadoController extends Controller implements HasMiddleware
 
     public function index(Request $request)
     {
-        $certificadosQuery = Certificado::latest();
-
-        if ($request->search) {
-            $certificadosQuery->where(function (Builder $builder) use ($request) {
-                $builder->where('descricao', 'like', "%{$request->search}%")
-                    ->orWhere('horas', 'like', "%{$request->search}%")
-                    ->orWhere('data', 'like', "%{$request->search}%")
-                    ->orWhereHas('user', function (Builder $query) use ($request) {
-                        $query->where('nome', 'like', "%{$request->search}%");
-                    })
-                    ->orWhere('token', 'like', "%{$request->search}%");
-            });
-        }
-
-        $certificados = $certificadosQuery->paginate(5);
+        $certificados = $this->listagemDeCertificados($request);
 
         if ($request->ajax()) {
             return response()->json([
@@ -129,6 +118,28 @@ class CertificadoController extends Controller implements HasMiddleware
         }
 
         return view('certificados.index', compact('certificados'));
+    }
+
+    /** Listagem usada pela tela e pela exclusão via AJAX. */
+    private function listagemDeCertificados(Request $request)
+    {
+        $certificadosQuery = Certificado::latest()->latest('id');
+
+        if ($request->search) {
+            $certificadosQuery->where(function (Builder $builder) use ($request) {
+                $builder->where('descricao', 'like', "%{$request->search}%")
+                    ->orWhere('horas', 'like', "%{$request->search}%")
+                    ->orWhere('data', 'like', "%{$request->search}%")
+                    // O nome completo fica em "name"; "nome" só existe no cadastro público
+                    ->orWhereHas('user', function (Builder $query) use ($request) {
+                        $query->where('name', 'like', "%{$request->search}%")
+                            ->orWhere('nome', 'like', "%{$request->search}%");
+                    })
+                    ->orWhere('token', 'like', "%{$request->search}%");
+            });
+        }
+
+        return $this->paginarListagem($certificadosQuery, 'certificados.index', 5, ['search']);
     }
 
     public function create(Request $request)
@@ -314,7 +325,7 @@ class CertificadoController extends Controller implements HasMiddleware
             $certificado = Certificado::findOrFail($id);
             $certificado->delete();
 
-            $certificados = Certificado::paginate(5);
+            $certificados = $this->listagemDeCertificados(request());
 
             if (request()->ajax()) {
                 return response()->json([

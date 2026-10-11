@@ -91,6 +91,8 @@
             $.ajax({
                 url: url,
                 method: 'DELETE',
+                // Página, busca e filtros atuais: a tabela volta do jeito que estava
+                data: Object.assign(Object.fromEntries(new URLSearchParams(window.location.search)), { search: $('#search-input').val() || '' }),
                 success: function (response) {
                     if (response.table) {
                         $('#projetos-table-container').html(response.table);

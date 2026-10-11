@@ -8,6 +8,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Providers\ImageUploader;
+use App\Http\Controllers\Concerns\PaginaListagem;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,8 @@ use Illuminate\Routing\Controllers\Middleware;
 
 class NoticiasController extends Controller implements HasMiddleware
 {
+    use PaginaListagem;
+
     public static function middleware(): array
     {
         return [
@@ -27,18 +30,8 @@ class NoticiasController extends Controller implements HasMiddleware
 
     public function index(Request $request)
     {
-        $noticiasQuery = Noticias::latest();
-    
-        if ($request->search) {
-            $noticiasQuery->where(function (Builder $builder) use ($request) {
-                $builder->where('titulo', 'like', "%{$request->search}%")
-                        ->orWhere('autor', 'like', "%{$request->search}%")
-                        ->orWhere('categoria', 'like', "%{$request->search}%");
-            });
-        }
-    
-        $noticias = $noticiasQuery->paginate(5);
-    
+        $noticias = $this->listagemDeNoticias($request);
+
         if ($request->ajax()) {
             return response()->json([
                 'table' => view('noticias.table', compact('noticias'))->render()
@@ -46,6 +39,22 @@ class NoticiasController extends Controller implements HasMiddleware
         }
     
         return view('noticias.index', compact('noticias'));
+    }
+
+    /** Listagem usada pela tela e pela exclusão via AJAX. */
+    private function listagemDeNoticias(Request $request)
+    {
+        $noticiasQuery = Noticias::latest()->latest('id');
+
+        if ($request->search) {
+            $noticiasQuery->where(function (Builder $builder) use ($request) {
+                $builder->where('titulo', 'like', "%{$request->search}%")
+                        ->orWhere('autor', 'like', "%{$request->search}%")
+                        ->orWhere('categoria', 'like', "%{$request->search}%");
+            });
+        }
+
+        return $this->paginarListagem($noticiasQuery, 'noticias.index', 5, ['search']);
     }
 
     public function home(): View
@@ -184,7 +193,7 @@ class NoticiasController extends Controller implements HasMiddleware
     
             $noticia->delete();
     
-            $noticias = Noticias::paginate(5);
+            $noticias = $this->listagemDeNoticias(request());
     
             if (request()->ajax()) {
                 return response()->json([
