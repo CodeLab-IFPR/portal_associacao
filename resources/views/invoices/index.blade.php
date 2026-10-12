@@ -169,12 +169,12 @@ Faturas
                                     <td>{{ \Carbon\Carbon::parse($invoice->first_due_date)->format('d/m/Y') }}</td>
                                     <td>
                                         <span class="badge
-                                            @if($invoice->status === 'paga') bg-success
-                                            @elseif($invoice->status === 'pendente') bg-warning text-dark
-                                            @elseif($invoice->status === 'vencida') bg-danger
+                                            @if($invoice->effective_status === 'paga') bg-success
+                                            @elseif($invoice->effective_status === 'pendente') bg-warning text-dark
+                                            @elseif($invoice->effective_status === 'vencida') bg-danger
                                             @else bg-secondary
                                             @endif">
-                                            {{ ucfirst($invoice->status) }}
+                                            {{ ucfirst($invoice->effective_status) }}
                                         </span>
                                     </td>
                                     <td>

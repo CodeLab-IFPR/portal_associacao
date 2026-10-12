@@ -42,7 +42,7 @@ class InvoiceController extends Controller implements HasMiddleware
         }
 
         if (!empty($validated['status'])) {
-            $query->where('status', $validated['status']);
+            $query->withEffectiveStatus($validated['status']);
         }
 
         if (!empty($validated['month'])) {
@@ -209,12 +209,15 @@ class InvoiceController extends Controller implements HasMiddleware
 
     public function updateInstallment(Request $request, Invoice $invoice, InvoiceInstallment $installment)
     {
+        if ($installment->invoice_id !== $invoice->id) {
+            abort(404);
+        }
+
         $validated = $request->validate([
-            'amount'             => 'required|numeric|min:0.01',
-            'installments_count' => 'required|integer|min:1|max:60',
-            'due_date'           => 'required|date',
-            'payment_date'       => 'nullable|date',
-            'status'             => 'required|in:pendente,paga,vencida,cancelada',
+            'amount'       => 'required|numeric|min:0.01',
+            'due_date'     => 'required|date',
+            'payment_date' => 'nullable|date',
+            'status'       => 'required|in:pendente,paga,vencida,cancelada',
         ]);
 
         DB::beginTransaction();
@@ -227,10 +230,10 @@ class InvoiceController extends Controller implements HasMiddleware
                 'status'       => $validated['status'],
             ]);
 
-            // Atualiza installments_count e recalcula total na fatura pai
+            // A fatura acompanha as parcelas que existem de fato
             $invoice->update([
-                'installments_count' => $validated['installments_count'],
-                'total_amount'       => $validated['amount'] * $validated['installments_count'],
+                'installments_count' => $invoice->installments()->count(),
+                'total_amount'       => $invoice->installments()->sum('amount'),
             ]);
 
             DB::commit();

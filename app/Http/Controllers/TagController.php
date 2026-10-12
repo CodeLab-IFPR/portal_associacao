@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TagController extends Controller
+class TagController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:admin|Admin'),
+        ];
+    }
+
     public function index()
     {
         $tags = Tag::all();

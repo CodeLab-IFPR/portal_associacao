@@ -11,6 +11,7 @@ use App\Providers\ImageUploader;
 use Illuminate\Validation\Rules;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\PaginaListagem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -24,6 +25,8 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 
 class RegisteredUserController extends Controller implements HasMiddleware
 {
+    use PaginaListagem;
+
     public static function middleware(): array
     {
         return [
@@ -103,9 +106,6 @@ class RegisteredUserController extends Controller implements HasMiddleware
         // Enviar email de verificação
         event(new Registered($user));
     
-        // Enviar email de verificação
-        event(new Registered($user));
-    
         // Enviar email de forma assíncrona usando um job
         SendPasswordJob::dispatch($user, $password);
     
@@ -115,8 +115,22 @@ class RegisteredUserController extends Controller implements HasMiddleware
 
     public function index(Request $request)
     {
-        $usersQuery = User::latest();
-    
+        $users = $this->listagemDeMembros($request);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'table' => view('users.table', compact('users'))->render()
+            ]);
+        }
+
+        return view('users.index', compact('users'));
+    }
+
+    /** Listagem de membros usada pela tela e pela exclusão via AJAX. */
+    private function listagemDeMembros(Request $request)
+    {
+        $usersQuery = User::latest()->latest('id');
+
         if ($request->search) {
             $usersQuery->where(function (Builder $builder) use ($request) {
                 $builder->where('name', 'like', "%{$request->search}%")
@@ -124,16 +138,8 @@ class RegisteredUserController extends Controller implements HasMiddleware
                         ->orWhere('cargo', 'like', "%{$request->search}%");
             });
         }
-    
-        $users = $usersQuery->paginate(5);
-    
-        if ($request->ajax()) {
-            return response()->json([
-                'table' => view('users.table', compact('users'))->render()
-            ]);
-        }
-    
-        return view('users.index', compact('users'));
+
+        return $this->paginarListagem($usersQuery, 'users.index', 5, ['search']);
     }
 
     public function about(): View
@@ -232,7 +238,8 @@ class RegisteredUserController extends Controller implements HasMiddleware
 
             $user->delete();
 
-            $users = User::paginate(5);
+            // Mesma listagem (busca, ordem e página) de onde o usuário excluiu
+            $users = $this->listagemDeMembros(request());
 
             if (request()->ajax()) {
                 return response()->json([

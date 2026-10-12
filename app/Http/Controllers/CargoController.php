@@ -4,25 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Cargo;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class CargoController extends Controller
+class CargoController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role:admin|Admin'),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // Verificação temporária para debug
-        if (!auth()->check()) {
-            abort(403, 'Usuário não autenticado.');
-        }
-        
-        if (!auth()->user()->hasRole('Admin')) {
-            // Vamos ver quais roles o usuário tem
-            $userRoles = auth()->user()->roles->pluck('name')->toArray();
-            abort(403, 'Acesso negado. Suas roles: ' . implode(', ', $userRoles) . '. Necessário: Admin');
-        }
-        
         $cargos = Cargo::orderBy('descricao')->paginate(10);
         return view('cargos.index', compact('cargos'));
     }
@@ -53,14 +51,6 @@ class CargoController extends Controller
         ]);
 
         return redirect()->route('cargos.index')->with('success', 'Cargo criado com sucesso!');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Cargo $cargo)
-    {
-        return view('cargos.show', compact('cargo'));
     }
 
     /**

@@ -37,7 +37,8 @@
             <div class="login-form__error">{{ session('error') }}</div>
           @endif
           @if ($errors->has('email'))
-            <div class="login-form__error">Email ou senha incorretos.</div>
+            {{-- Mensagem real do erro: credenciais, acesso inativo ou excesso de tentativas --}}
+            <div class="login-form__error">{{ $errors->first('email') }}</div>
           @endif
 
           <div class="login-form__field">

@@ -8,12 +8,15 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Providers\ImageUploader;
+use App\Http\Controllers\Concerns\PaginaListagem;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\Middleware;
 
 class ParceiroController extends Controller implements HasMiddleware
 {
+    use PaginaListagem;
+
     public static function middleware(): array
     {
         return [
@@ -24,26 +27,33 @@ class ParceiroController extends Controller implements HasMiddleware
         ];
         
     }
-    public function index(Request $request): View
+    // Sem tipo de retorno: na busca via AJAX a resposta é JSON
+    public function index(Request $request)
     {
-        $parceirosQuery = Parceiro::latest();
-    
+        $parceiros = $this->listagemDeParceiros($request);
+
+        if (request()->ajax()) {
+            return response()->json([
+                'table' => view('parceiros.table', compact('parceiros'))->render()
+            ]);
+        }
+
+        return view('parceiros.index', compact('parceiros'));
+    }
+
+    /** Listagem usada pela tela e pela exclusão via AJAX. */
+    private function listagemDeParceiros(Request $request)
+    {
+        $parceirosQuery = Parceiro::latest()->latest('id');
+
         if ($request->search) {
             $parceirosQuery->where(function ($query) use ($request) {
                 $query->where('nome', 'like', "%{$request->search}%")
                       ->orWhere('email', 'like', "%{$request->search}%");
             });
         }
-    
-        $parceiros = $parceirosQuery->paginate(5);
-    
-        if (request()->ajax()) {
-            return response()->json([
-                'table' => view('parceiros.table', compact('parceiros'))->render()
-            ]);
-        }
-    
-        return view('parceiros.index', compact('parceiros'));
+
+        return $this->paginarListagem($parceirosQuery, 'parceiros.index', 5, ['search']);
     }
 
     public function create(): View
@@ -175,7 +185,7 @@ class ParceiroController extends Controller implements HasMiddleware
     
             $parceiro->delete();
     
-            $parceiros = Parceiro::paginate(5);
+            $parceiros = $this->listagemDeParceiros(request());
     
             if (request()->ajax()) {
                 return response()->json([

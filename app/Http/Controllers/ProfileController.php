@@ -31,11 +31,13 @@ class ProfileController extends Controller
         $user = $request->user();
         unset($data['cropped_image'], $data['imagem']);
     
+        $user->fill($data);
+
+        // Só depois do fill o model sabe se o e-mail mudou
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
-    
-        $user->fill($data);
+
         $user->save();
     
         return Redirect::route('profile.edit')->with('status', 'profile-updated');

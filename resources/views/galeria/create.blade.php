@@ -29,6 +29,10 @@
             <p class="text-muted">{{ __("Adicione uma nova mídia à galeria com imagens ou vídeos do YouTube.") }}</p>
         </header>
 
+        @if(session('error'))
+            <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+        @endif
+
         <form id="media-form" action="{{ route('galeria.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 

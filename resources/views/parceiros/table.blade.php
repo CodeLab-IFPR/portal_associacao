@@ -1,3 +1,4 @@
+<div class="table-responsive">
 <table class="table table-bordered table-striped mt-4" id="parceiros-table">
     <thead>
         <tr>
@@ -57,5 +58,6 @@
         @endforelse
     </tbody>
 </table>
+</div>
 
 {!! $parceiros->withQueryString()->links('pagination::bootstrap-5') !!}

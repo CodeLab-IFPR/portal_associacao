@@ -68,10 +68,8 @@ class PendenciaController extends Controller
 
     public function settleInstallment(Request $request, InvoiceInstallment $installment)
     {
-        $user = $request->user();
-        $isAdmin = $this->isAdmin($user);
-
-        if (!$isAdmin && $installment->invoice->user_id !== $user?->id) {
+        // Só a administração registra pagamento; o associado não dá baixa nem na própria parcela
+        if (!$this->isAdmin($request->user())) {
             abort(403);
         }
 

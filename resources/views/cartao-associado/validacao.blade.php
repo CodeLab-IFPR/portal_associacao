@@ -110,7 +110,7 @@
                                         <div class="col-md-6">
                                             <p class="mb-2"><strong>Categoria:</strong> {{ $usuario->categoria ?? 'Aeromodelismo' }}</p>
                                             <p class="mb-2"><strong>Status:</strong> 
-                                                <span class="badge bg-success">{{ $usuario->status ?? 'Ativo' }}</span>
+                                                <span class="badge {{ $usuario->acessoLiberado() ? 'bg-success' : 'bg-secondary' }}">{{ $usuario->acessoLiberado() ? 'Ativo' : 'Inativo' }}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -120,7 +120,7 @@
                                             <p class="mb-2"><strong>Data de Ingresso:</strong> {{ $usuario->created_at->format('d/m/Y') }}</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p class="mb-2"><strong>Validade:</strong> {{ $usuario->created_at->addYears(2)->format('d/m/Y') }}</p>
+                                            <p class="mb-2"><strong>Validade:</strong> {{ $usuario->validadeDoCartao()->format('d/m/Y') }}</p>
                                         </div>
                                     </div>
                                     <p class="text-muted mt-2 mb-0">

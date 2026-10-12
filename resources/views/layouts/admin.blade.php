@@ -40,9 +40,16 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
         integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"
         integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
-        integrity="sha384-Qsx5lrStHZyR9REqhUF8iQt73X06c8LGIUPzpOhwRrI=" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // As telas configuram o token CSRF em todo $.ajax; ele não deve ir para outros
+        // domínios (CDNs recusam o pedido, e o token vazaria)
+        $.ajaxPrefilter(function (options) {
+            if (options.crossDomain && options.headers) {
+                delete options.headers['X-CSRF-TOKEN'];
+            }
+        });
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
     <!-- Cropper.js -->
@@ -725,6 +732,8 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
 
         document.addEventListener('DOMContentLoaded', function () {
             const textarea = document.getElementById('descricao');
+            // Só nas telas que têm o contador de caracteres
+            if (!textarea || !document.getElementById('charCount')) return;
             textarea.addEventListener('input', updateCharacterCount);
             updateCharacterCount();
         });
@@ -747,7 +756,7 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                 };
                 document.addEventListener("DOMContentLoaded", function () {
                     const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-                    if (sidebarWrapper && typeof OverlayScrollbarsGlobal ? .OverlayScrollbars !== "undefined") {
+                    if (sidebarWrapper && typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== "undefined") {
                         OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
                             scrollbars: {
                                 theme: Default.scrollbarTheme,
@@ -771,10 +780,9 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                     });
                 });
 
-                <script >
-                    const cardHeaders = document.querySelectorAll(
-                        ".connectedSortable .card-header",
-                    );
+                const cardHeaders = document.querySelectorAll(
+                    ".connectedSortable .card-header",
+                );
                 cardHeaders.forEach((cardHeader) => {
                     cardHeader.style.cursor = "move";
                 });
@@ -797,20 +805,22 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
                     });
                 });
             </script>
+            {{-- Recorte de imagem: só roda nas telas que têm o campo de imagem --}}
             <script>
-                document.querySelector('#cancel-button').addEventListener('click', function () {
+                document.querySelector('#cancel-button')?.addEventListener('click', function () {
                     $('#modal').modal('hide');
                     document.querySelector('#inputImagem').value = '';
                 });
             </script>
             <script>
-                document.getElementById('crop').addEventListener('click', function () {
+                document.getElementById('crop')?.addEventListener('click', function () {
                     document.getElementById('croppedImageContainer').style.display = 'block';
                 });
             </script>
             <script>
-                document.getElementById('inputImagem').addEventListener('change', function () {
-                    if (this.files.length > 0) {
+                document.getElementById('inputImagem')?.addEventListener('change', function () {
+                    // Só abre o recorte nas telas que têm o modal (notícias, por exemplo, não têm)
+                    if (this.files.length > 0 && document.getElementById('image')) {
                         var file = this.files[0];
                         var done = function (url) {
                             document.getElementById('image').src = url;
@@ -831,10 +841,10 @@ $lastSubmissionTime = $lastSubmission ? $lastSubmission->created_at->diffForHuma
             </script>
 
             <script>
-                document.getElementById('inputImagem').addEventListener('change', function (event) {
+                document.getElementById('inputImagem')?.addEventListener('change', function (event) {
                     const [file] = event.target.files;
-                    if (file) {
-                        const preview = document.getElementById('newImagePreview');
+                    const preview = document.getElementById('newImagePreview');
+                    if (file && preview) {
                         preview.innerHTML =
                             `<p class="mt-2"><strong>Nova imagem:</strong></p><img src="${URL.createObjectURL(file)}" width="160px" class="mt-2">`;
                     }
