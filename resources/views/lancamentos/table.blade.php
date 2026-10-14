@@ -1,4 +1,5 @@
 
+<div class="table-responsive">
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
@@ -87,5 +88,6 @@
         @endforelse
     </tbody>
 </table>
+</div>
 
 {!! $lancamentos->withQueryString()->links('pagination::bootstrap-5') !!}

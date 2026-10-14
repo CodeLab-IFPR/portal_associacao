@@ -5,6 +5,44 @@ Faturas
 @endsection
 
 @section('content')
+<style>
+    .invoice-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .invoice-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .invoice-actions .btn {
+        min-width: 2.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-width: 1px;
+        border-style: solid;
+    }
+
+    @media (max-width: 575.98px) {
+        .invoice-table {
+            font-size: 0.82rem;
+        }
+
+        .invoice-actions {
+            gap: 0.35rem;
+        }
+
+        .invoice-actions .btn {
+            min-width: 2rem;
+            padding: 0.35rem 0.5rem;
+        }
+    }
+</style>
 @php
     $mesesAbrev = [1=>'Jan',2=>'Fev',3=>'Mar',4=>'Abr',5=>'Mai',6=>'Jun',7=>'Jul',8=>'Ago',9=>'Set',10=>'Out',11=>'Nov',12=>'Dez'];
     $monthOptions = collect($availableMonths ?? [])->map(function ($ym) use ($mesesAbrev) {
@@ -14,6 +52,7 @@ Faturas
             'label' => $mesesAbrev[(int)$month] . '/' . substr($year, -2),
         ];
     });
+    $isAdmin = auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin');
 @endphp
 <div class="app-content-header">
     <div class="container-fluid">
@@ -49,10 +88,15 @@ Faturas
         @endif
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="{{ route('invoices.create') }}" class="btn btn-outline-primary">
-                <i class="bi bi-plus-lg me-1"></i>Nova Fatura
-            </a>
+            @if($isAdmin)
+                <a href="{{ route('invoices.create') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Nova Fatura
+                </a>
+            @else
+                <span></span>
+            @endif
             <form id="filterForm" method="GET" action="{{ route('invoices.index') }}" class="d-flex align-items-center gap-3 flex-wrap">
+                @if($isAdmin)
                 <div class="d-flex align-items-center">
                     <label for="searchFilter" class="form-label mb-0 me-2 text-nowrap">Buscar:</label>
                     <input type="text" id="searchFilter" name="search" class="form-control"
@@ -60,6 +104,7 @@ Faturas
                            placeholder="Associado ou valor (R$)"
                            style="min-width: 220px;">
                 </div>
+                @endif
                 <div class="d-flex align-items-center">
                     <label for="monthFilter" class="form-label mb-0 me-2 text-nowrap">Mês:</label>
                     <select id="monthFilter" name="month" class="form-select">
@@ -95,71 +140,77 @@ Faturas
                 </h5>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover mb-0">
+                <div class="table-responsive invoice-table-wrapper">
+                    <table class="table table-bordered table-hover align-middle mb-0 invoice-table">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Associado</th>
+                                @if($isAdmin)
+                                    <th scope="col">Associado</th>
+                                @endif
                                 <th scope="col">Total</th>
                                 <th scope="col">Parcelas</th>
                                 <th scope="col">Periodicidade</th>
                                 <th scope="col">1º Vencimento</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Ações</th>
+                                <th scope="col" class="text-center">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($invoices as $invoice)
                                 <tr>
                                     <td>{{ $invoice->id }}</td>
-                                    <td>{{ $invoice->user->name }}</td>
+                                    @if($isAdmin)
+                                        <td>{{ $invoice->user->name }}</td>
+                                    @endif
                                     <td>R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}</td>
                                     <td>{{ $invoice->installments_count }}x</td>
                                     <td>{{ ucfirst($invoice->periodicity) }}</td>
                                     <td>{{ \Carbon\Carbon::parse($invoice->first_due_date)->format('d/m/Y') }}</td>
                                     <td>
                                         <span class="badge
-                                            @if($invoice->status === 'paga') bg-success
-                                            @elseif($invoice->status === 'pendente') bg-warning text-dark
-                                            @elseif($invoice->status === 'vencida') bg-danger
+                                            @if($invoice->effective_status === 'paga') bg-success
+                                            @elseif($invoice->effective_status === 'pendente') bg-warning text-dark
+                                            @elseif($invoice->effective_status === 'vencida') bg-danger
                                             @else bg-secondary
                                             @endif">
-                                            {{ ucfirst($invoice->status) }}
+                                            {{ ucfirst($invoice->effective_status) }}
                                         </span>
                                     </td>
                                     <td>
                                         <div class="invoice-actions" aria-label="Ações da fatura">
                                             <a href="{{ route('invoices.show', $invoice->id) }}"
-                                               class="action-icon text-info"
+                                               class="btn btn-outline-info btn-sm px-2"
                                                data-bs-toggle="tooltip"
                                                data-bs-placement="top"
                                                title="Visualizar">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="{{ route('invoices.edit', $invoice->id) }}"
-                                               class="action-icon text-warning"
-                                               data-bs-toggle="tooltip"
-                                               data-bs-placement="top"
-                                               title="Editar">
-                                                <i class="bi bi-pencil-square"></i>
-                                            </a>
-                                            <button type="button"
-                                                class="action-icon text-danger btn-delete bg-transparent"
-                                                data-id="{{ $invoice->id }}"
-                                                data-nome="{{ $invoice->user->name }}"
-                                                data-total="R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="top"
-                                                title="Excluir">
-                                                <i class="bi bi-x-circle-fill me-1"></i>
-                                            </button>
+                                            @if($isAdmin)
+                                                <a href="{{ route('invoices.edit', $invoice->id) }}"
+                                                   class="btn btn-outline-warning btn-sm px-2"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-placement="top"
+                                                   title="Editar">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                                <button type="button"
+                                                    class="btn btn-outline-danger btn-sm px-2 btn-delete"
+                                                    data-id="{{ $invoice->id }}"
+                                                    data-nome="{{ $invoice->user->name }}"
+                                                    data-total="R$ {{ number_format($invoice->total_amount, 2, ',', '.') }}"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="Excluir">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-4">
+                                    <td colspan="{{ $isAdmin ? 8 : 7 }}" class="text-center py-4">
                                         @if(request('month') || request('status') || request('search'))
                                             Nenhuma fatura encontrada para os filtros selecionados.
                                         @else

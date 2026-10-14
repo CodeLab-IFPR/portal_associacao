@@ -58,7 +58,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('member.register') }}" enctype="multipart/form-data" novalidate>
+            <form method="POST" action="{{ route('member.register') }}" enctype="multipart/form-data" class="needs-validation">
                 @csrf
                 
                 <!-- Modalidade Principal -->
@@ -120,7 +120,7 @@
 
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="cpf">CPF *</label>
-                                <input type="text" class="form-control rounded" id="cpf" name="cpf" value="{{ old('cpf') }}" required data-mask="cpf">
+                                <input type="text" class="form-control rounded" id="cpf" name="cpf" value="{{ old('cpf') }}" required data-mask="cpf" minlength="14" maxlength="14" inputmode="numeric">
                                 @error('cpf')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
@@ -144,7 +144,7 @@
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="telefone_celular">Telefone Celular *</label>
-                                <input type="tel" class="form-control rounded" id="telefone_celular" name="telefone_celular" value="{{ old('telefone_celular') }}" required data-mask="phone">
+                                <input type="tel" class="form-control rounded" id="telefone_celular" name="telefone_celular" value="{{ old('telefone_celular') }}" required data-mask="phone" minlength="14" maxlength="15" inputmode="numeric">
                                 @error('telefone_celular')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
@@ -214,7 +214,7 @@
                         <div class="row g-3">
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="cep">CEP *</label>
-                                <input type="text" class="form-control rounded" id="cep" name="cep" value="{{ old('cep') }}" required data-mask="cep">
+                                <input type="text" class="form-control rounded" id="cep" name="cep" value="{{ old('cep') }}" required data-mask="cep" minlength="9" maxlength="9" inputmode="numeric">
                             <div id="cep-loading" style="display: none;" class="text-primary small">
                                 <i class="fas fa-spinner fa-spin"></i> Buscando endereço...
                             </div>
@@ -279,23 +279,28 @@
 </div>
 
 @push('scripts')
-@vite('resources/js/utils/viacep.js')
+@vite(['resources/js/utils/masks.js', 'resources/js/utils/viacep.js'])
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form');
+        const form = document.querySelector('form.needs-validation');
+        if (!form) return;
         const submitBtn = document.getElementById('submitBtn');
         const btnText = document.getElementById('btnText');
         const btnLoading = document.getElementById('btnLoading');
 
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                const firstInvalid = form.querySelector(':invalid');
+                if (firstInvalid) firstInvalid.focus();
+                return;
+            }
             btnText.textContent = 'Enviando...';
             btnLoading.classList.remove('d-none');
             submitBtn.disabled = true;
-            setTimeout(() => {
-                form.submit();
-            }, 500);
-        });
+        }, false);
     });
 </script>
 @endpush

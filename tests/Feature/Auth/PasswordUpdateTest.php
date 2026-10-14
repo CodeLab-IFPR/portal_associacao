@@ -34,11 +34,11 @@ test('a senha correta deve ser fornecida para atualizar a senha', function () {
             'password_confirmation' => 'NewPassword1!',
         ]);
 
+    // O PasswordController grava os erros no bag "updatePassword"
     $response
-        ->assertSessionHasErrors(['current_password'])
+        ->assertSessionHasErrorsIn('updatePassword', ['current_password'])
         ->assertRedirect('/profile');
 
-    $this->assertTrue(session()->has('errors'));
-    $this->assertNotEmpty(session('errors')->get('current_password'));
+    $this->assertFalse(Hash::check('NewPassword1!', $user->refresh()->password));
 });
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Projeto;
 use App\Models\Tag;
+use App\Models\LancamentoServico;
+use App\Http\Controllers\Concerns\PaginaListagem;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -12,10 +14,12 @@ use Illuminate\Routing\Controllers\Middleware;
 
 class ProjetoController extends Controller implements HasMiddleware
 {
+    use PaginaListagem;
+
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:Visualizar Projeto', only: ['index', 'show']),
+            new Middleware('permission:Visualizar Projeto', only: ['index']),
             new Middleware('permission:Criar Projeto', only: ['create', 'store']),
             new Middleware('permission:Editar Projeto', only: ['edit', 'update']),
             new Middleware('permission:Deletar Projeto', only: ['destroy']),
@@ -23,7 +27,7 @@ class ProjetoController extends Controller implements HasMiddleware
     }
     public function index(): View
     {
-        $projetos = Projeto::paginate(10);
+        $projetos = $this->paginarListagem(Projeto::orderBy('id'), 'projetos.index', 10);
         return view('projetos.index', compact('projetos'));
     }
 
@@ -69,7 +73,7 @@ class ProjetoController extends Controller implements HasMiddleware
 
         if ($request->hasFile('imagem')) {
             $file = $request->file('imagem');
-            $fileName = date('YmdHis') . '.' . $file->getClientOriginalExtension();
+            $fileName = date('YmdHis') . '.' . $file->guessExtension();
             $file->move(public_path('imagens/projetos'), $fileName);
             $projeto->imagem = 'imagens/projetos/' . $fileName;
             $projeto->save();
@@ -79,11 +83,6 @@ class ProjetoController extends Controller implements HasMiddleware
         
         return redirect()->route('projetos.index')
             ->with('success', 'Projeto criado com sucesso.');
-    }
-    
-    public function show(Projeto $projeto): View
-    {
-        return view('projetos.show', compact('projeto'));
     }
     
     public function edit(Projeto $projeto): View
@@ -116,7 +115,7 @@ class ProjetoController extends Controller implements HasMiddleware
 
         if ($request->hasFile('imagem')) {
             $file = $request->file('imagem');
-            $fileName = date('YmdHis') . '.' . $file->getClientOriginalExtension();
+            $fileName = date('YmdHis') . '.' . $file->guessExtension();
             $file->move(public_path('imagens/projetos'), $fileName);
             $projeto->imagem = 'imagens/projetos/' . $fileName;
             $projeto->save();
@@ -130,10 +129,20 @@ class ProjetoController extends Controller implements HasMiddleware
 
     public function destroy(Projeto $projeto)
     {
+        // Os lançamentos de horas são apagados em cascata pelo banco: não deixa
+        // excluir um projeto que ainda tem horas lançadas pelos associados
+        $lancamentos = LancamentoServico::where('projeto_id', $projeto->id)->count();
+        if ($lancamentos > 0) {
+            $mensagem = "Este projeto tem {$lancamentos} lançamento(s) de horas e não pode ser excluído.";
+            return request()->ajax()
+                ? response()->json(['error' => $mensagem], 422)
+                : redirect()->route('projetos.index')->with('error', $mensagem);
+        }
+
         try {
             $projeto->delete();
 
-            $projetos = Projeto::paginate(10);
+            $projetos = $this->paginarListagem(Projeto::orderBy('id'), 'projetos.index', 10);
 
             if (request()->ajax()) {
                 return response()->json([

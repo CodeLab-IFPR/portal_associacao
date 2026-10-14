@@ -10,21 +10,39 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class InvoiceController extends Controller
+class InvoiceController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            'auth',
+            'verified',
+            new Middleware('role:admin|Admin', except: ['index', 'show']),
+        ];
+    }
+
     public function index(Request $request)
     {
         $validated = $request->validate([
             'status' => 'nullable|in:pendente,paga,vencida,cancelada',
-            'month'  => 'nullable|regex:/^\d{4}-(0[1-9]|1[0-2])$/',
+            'month'  => ['nullable', 'regex:/^\d{4}-(0[1-9]|1[0-2])$/'],
             'search' => 'nullable|string|max:255',
         ]);
 
+        $user    = $request->user();
+        $isAdmin = $user->hasRole('admin') || $user->hasRole('Admin');
+
         $query = Invoice::with(['user', 'installments']);
 
+        if (!$isAdmin) {
+            $query->where('user_id', $user->id);
+        }
+
         if (!empty($validated['status'])) {
-            $query->where('status', $validated['status']);
+            $query->withEffectiveStatus($validated['status']);
         }
 
         if (!empty($validated['month'])) {
@@ -33,7 +51,7 @@ class InvoiceController extends Controller
             $query->whereBetween('first_due_date', [$start, $end]);
         }
 
-        if (!empty($validated['search'])) {
+        if ($isAdmin && !empty($validated['search'])) {
             $search = trim($validated['search']);
 
             if (is_numeric($search)) {
@@ -142,8 +160,15 @@ class InvoiceController extends Controller
         };
     }
 
-    public function show(Invoice $invoice)
+    public function show(Request $request, Invoice $invoice)
     {
+        $user    = $request->user();
+        $isAdmin = $user->hasRole('admin') || $user->hasRole('Admin');
+
+        if (!$isAdmin && $invoice->user_id !== $user->id) {
+            abort(403);
+        }
+
         $invoice->load(['user', 'installments']);
 
         return view('invoices.show', compact('invoice'));
@@ -184,12 +209,15 @@ class InvoiceController extends Controller
 
     public function updateInstallment(Request $request, Invoice $invoice, InvoiceInstallment $installment)
     {
+        if ($installment->invoice_id !== $invoice->id) {
+            abort(404);
+        }
+
         $validated = $request->validate([
-            'amount'             => 'required|numeric|min:0.01',
-            'installments_count' => 'required|integer|min:1|max:60',
-            'due_date'           => 'required|date',
-            'payment_date'       => 'nullable|date',
-            'status'             => 'required|in:pendente,paga,vencida,cancelada',
+            'amount'       => 'required|numeric|min:0.01',
+            'due_date'     => 'required|date',
+            'payment_date' => 'nullable|date',
+            'status'       => 'required|in:pendente,paga,vencida,cancelada',
         ]);
 
         DB::beginTransaction();
@@ -202,10 +230,10 @@ class InvoiceController extends Controller
                 'status'       => $validated['status'],
             ]);
 
-            // Atualiza installments_count e recalcula total na fatura pai
+            // A fatura acompanha as parcelas que existem de fato
             $invoice->update([
-                'installments_count' => $validated['installments_count'],
-                'total_amount'       => $validated['amount'] * $validated['installments_count'],
+                'installments_count' => $invoice->installments()->count(),
+                'total_amount'       => $invoice->installments()->sum('amount'),
             ]);
 
             DB::commit();

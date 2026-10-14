@@ -3,12 +3,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Mail\ContactMessage;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Contact;
 use Illuminate\Support\Facades\File;
 
-class ContactController extends Controller
+class ContactController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:Visualizar Mensagem', only: ['index', 'show']),
+            new Middleware('permission:Marcar como Lida', only: ['markRead', 'markReadSelected']),
+            new Middleware('permission:Marcar como Não Lida', only: ['markUnread', 'markUnreadSelected']),
+            new Middleware('permission:Alterar Status da Mensagem', only: ['toggleRead']),
+            new Middleware('permission:Deletar Mensagem', only: ['destroy', 'deleteSelected']),
+        ];
+    }
+
     public function index()
     {
         $mensagens = Contact::paginate(10);
@@ -21,20 +34,20 @@ class ContactController extends Controller
         $mensagem->update(['read' => true]);
         return view('mensagens.show', compact('mensagem'));
     }
-    
+
     public function markRead($id)
     {
         $mensagem = Contact::findOrFail($id);
         $mensagem->update(['read' => true]);
         return response()->json(['success' => 'Mensagem marcada como lida.']);
     }
-    
+
     public function destroy($id)
     {
         $mensagem = Contact::findOrFail($id);
         $this->deleteAttachments($mensagem);
         $mensagem->delete();
-        
+
         return redirect()->route('mensagens.index')->with('success', 'Mensagem excluída com sucesso.');
     }
 
@@ -68,17 +81,32 @@ class ContactController extends Controller
 
     public function sendMessage(Request $request)
     {
-        $data = $request->all();
-
-        // Salvar a mensagem de contato no banco de dados
-        $contact = Contact::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'message' => $data['message'],
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'telephone' => 'nullable|string|max:20',
+            'message' => 'required|string|max:5000',
+        ], [
+            'name.required' => 'Informe seu nome.',
+            'email.required' => 'Informe seu e-mail.',
+            'email.email' => 'Informe um e-mail válido.',
+            'message.required' => 'Escreva sua mensagem.',
         ]);
 
-        // Enviar e-mail
-        Mail::to($data['email'])->send(new ContactMessage($data));
+        // Salvar a mensagem de contato no banco de dados
+        Contact::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'message' => $validated['message'],
+        ]);
+
+        // O e-mail recebe só os campos validados: nada vindo do request decide anexos
+        Mail::to($validated['email'])->send(new ContactMessage([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'telephone' => $validated['telephone'] ?? '',
+            'message' => $validated['message'],
+        ]));
 
         return redirect()->back()->with('success', 'Mensagem enviada com sucesso!');
     }

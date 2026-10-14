@@ -3,13 +3,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use App\Models\FraseInicio;
 
-class FraseInicioController extends Controller
+class FraseInicioController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            // Mesma permissão que mostra o item "Frases" no menu
+            new Middleware('permission:Criar Frase'),
+        ];
+    }
+
     public function editar()
     {
-        $fraseInicio = FraseInicio::find(1);
+        // Mesmo registro que atualizar() grava e a home exibe
+        $fraseInicio = FraseInicio::first();
         $fraseSobre = FraseInicio::find(2);
         return view('admin.frase_inicio.editar', compact('fraseInicio', 'fraseSobre'));
     }

@@ -44,7 +44,7 @@ Certificado - Edição
                         </option>
                     @endforeach
                 </select>
-                @error('users_id')
+                @error('user_id')
                     <div class="form-text text-danger">{{ $message }}</div>
                 @enderror
             </div>

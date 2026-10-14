@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Tarefa;
 use App\Models\Servico;
-use setasign\Fpdi\Fpdi;
+use App\Support\CertificadoPdf;
+use App\Http\Controllers\Concerns\PaginaListagem;
+use BaconQrCode\Renderer\GDLibRenderer;
+use BaconQrCode\Writer as QrCodeWriter;
 use Illuminate\View\View;
 use App\Models\Certificado;
 use Illuminate\Support\Str;
@@ -14,12 +17,13 @@ use App\Models\LancamentoServico;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Builder;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 
 class CertificadoController extends Controller implements HasMiddleware
 {
+    use PaginaListagem;
+
     public static function middleware(): array
     {
         return [
@@ -44,9 +48,13 @@ class CertificadoController extends Controller implements HasMiddleware
                 'cpf' => 'required|string|max:14'
             ]);
 
-            $cpf = $request->input('cpf');
+            // A tela envia o CPF com máscara e o banco tem CPFs com e sem pontuação
+            $cpf = preg_replace('/\D+/', '', (string) $request->input('cpf'));
 
-            $user = User::where('cpf', $cpf)->first();
+            $user = $cpf === '' ? null : User::whereRaw(
+                "REPLACE(REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), ' ', ''), '/', '') = ?",
+                [$cpf]
+            )->first();
             
             if ($user) {
                 $certificados = Certificado::where('user_id', $user->id)->get();
@@ -80,10 +88,17 @@ class CertificadoController extends Controller implements HasMiddleware
 
             $token = $request->input('token');
 
-            $certificado = Certificado::where('token', $token)->with('user')->first();
+            $certificado = Certificado::where('token', $token)->with('user:id,name')->first();
             
             if ($certificado) {
-                return response()->json(['certificado' => $certificado]);
+                // Página pública: só o que comprova o certificado, sem dados pessoais do associado
+                return response()->json(['certificado' => [
+                    'token' => $certificado->token,
+                    'descricao' => $certificado->descricao,
+                    'horas' => $certificado->horas,
+                    'data' => $certificado->data,
+                    'user' => ['name' => $certificado->user?->name],
+                ]]);
             } else {
                 return response()->json(['error' => 'Certificado não encontrado.'], 404);
             }
@@ -94,21 +109,7 @@ class CertificadoController extends Controller implements HasMiddleware
 
     public function index(Request $request)
     {
-        $certificadosQuery = Certificado::latest();
-
-        if ($request->search) {
-            $certificadosQuery->where(function (Builder $builder) use ($request) {
-                $builder->where('descricao', 'like', "%{$request->search}%")
-                    ->orWhere('horas', 'like', "%{$request->search}%")
-                    ->orWhere('data', 'like', "%{$request->search}%")
-                    ->orWhereHas('user', function (Builder $query) use ($request) {
-                        $query->where('nome', 'like', "%{$request->search}%");
-                    })
-                    ->orWhere('token', 'like', "%{$request->search}%");
-            });
-        }
-
-        $certificados = $certificadosQuery->paginate(5);
+        $certificados = $this->listagemDeCertificados($request);
 
         if ($request->ajax()) {
             return response()->json([
@@ -117,6 +118,28 @@ class CertificadoController extends Controller implements HasMiddleware
         }
 
         return view('certificados.index', compact('certificados'));
+    }
+
+    /** Listagem usada pela tela e pela exclusão via AJAX. */
+    private function listagemDeCertificados(Request $request)
+    {
+        $certificadosQuery = Certificado::latest()->latest('id');
+
+        if ($request->search) {
+            $certificadosQuery->where(function (Builder $builder) use ($request) {
+                $builder->where('descricao', 'like', "%{$request->search}%")
+                    ->orWhere('horas', 'like', "%{$request->search}%")
+                    ->orWhere('data', 'like', "%{$request->search}%")
+                    // O nome completo fica em "name"; "nome" só existe no cadastro público
+                    ->orWhereHas('user', function (Builder $query) use ($request) {
+                        $query->where('name', 'like', "%{$request->search}%")
+                            ->orWhere('nome', 'like', "%{$request->search}%");
+                    })
+                    ->orWhere('token', 'like', "%{$request->search}%");
+            });
+        }
+
+        return $this->paginarListagem($certificadosQuery, 'certificados.index', 5, ['search']);
     }
 
     public function create(Request $request)
@@ -130,7 +153,7 @@ class CertificadoController extends Controller implements HasMiddleware
     public function edit(Certificado $certificado)
     {
         $users = User::all();
-        $selectedUser = $certificado->users_id;
+        $selectedUser = $certificado->user_id;
         return view('certificados.edit', [
             'certificado' => $certificado,
             'users' => $users,
@@ -141,7 +164,7 @@ class CertificadoController extends Controller implements HasMiddleware
     public function update(Request $request, Certificado $certificado): RedirectResponse
     {
         $request->validate([
-            'user_id' => 'required',
+            'user_id' => 'required|exists:users,id',
             'descricao' => 'required|max:520',
             'horas' => 'required|integer',
             'data' => 'required|date',
@@ -156,7 +179,7 @@ class CertificadoController extends Controller implements HasMiddleware
         ]);
 
         $certificado->update([
-            'user_id' => $request->users_id,
+            'user_id' => $request->user_id,
             'descricao' => $request->descricao,
             'horas' => $request->horas,
             'data' => $request->data,
@@ -229,22 +252,12 @@ class CertificadoController extends Controller implements HasMiddleware
     $hours = $certificado->horas;
     $date = (new \DateTime($certificado->data))->format('d/m/Y');
     $url = route('certificados.validar', ['token' => $credential]);
-    $qrCode = QrCode::format('png')->size(500)->generate($url);
-    $qrCodeDir = public_path('qr');
-    $qrCodePath = $qrCodeDir . '/' . $credential . '.png';
 
-    if (!file_exists($qrCodeDir)) {
-        mkdir($qrCodeDir, 0777, true);
-    }
+    // QR Code em PNG via GD, num arquivo temporário só para o FPDF embutir
+    $qrCodePath = tempnam(sys_get_temp_dir(), 'qr') . '.png';
+    file_put_contents($qrCodePath, (new QrCodeWriter(new GDLibRenderer(500)))->writeString($url));
 
-    file_put_contents($qrCodePath, $qrCode);
-
-    $certificateDir = public_path('certificate');
-    if (!file_exists($certificateDir)) {
-        mkdir($certificateDir, 0777, true);
-    }
-
-    $pdf = new Fpdi();
+    $pdf = new CertificadoPdf();
     $pathToTemplate = public_path('certificate/Certificate2.pdf');
     if (!file_exists($pathToTemplate)) {
         throw new \Exception("Template file not found: " . $pathToTemplate);
@@ -283,22 +296,16 @@ class CertificadoController extends Controller implements HasMiddleware
 
     $pdf->Image($qrCodePath, 217, 133, 40, 40);
 
-    $fileName = 'Certificate2_' . $credential . '.pdf';
-    $filePath = $certificateDir . '/' . $fileName;
+    $conteudo = $pdf->Output('S');
+    @unlink($qrCodePath);
 
-    $pdf->Output($filePath, 'F');
+    // O PDF vai direto na resposta, sem ficar gravado na pasta pública
+    $fileName = 'Certificado_' . $credential . '.pdf';
 
-    if ($download) {
-        return response()->download($filePath, $fileName, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $fileName . '"'
-        ]);
-    } else {
-        return response()->file($filePath, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $fileName . '"'
-        ]);
-    }
+    return response($conteudo, 200, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => ($download ? 'attachment' : 'inline') . '; filename="' . $fileName . '"',
+    ]);
 }
 
 
@@ -318,7 +325,7 @@ class CertificadoController extends Controller implements HasMiddleware
             $certificado = Certificado::findOrFail($id);
             $certificado->delete();
 
-            $certificados = Certificado::paginate(5);
+            $certificados = $this->listagemDeCertificados(request());
 
             if (request()->ajax()) {
                 return response()->json([

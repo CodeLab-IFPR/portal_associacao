@@ -73,19 +73,18 @@ export function initMasks(root = document) {
     root.querySelectorAll('[data-mask]')
         .forEach(el => {
             const maskType = el.getAttribute('data-mask');
-            
-            // Aplicar formatação inicial se o campo já tem valor
-            if (el.value && maskType === 'cep') {
-                el.value = maskCEP(el.value);
-            }
-            
             bindMask(el, maskType);
         });
 }
 
 
-// Auto init removido para evitar conflitos
-// A inicialização será feita pelo app.js
+if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => initMasks());
+    } else {
+        initMasks();
+    }
+}
 
 // Export default opcional
 export default {

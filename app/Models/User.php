@@ -48,7 +48,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'numero',
         'bairro',
         'estado',
-        'cidade'
+        'cidade',
+        'profissao',
+        'escolaridade',
     ];
 
     /**
@@ -74,9 +76,24 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    /**
+     * Associado aprovado pela administração. O cadastro público cria o
+     * usuário inativo até a aprovação; nulo segue o padrão da coluna (ativo).
+     */
+    public function acessoLiberado(): bool
+    {
+        return $this->ativo === null || (bool) $this->ativo;
+    }
+
+    /** Validade do cartão do associado: 1 ano a partir do ingresso. */
+    public function validadeDoCartao(): \Illuminate\Support\Carbon
+    {
+        return $this->created_at->copy()->addYear();
+    }
+
     public function certificados()
     {
-        return $this->hasMany(Certificado::class, 'users_id');
+        return $this->hasMany(Certificado::class, 'user_id');
     }
 
     public function tarefas()
