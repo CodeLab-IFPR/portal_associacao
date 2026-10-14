@@ -178,6 +178,12 @@ Faturas
         plugins: ['remove_button'],
         placeholder: 'Selecione um ou mais associados...',
         maxOptions: null,
+        // Limpa a busca depois de escolher: sem isso o nome escolhido ficava no campo
+        // e a próxima busca virava "Fulano CicranoBeltrano" (sem resultados)
+        onItemAdd() {
+            this.setTextboxValue('');
+            this.refreshOptions(false);
+        },
     });
 
     // Cálculo do total em tempo real

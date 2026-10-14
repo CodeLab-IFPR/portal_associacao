@@ -31,7 +31,8 @@ test('as informações do perfil podem ser atualizadas', function () {
 
     $this->assertSame('Usuário Teste', $user->name);
     $this->assertSame('teste@example.com', $user->email);
-    $this->assertNotNull($user->email_verified_at);
+    // E-mail novo precisa ser verificado de novo
+    $this->assertNull($user->email_verified_at);
 });
 
 test('o status de verificação do email permanece inalterado quando o endereço de email não é alterado', function () {

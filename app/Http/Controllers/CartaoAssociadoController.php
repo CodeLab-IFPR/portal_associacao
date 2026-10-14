@@ -243,7 +243,7 @@ class CartaoAssociadoController extends Controller
             imagestring($img, 4, 50, $infoStartY + $lineHeight + 15, $ingresso, $preto);
             
             // Validade
-            $validade = $user->created_at->addYears(2)->format('d/m/Y');
+            $validade = $user->validadeDoCartao()->format('d/m/Y');
             imagestring($img, 3, $width - 200, $infoStartY + $lineHeight, 'Validade:', $cinzaTexto);
             imagestring($img, 4, $width - 200, $infoStartY + $lineHeight + 15, $validade, $preto);
             
@@ -332,7 +332,8 @@ class CartaoAssociadoController extends Controller
             $usuario = \App\Models\User::findOrFail($user);
             $hashValido = md5($usuario->email . $usuario->created_at);
             
-            if ($hash === $hashValido) {
+            // Cartão de associado inativo (não aprovado ou desligado) não vale
+            if ($hash === $hashValido && $usuario->acessoLiberado()) {
                 $resultado = 'valido';
             }
         } catch (\Exception $e) {
@@ -370,7 +371,7 @@ class CartaoAssociadoController extends Controller
         
         foreach ($usuarios as $usuario) {
             $assinaturaGerada = substr(md5($usuario->email . $usuario->created_at), 0, 12);
-            if (strtolower($assinaturaGerada) === $assinatura) {
+            if (strtolower($assinaturaGerada) === $assinatura && $usuario->acessoLiberado()) {
                 $usuarioEncontrado = $usuario;
                 break;
             }

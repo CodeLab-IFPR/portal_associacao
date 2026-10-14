@@ -87,6 +87,8 @@ Serviços
             $.ajax({
                 url: url,
                 method: 'DELETE',
+                // Página, busca e filtros atuais: a tabela volta do jeito que estava
+                data: Object.assign(Object.fromEntries(new URLSearchParams(window.location.search)), { search: $('#search-input').val() || '' }),
                 success: function (response) {
                     if (response.table) {
                         $('#servicos-table-container').html(response.table);
@@ -97,7 +99,7 @@ Serviços
                 },
                 error: function (xhr) {
                     console.log(xhr.responseText);
-                    alert('Ocorreu um erro ao tentar excluir o serviço.');
+                    alert(xhr.responseJSON?.error || 'Ocorreu um erro ao tentar excluir o serviço.');
                 }
             });
         });

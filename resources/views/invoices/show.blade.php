@@ -5,6 +5,44 @@ Fatura #{{ $invoice->id }}
 @endsection
 
 @section('content')
+<style>
+    .installment-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .installment-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .installment-actions .btn {
+        min-width: 2.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-width: 1px;
+        border-style: solid;
+    }
+
+    @media (max-width: 575.98px) {
+        .installment-table {
+            font-size: 0.82rem;
+        }
+
+        .installment-actions {
+            gap: 0.35rem;
+        }
+
+        .installment-actions .btn {
+            min-width: 2rem;
+            padding: 0.35rem 0.5rem;
+        }
+    }
+</style>
 @php
     $isAdmin = auth()->user()->hasRole('admin') || auth()->user()->hasRole('Admin');
     $feedbackMessage = session('success') ?? session('error') ?? ($errors->any() ? $errors->first() : null);
@@ -56,12 +94,12 @@ Fatura #{{ $invoice->id }}
                             Fatura #{{ $invoice->id }}
                         </h5>
                         <span class="badge
-                            @if($invoice->status === 'paga') bg-success
-                            @elseif($invoice->status === 'pendente') bg-warning text-dark
-                            @elseif($invoice->status === 'vencida') bg-danger
+                            @if($invoice->effective_status === 'paga') bg-success
+                            @elseif($invoice->effective_status === 'pendente') bg-warning text-dark
+                            @elseif($invoice->effective_status === 'vencida') bg-danger
                             @else bg-secondary
                             @endif fs-6">
-                            {{ ucfirst($invoice->status) }}
+                            {{ ucfirst($invoice->effective_status) }}
                         </span>
                     </div>
                     <div class="card-body">
@@ -119,8 +157,8 @@ Fatura #{{ $invoice->id }}
                         </h5>
                     </div>
                     <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover mb-0">
+                        <div class="table-responsive installment-table-wrapper">
+                            <table class="table table-bordered table-hover align-middle mb-0 installment-table">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
@@ -154,51 +192,51 @@ Fatura #{{ $invoice->id }}
                                                     : '—' }}
                                             </td>
                                             <td class="text-center">
-                                                @if($isAdmin)
-                                                    {{-- Editar parcela --}}
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-warning btn-edit-installment me-1"
-                                                        title="Editar parcela"
-                                                        data-id="{{ $installment->id }}"
-                                                        data-number="{{ $installment->installment_number }}"
-                                                        data-amount="{{ $installment->amount }}"
-                                                        data-due-date="{{ \Carbon\Carbon::parse($installment->due_date)->format('Y-m-d') }}"
-                                                        data-payment-date="{{ $installment->payment_date ? \Carbon\Carbon::parse($installment->payment_date)->format('Y-m-d') : '' }}"
-                                                        data-status="{{ $installmentStatus }}"
-                                                        data-installments-count="{{ $invoice->installments_count }}">
-                                                        <i class="bi bi-pencil-square"></i>
-                                                    </button>
-                                                    {{-- Excluir parcela --}}
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-danger btn-delete-installment"
-                                                        title="Excluir parcela"
-                                                        data-id="{{ $installment->id }}"
-                                                        data-number="{{ $installment->installment_number }}">
-                                                        <i class="bi bi-x-circle-fill me-1"></i>
-                                                    </button>
+                                                <div class="installment-actions" aria-label="Ações da parcela">
+                                                    @if($isAdmin)
+                                                        {{-- Editar parcela --}}
+                                                        <button type="button"
+                                                            class="btn btn-outline-warning btn-sm px-2 btn-edit-installment"
+                                                            title="Editar parcela"
+                                                            data-id="{{ $installment->id }}"
+                                                            data-number="{{ $installment->installment_number }}"
+                                                            data-amount="{{ $installment->amount }}"
+                                                            data-due-date="{{ \Carbon\Carbon::parse($installment->due_date)->format('Y-m-d') }}"
+                                                            data-payment-date="{{ $installment->payment_date ? \Carbon\Carbon::parse($installment->payment_date)->format('Y-m-d') : '' }}"
+                                                            data-status="{{ $installmentStatus }}">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </button>
 
+                                                        {{-- Excluir parcela --}}
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger btn-sm px-2 btn-delete-installment"
+                                                            title="Excluir parcela"
+                                                            data-id="{{ $installment->id }}"
+                                                            data-number="{{ $installment->installment_number }}">
+                                                            <i class="bi bi-x-circle-fill"></i>
+                                                        </button>
 
-                                                    {{-- Anexar boleto (PDF) --}}
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-primary btn-attach-boleto me-1"
-                                                        title="{{ $installment->boleto_path ? 'Substituir boleto (PDF)' : 'Anexar boleto (PDF)' }}"
-                                                        data-id="{{ $installment->id }}"
-                                                        data-number="{{ $installment->installment_number }}">
-                                                        <i class="bi bi-paperclip"></i>
-                                                    </button>
-                                                @endif
+                                                        {{-- Anexar boleto (PDF) --}}
+                                                        <button type="button"
+                                                            class="btn btn-outline-primary btn-sm px-2 btn-attach-boleto"
+                                                            title="{{ $installment->boleto_path ? 'Substituir boleto (PDF)' : 'Anexar boleto (PDF)' }}"
+                                                            data-id="{{ $installment->id }}"
+                                                            data-number="{{ $installment->installment_number }}">
+                                                            <i class="bi bi-paperclip"></i>
+                                                        </button>
+                                                    @endif
 
-                                                {{-- Visualizar boleto (PDF) --}}
-                                                @if($installment->boleto_path)
-                                                    <button type="button"
-                                                        class="btn btn-sm btn-outline-info btn-preview-boleto me-1"
-                                                        title="Visualizar boleto"
-                                                        data-number="{{ $installment->installment_number }}"
-                                                        data-url="{{ asset('storage/' . $installment->boleto_path) }}">
-                                                        <i class="bi bi-eye"></i>
-                                                    </button>
-                                                @endif
-
+                                                    {{-- Visualizar boleto (PDF) --}}
+                                                    @if($installment->boleto_path)
+                                                        <button type="button"
+                                                            class="btn btn-outline-info btn-sm px-2 btn-preview-boleto"
+                                                            title="Visualizar boleto"
+                                                            data-number="{{ $installment->installment_number }}"
+                                                            data-url="{{ asset('storage/' . $installment->boleto_path) }}">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    @endif
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -248,20 +286,13 @@ Fatura #{{ $invoice->id }}
 
                     <div class="row">
                         {{-- Valor --}}
-                        <div class="col-md-6 mb-3">
+                        <div class="col-12 mb-3">
                             <label for="edit-amount" class="form-label"><strong>Valor (R$)*</strong></label>
                             <div class="input-group">
                                 <span class="input-group-text">R$</span>
                                 <input type="number" id="edit-amount" name="amount"
                                     class="form-control" min="0.01" step="0.01" required>
                             </div>
-                        </div>
-
-                        {{-- Quantidade de Parcelas --}}
-                        <div class="col-md-6 mb-3">
-                            <label for="edit-installments-count" class="form-label"><strong>Qtd. de Parcelas*</strong></label>
-                            <input type="number" id="edit-installments-count" name="installments_count"
-                                class="form-control" min="1" max="60" required>
                         </div>
                     </div>
 
@@ -413,14 +444,12 @@ Fatura #{{ $invoice->id }}
             var dueDate          = this.dataset.dueDate;
             var paymentDate      = this.dataset.paymentDate;
             var status           = this.dataset.status;
-            var installmentsCount = this.dataset.installmentsCount;
 
             document.getElementById('edit-installment-number').textContent = '#' + number;
             document.getElementById('edit-amount').value            = amount;
             document.getElementById('edit-due-date').value          = dueDate;
             document.getElementById('edit-payment-date').value      = paymentDate;
             document.getElementById('edit-status').value            = status;
-            document.getElementById('edit-installments-count').value = installmentsCount;
 
             document.getElementById('editInstallmentForm').action =
                 '/admin/faturas/{{ $invoice->id }}/installments/' + id;

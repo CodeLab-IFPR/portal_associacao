@@ -24,6 +24,9 @@ AMAER
             <p>
                 <h2 class="fs-5 fs-md-4 fw-bold mb-3">{{ $fraseInicio->subtitulo ?? 'Associação de Aeromodelismo e Automodelismo' }}</h2>
             </p>
+            @if(!empty($fraseInicio?->frase))
+                <p class="fs-5 fst-italic mb-3">{{ $fraseInicio->frase }}</p>
+            @endif
             <p class="fs-6 fs-md-5 fw-medium mb-4">{{ $fraseInicio->localizacao ?? 'Paranavaí - PR' }}</p>
             <p class="text-muted mb-5">{{ $fraseInicio->descricao ?? 'Uma associação dedicada aos amantes do aeromodelismo e automodelismo' }}</p>
 

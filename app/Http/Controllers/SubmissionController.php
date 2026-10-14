@@ -8,6 +8,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Submission;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class SubmissionController extends Controller implements HasMiddleware
 {
@@ -15,40 +16,60 @@ class SubmissionController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('permission:Visualizar Submissão', only: ['index', 'show']),
-            new Middleware('permission:Editar Submissão', only: ['markRead', 'markUnread', 'toggleRead']),
-            new Middleware('permission:Deletar Submissão', only: ['destroy']),
+            new Middleware('permission:Editar Submissão', only: ['markRead', 'markUnread', 'toggleRead', 'markReadSelected', 'markUnreadSelected']),
+            new Middleware('permission:Deletar Submissão', only: ['destroy', 'deleteSelected']),
         ];
     }
     public function submit(Request $request)
     {
-        $data = $request->all();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'demand_description' => 'required|string|max:5000',
+            'expected_utility' => 'required|string|max:5000',
+            'supporting_files' => 'nullable|array|max:5',
+            'supporting_files.*' => 'file|mimes:pdf,doc,docx|max:10240',
+        ], [
+            'name.required' => 'Informe seu nome.',
+            'email.required' => 'Informe seu e-mail.',
+            'email.email' => 'Informe um e-mail válido.',
+            'demand_description.required' => 'Descreva a demanda.',
+            'expected_utility.required' => 'Informe a utilidade esperada.',
+            'supporting_files.*.mimes' => 'Os anexos devem ser PDF, DOC ou DOCX.',
+            'supporting_files.*.max' => 'Cada anexo pode ter no máximo 10MB.',
+        ]);
 
-        // Verificar e processar arquivos anexados
+        // Anexos ficam na pasta pública (o admin abre por link), então a extensão
+        // vem do conteúdo do arquivo e nunca do nome enviado pelo visitante
+        $attachments = null;
         if ($request->hasFile('supporting_files')) {
-            $files = $request->file('supporting_files');
+            $destinationPath = public_path('anexos_submissions');
+            if (!File::exists($destinationPath)) {
+                File::makeDirectory($destinationPath, 0755, true);
+            }
+
             $filePaths = [];
-            foreach ($files as $file) {
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $destinationPath = public_path('anexos_submissions');
-                if (!File::exists($destinationPath)) {
-                    File::makeDirectory($destinationPath, 0755, true);
-                }
+            foreach ($request->file('supporting_files') as $file) {
+                $nomeBase = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) ?: 'anexo';
+                $fileName = time() . '_' . Str::random(8) . '_' . Str::limit($nomeBase, 60, '') . '.' . $file->guessExtension();
                 $file->move($destinationPath, $fileName);
                 $filePaths[] = 'anexos_submissions/' . $fileName;
             }
-            $data['attachments'] = json_encode($filePaths);
+            $attachments = json_encode($filePaths);
         }
 
-        // Salvar a submissão no banco de dados
-        $submission = Submission::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'demand_description' => $data['demand_description'],
-            'expected_utility' => $data['expected_utility'],
-            'attachments' => $data['attachments'] ?? null,
-        ]);
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'demand_description' => $validated['demand_description'],
+            'expected_utility' => $validated['expected_utility'],
+            'attachments' => $attachments,
+        ];
 
-        // Enviar e-mail
+        // Salvar a submissão no banco de dados
+        Submission::create($data);
+
+        // O e-mail recebe só os anexos salvos acima
         Mail::to($data['email'])->send(new DemandSubmission($data));
 
         return redirect()->back()->with('success', 'Submissão enviada com sucesso!');

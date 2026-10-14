@@ -49,6 +49,14 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        if (! Auth::user()->acessoLiberado()) {
+            Auth::guard('web')->logout();
+
+            throw ValidationException::withMessages([
+                'email' => 'Seu acesso está inativo. Se você acabou de se cadastrar, aguarde a aprovação da associação.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

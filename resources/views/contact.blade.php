@@ -20,6 +20,23 @@ Contate Nos
         <div class="col-12 col-lg-8 col-xl-6">
             <p class="mb-3 small fw-bolder tracking-wider text-uppercase text-primary">Entre em contato</p>
             <h2 class="display-5 fw-bold mb-6">Envie-nos uma mensagem</h2>
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger mb-4" role="alert">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $erro)
+                            <li>{{ $erro }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form id="contactForm" method="POST" action="{{ route('send-message') }}" aria-labelledby="formTitle">
                 @csrf
                 <div class="row g-5">

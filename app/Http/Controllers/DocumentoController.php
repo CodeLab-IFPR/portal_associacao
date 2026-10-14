@@ -75,7 +75,7 @@ class DocumentoController extends Controller
         $user = Auth::user();
         
         // Verificar se o usuário pode ver este documento
-        if (!$user->hasRole('admin') && $documento->user_id !== $user->id) {
+        if (!$this->podeAcessar($user, $documento)) {
             abort(403, 'Você não tem permissão para ver este documento.');
         }
 
@@ -87,7 +87,7 @@ class DocumentoController extends Controller
         $user = Auth::user();
         
         // Verificar se o usuário pode baixar este documento
-        if (!$user->hasRole('admin') && $documento->user_id !== $user->id) {
+        if (!$this->podeAcessar($user, $documento)) {
             abort(403, 'Você não tem permissão para baixar este documento.');
         }
 
@@ -103,11 +103,19 @@ class DocumentoController extends Controller
 
     public function edit(Documento $documento)
     {
+        if (!$this->podeAcessar(Auth::user(), $documento)) {
+            abort(403, 'Você não tem permissão para editar este documento.');
+        }
+
         return view('admin.documentos.edit', compact('documento'));
     }
 
     public function update(Request $request, Documento $documento)
     {
+        if (!$this->podeAcessar(Auth::user(), $documento)) {
+            abort(403, 'Você não tem permissão para editar este documento.');
+        }
+
         $request->validate([
             'arquivo' => 'nullable|file|mimes:pdf|max:10240', // 10MB max
             'tipo_documento' => 'required|string|max:255',
@@ -153,7 +161,7 @@ class DocumentoController extends Controller
         $user = Auth::user();
         
         // Verificar permissões
-        if (!$user->hasRole('admin') && $documento->user_id !== $user->id) {
+        if (!$this->podeAcessar($user, $documento)) {
             abort(403, 'Você não tem permissão para excluir este documento.');
         }
 
@@ -222,5 +230,14 @@ class DocumentoController extends Controller
             ->paginate(15);
 
         return view('admin.documentos.index', compact('documentos', 'user'));
+    }
+
+    /**
+     * O dono do documento ou um administrador. O papel no banco é "Admin";
+     * "admin" fica por compatibilidade com o restante do sistema.
+     */
+    private function podeAcessar(User $user, Documento $documento): bool
+    {
+        return $user->hasRole('admin') || $user->hasRole('Admin') || $documento->user_id === $user->id;
     }
 }
