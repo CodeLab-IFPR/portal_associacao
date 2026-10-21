@@ -41,7 +41,5 @@
         </td>
     </tr>
 @empty
-    <tr>
-        <td colspan="4" class="text-center">Não há mídias 😢</td>
-    </tr>
+    {{-- Sem linha com colspan: o DataTables quebra com ela e já mostra a própria mensagem de tabela vazia --}}
 @endforelse

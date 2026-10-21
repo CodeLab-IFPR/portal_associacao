@@ -21,6 +21,7 @@
         "vite": "^5.4.0"
     },
     "dependencies": {
+        "chart.js": "^4.5.1",
         "croppie": "^2.6.5"
     }
 }

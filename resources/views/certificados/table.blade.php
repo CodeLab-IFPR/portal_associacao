@@ -1,3 +1,4 @@
+<div class="table-responsive">
 <table class="table table-bordered table-striped mt-4" id="certificados-table">
             <thead>
                 <tr>
@@ -28,7 +29,7 @@
                                     <i class="bi bi-gear"></i>
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $certificado->id }}">
-                                <a class="dropdown-item d-flex align-items-center external-link" href="{{ route('certificados.view', $certificado->id) }}">
+                                <a class="dropdown-item d-flex align-items-center external-link" href="{{ route('certificados.view', $certificado) }}">
                                     <i class="bi bi-eye text-secondary me-2"></i> Visualizar
                                 </a>
                                     <li>
@@ -63,5 +64,6 @@
                 @endforelse
             </tbody>
         </table>
+</div>
 
 {!! $certificados->withQueryString()->links('pagination::bootstrap-5') !!}

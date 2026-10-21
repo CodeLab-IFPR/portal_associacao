@@ -16,6 +16,23 @@ Submissão de Demandas
 <div class="container position-relative z-index-20 py-7">
     <div class="row g-5">
         <div class="col-12 col-lg-8">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger mb-4" role="alert">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $erro)
+                            <li>{{ $erro }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form id="submissionForm" method="POST" action="{{ route('submission.submit') }}" enctype="multipart/form-data" aria-labelledby="formTitle">
                 @csrf
                 <div class="row g-5">

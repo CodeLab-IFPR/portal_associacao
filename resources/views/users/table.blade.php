@@ -1,3 +1,4 @@
+<div class="table-responsive">
 <table class="table table-bordered table-striped mt-4" id="users-table">
     <thead>
         <tr>
@@ -107,5 +108,6 @@
         @endforelse
     </tbody>
 </table>
+</div>
 
 {!! $users->withQueryString()->links('pagination::bootstrap-5') !!}

@@ -47,8 +47,8 @@ Validar Certificado
             document.getElementById('horas').innerText = data.certificado.horas || 'N/A';
             document.getElementById('data').innerText = formatDate(data.certificado.data) || 'N/A';
 
-            document.getElementById('visualizar-link').href = `/certificados/${data.certificado.id}/view`;
-            document.getElementById('baixar-link').href = `/certificados/${data.certificado.id}/download`;
+            document.getElementById('visualizar-link').href = `/certificados/${data.certificado.token}/view`;
+            document.getElementById('baixar-link').href = `/certificados/${data.certificado.token}/download`;
 
             document.getElementById('certificado-detalhes').style.display = 'block';
             document.getElementById('error-message').style.display = 'none';

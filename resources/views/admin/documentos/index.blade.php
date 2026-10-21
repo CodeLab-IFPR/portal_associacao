@@ -126,6 +126,17 @@ Gestão de Documentos
         </div>
         @endif
 
+        @if(session('success'))
+            <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="alert-content">
+                    <strong>{{ session('success') }}</strong>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+            </div>
+        @endif
+
         <!-- Lista de Documentos -->
         <div class="card">
             <div class="card-header bg-success text-white">

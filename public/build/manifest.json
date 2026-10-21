@@ -9,13 +9,18 @@
     "isEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-CUmQ25Yf.css",
+    "file": "assets/app-B87LuWEI.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/datatables.min.css": {
     "file": "assets/datatables-B_-5l-at.css",
     "src": "resources/css/datatables.min.css",
+    "isEntry": true
+  },
+  "resources/css/forgot-password.css": {
+    "file": "assets/forgot-password-DHqMDr-9.css",
+    "src": "resources/css/forgot-password.css",
     "isEntry": true
   },
   "resources/css/libs.bundle.css": {
@@ -70,6 +75,12 @@
     "file": "assets/app-CH09qwMe.js",
     "name": "app",
     "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard.js": {
+    "file": "assets/dashboard-DIP7G2OP.js",
+    "name": "dashboard",
+    "src": "resources/js/dashboard.js",
     "isEntry": true
   },
   "resources/js/datatables.min.js": {

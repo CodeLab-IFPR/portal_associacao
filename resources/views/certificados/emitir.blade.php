@@ -72,8 +72,8 @@ Emitir Certificado
                                 <td>${certificado.descricao}</td>
                                 <td>${certificado.horas}</td>
                                 <td>
-                                    <a href="/certificados/${certificado.id}/view" target="_blank">Visualizar</a> |
-                                    <a href="/certificados/${certificado.id}/download">Baixar</a>
+                                    <a href="/certificados/${certificado.token}/view" target="_blank">Visualizar</a> |
+                                    <a href="/certificados/${certificado.token}/download">Baixar</a>
                                 </td>
                             </tr>`;
                         });

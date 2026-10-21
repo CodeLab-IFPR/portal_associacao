@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Servico;
+use App\Models\LancamentoServico;
+use App\Http\Controllers\Concerns\PaginaListagem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Routing\Controllers\Middleware;
@@ -11,6 +13,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ServicoController extends Controller implements HasMiddleware
 {
+    use PaginaListagem;
+
     public static function middleware(): array
     {
         return [
@@ -23,8 +27,7 @@ class ServicoController extends Controller implements HasMiddleware
     }
     public function index()
     {
-        $servicos = Servico::all();
-        $servicos = Servico::paginate(10);
+        $servicos = $this->paginarListagem(Servico::orderBy('id'), 'servicos.index', 10);
         return view('servicos.index', compact('servicos'));
     }
 
@@ -75,10 +78,20 @@ class ServicoController extends Controller implements HasMiddleware
 
     public function destroy(Servico $servico)
     {
+        // Os lançamentos de horas são apagados em cascata pelo banco: não deixa
+        // excluir um serviço que ainda tem horas lançadas pelos associados
+        $lancamentos = LancamentoServico::where('servico_id', $servico->id)->count();
+        if ($lancamentos > 0) {
+            $mensagem = "Este serviço tem {$lancamentos} lançamento(s) de horas e não pode ser excluído.";
+            return request()->ajax()
+                ? response()->json(['error' => $mensagem], 422)
+                : redirect()->route('servicos.index')->with('error', $mensagem);
+        }
+
         try {
             $servico->delete();
 
-            $servicos = Servico::paginate(10);
+            $servicos = $this->paginarListagem(Servico::orderBy('id'), 'servicos.index', 10);
 
             if (request()->ajax()) {
                 return response()->json([

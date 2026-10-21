@@ -166,13 +166,18 @@ Lançamentos
 </div>
 
 <script>
-    document.getElementById('select-all').onclick = function () {
-        var checkboxes = document.getElementsByName('lancamentos[]');
-        for (var checkbox of checkboxes) {
-            if (!checkbox.disabled) {
-                checkbox.checked = this.checked;
+    // "Selecionar todos" só existe para quem gera certificados; sem a checagem,
+    // o erro aqui parava o resto do script para os associados
+    var selecionarTodos = document.getElementById('select-all');
+    if (selecionarTodos) {
+        selecionarTodos.onclick = function () {
+            var checkboxes = document.getElementsByName('lancamentos[]');
+            for (var checkbox of checkboxes) {
+                if (!checkbox.disabled) {
+                    checkbox.checked = this.checked;
+                }
             }
-        }
+        };
     }
 
     $(document).ready(function () {
@@ -227,6 +232,8 @@ Lançamentos
             $.ajax({
                 url: urlWithParams,
                 method: 'DELETE',
+                // Página, busca e filtros atuais: a tabela volta do jeito que estava
+                data: Object.assign(Object.fromEntries(new URLSearchParams(window.location.search)), { search: $('#search-input').val() || '' }),
                 success: function (response) {
                     if (response.table) {
                         $('#lancamentos-table-container').html(response.table);

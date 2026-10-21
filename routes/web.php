@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CartaoAssociadoController;
 use App\Http\Controllers\PasswordUpdateController;
 use App\Http\Controllers\CargoController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PendenciaController;
 
@@ -47,23 +48,24 @@ Route::get('/noticias/cards', [NoticiasController::class, 'cards'])->name('notic
 Route::get('/noticias/{noticia}', [NoticiasController::class, 'show'])->name('noticias.show');
 
 // Rotas públicas de certificados
+// O PDF é identificado pelo código impresso no certificado, não pelo id sequencial
 Route::get('/certificados/emitir', [CertificadoController::class, 'emitir'])->name('certificados.emitir');
-Route::post('/certificados/buscar', [CertificadoController::class, 'buscarCertificados'])->name('certificados.buscar');
-Route::get('/certificados/{certificado}/view', [CertificadoController::class, 'viewCertificate'])->name('certificados.view');
-Route::get('/certificados/{certificado}/download', [CertificadoController::class, 'downloadCertificate'])->name('certificados.download');
+Route::post('/certificados/buscar', [CertificadoController::class, 'buscarCertificados'])->middleware('throttle:20,1')->name('certificados.buscar');
+Route::get('/certificados/{certificado:token}/view', [CertificadoController::class, 'viewCertificate'])->name('certificados.view');
+Route::get('/certificados/{certificado:token}/download', [CertificadoController::class, 'downloadCertificate'])->name('certificados.download');
 Route::get('/certificados/validar', [CertificadoController::class, 'showValidationForm'])->name('certificados.validar');
-Route::post('/certificados/validar', [CertificadoController::class, 'validarCertificado'])->name('certificados.validar.post');
+Route::post('/certificados/validar', [CertificadoController::class, 'validarCertificado'])->middleware('throttle:20,1')->name('certificados.validar.post');
 
 // Rotas para submissão de formulários públicos
-Route::post('/submit-demand', [SubmissionController::class, 'submit'])->name('submit-demand');
-Route::post('/send-message', [ContactController::class, 'sendMessage'])->name('send-message');
-Route::post('/submit', [SubmissionController::class, 'submit'])->name('submission.submit');
+// Formulários públicos: até 5 envios por minuto por IP, contra spam
+Route::middleware('throttle:5,1')->group(function () {
+    Route::post('/submit-demand', [SubmissionController::class, 'submit'])->name('submit-demand');
+    Route::post('/send-message', [ContactController::class, 'sendMessage'])->name('send-message');
+    Route::post('/submit', [SubmissionController::class, 'submit'])->name('submission.submit');
+});
 
 Route::resource('certificados', CertificadoController::class);
-Route::get('certificados/{id}/download', [CertificadoController::class, 'download'])->name('certificados.download');
-Route::get('/certificados/{certificado}/view', [CertificadoController::class, 'viewCertificate'])->name('certificados.view');
 Route::delete('certificados/{certificado}', [CertificadoController::class, 'destroy'])->name('certificados.destroy');
-Route::post('/certificados/generate', [CertificadoController::class, 'generateFromTasks'])->name('certificados.generate');
 Route::get('/certificados/create', [CertificadoController::class, 'create'])->name('certificados.create');
 Route::post('/certificados', [CertificadoController::class, 'store'])->name('certificados.store');
 
@@ -77,17 +79,10 @@ Route::get('/galeria/ano/{ano}', [GaleriaController::class, 'peloAno'])->name('g
 Route::get('/galeria/{galeria}', [GaleriaController::class, 'show'])->name('galeria.show');
 Route::get('/galeria', [GaleriaController::class, 'indexPublic'])->name('galeria.indexPublic');
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('frase-inicio/editar', [App\Http\Controllers\Admin\FraseInicioController::class, 'editar'])->name('frase_inicio.editar');
-    Route::put('frase-inicio/atualizar', [App\Http\Controllers\Admin\FraseInicioController::class, 'atualizar'])->name('frase_inicio.atualizar');
-});
-
 // Rotas Administrativas
 Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     // Rota principal do admin (dashboard)
-    Route::get('/', function () {
-        return view('admin.index');
-    })->name('admin');
+    Route::get('/', [DashboardController::class, 'index'])->name('admin');
 
     // não tava achando a rota do indexAdmin então tive que tirar do grupo
     Route::get('/galeria', [GaleriaController::class, 'indexAdmin'])->name('galeria.indexAdmin');
@@ -100,7 +95,6 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
 
     // Rotas de certificados (admin)
     Route::resource('certificados', CertificadoController::class)->except(['show']);
-    Route::post('/certificados/generate', [CertificadoController::class, 'generateFromTasks'])->name('certificados.generate');
 
     // Rotas de documentos
     Route::resource('documentos', \App\Http\Controllers\DocumentoController::class);
@@ -134,9 +128,10 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     });
 
     // Outras rotas administrativas
-    Route::resource('projetos', ProjetoController::class);
+    // projetos.show e tags.show não têm tela
+    Route::resource('projetos', ProjetoController::class)->except(['show']);
     Route::resource('servicos', ServicoController::class);
-    Route::resource('tags', TagController::class);
+    Route::resource('tags', TagController::class)->except(['show']);
 
     Route::group(['prefix' => 'lancamentos'], function(){
         Route::get('/', [LancamentoServicoController::class, 'index'])->name('lancamentos.index');
@@ -223,8 +218,8 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::put('frase-inicio/atualizar', [FraseInicioController::class, 'atualizar'])->name('admin.frase_inicio.atualizar');
     Route::post('lancamentos/generate-certificates', [LancamentoServicoController::class, 'generateCertificates'])->name('lancamentos.generateCertificates');
     
-    // Rotas de Cargos (apenas para administradores)
-    Route::resource('cargos', CargoController::class);
+    // Rotas de Cargos (apenas para administradores; cargos.show não tem tela)
+    Route::resource('cargos', CargoController::class)->except(['show']);
 
     // Faturas
     Route::resource('faturas', InvoiceController::class)
