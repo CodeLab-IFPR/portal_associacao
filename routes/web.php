@@ -238,12 +238,19 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->group(function () {
     Route::patch('faturas/{invoice}/installments/{installment}/boleto', [InvoiceController::class, 'uploadBoleto'])
         ->name('invoices.installments.boleto');
 
+    // Visualizar/baixar o boleto da parcela (admin ou dono da fatura)
+    Route::get('faturas/{invoice}/installments/{installment}/boleto', [InvoiceController::class, 'showBoleto'])
+        ->name('invoices.installments.boleto.show');
+
     // Baixa rápida de pendência
     Route::patch('/pendencias/installments/{installment}/baixar', [PendenciaController::class, 'settleInstallment'])
         ->name('pendencias.installments.settle');
 
     Route::patch('faturas/{invoice}/installments/{installment}', [InvoiceController::class, 'updateInstallment'])
     ->name('invoices.installments.update');
+
+    Route::delete('faturas/{invoice}/installments/{installment}', [InvoiceController::class, 'destroyInstallment'])
+        ->name('invoices.installments.destroy');
 
     // Pendências do associado logado
     Route::get('/pendencias', [PendenciaController::class, 'index'])->name('pendencias.index');
