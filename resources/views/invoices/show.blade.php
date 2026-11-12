@@ -232,7 +232,7 @@ Fatura #{{ $invoice->id }}
                                                             class="btn btn-outline-info btn-sm px-2 btn-preview-boleto"
                                                             title="Visualizar boleto"
                                                             data-number="{{ $installment->installment_number }}"
-                                                            data-url="{{ asset('storage/' . $installment->boleto_path) }}">
+                                                            data-url="{{ route('invoices.installments.boleto.show', [$invoice->id, $installment->id]) }}">
                                                             <i class="bi bi-eye"></i>
                                                         </button>
                                                     @endif
@@ -388,9 +388,10 @@ Fatura #{{ $invoice->id }}
                                id="boleto"
                                name="boleto"
                                class="form-control"
-                               accept="application/pdf"
+                               accept=".pdf,application/pdf"
+                               data-max-bytes="{{ \App\Http\Controllers\InvoiceController::BOLETO_MAX_KB * 1024 }}"
                                required>
-                        <div class="form-text">Apenas PDF. Tamanho recomendado: até 5MB.</div>
+                        <div class="form-text">Apenas PDF, com no máximo 5MB.</div>
                     </div>
                 </div>
 
@@ -488,11 +489,25 @@ Fatura #{{ $invoice->id }}
 
             // limpa input anterior
             const fileInput = document.getElementById('boleto');
-            if (fileInput) fileInput.value = '';
+            if (fileInput) {
+                fileInput.value = '';
+                fileInput.setCustomValidity('');
+            }
 
             new bootstrap.Modal(document.getElementById('attachBoletoModal')).show();
         });
     });
+
+    // Bloqueia PDF acima de 5MB antes do envio (o backend valida de novo)
+    const boletoInput = document.getElementById('boleto');
+    if (boletoInput) {
+        boletoInput.addEventListener('change', function () {
+            const file = this.files[0];
+            const tooBig = file && file.size > Number(this.dataset.maxBytes);
+            this.setCustomValidity(tooBig ? 'O boleto deve ter no máximo 5MB.' : '');
+            this.reportValidity();
+        });
+    }
 
     // ── Visualizar boleto (PDF) ────────────────────────────
     document.querySelectorAll('.btn-preview-boleto').forEach(function (btn) {

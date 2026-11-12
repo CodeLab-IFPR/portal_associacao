@@ -15,12 +15,16 @@ use Illuminate\Routing\Controllers\Middleware;
 
 class InvoiceController extends Controller implements HasMiddleware
 {
+    /** Tamanho máximo do boleto em PDF (5MB), em kilobytes como a regra "max" espera. */
+    public const BOLETO_MAX_KB = 5120;
+
     public static function middleware(): array
     {
         return [
             'auth',
             'verified',
-            new Middleware('role:admin|Admin', except: ['index', 'show']),
+            // showBoleto faz a própria checagem (admin ou dono da fatura)
+            new Middleware('role:admin|Admin', except: ['index', 'show', 'showBoleto']),
         ];
     }
 
@@ -250,6 +254,13 @@ class InvoiceController extends Controller implements HasMiddleware
 
     public function destroyInstallment(Invoice $invoice, InvoiceInstallment $installment)
     {
+        // Sem isso, a parcela de outra fatura seria apagada e o total recalculado na fatura errada
+        if ($installment->invoice_id !== $invoice->id) {
+            abort(404);
+        }
+
+        $boletoPath = $installment->boleto_path;
+
         DB::beginTransaction();
 
         try {
@@ -265,6 +276,11 @@ class InvoiceController extends Controller implements HasMiddleware
             ]);
 
             DB::commit();
+
+            // Só apaga o PDF depois que a exclusão foi confirmada no banco
+            if ($boletoPath) {
+                Storage::disk('public')->delete($boletoPath);
+            }
 
             return redirect()->route('invoices.show', $invoice->id)
                 ->with('success', 'Parcela excluída com sucesso!');
@@ -284,7 +300,12 @@ class InvoiceController extends Controller implements HasMiddleware
         }
 
         $validated = $request->validate([
-            'boleto' => 'required|file|mimes:pdf|max:5120', // 5MB
+            'boleto' => 'required|file|mimes:pdf|max:' . self::BOLETO_MAX_KB,
+        ], [
+            'boleto.required' => 'Selecione o arquivo PDF do boleto.',
+            'boleto.uploaded' => 'Não foi possível enviar o boleto. Verifique se o arquivo tem no máximo 5MB.',
+            'boleto.mimes'    => 'O boleto deve ser um arquivo PDF.',
+            'boleto.max'      => 'O boleto deve ter no máximo 5MB.',
         ]);
 
         $path = $validated['boleto']->store('boletos', 'public');
@@ -301,5 +322,37 @@ class InvoiceController extends Controller implements HasMiddleware
         return redirect()
             ->route('invoices.show', $invoice->id)
             ->with('success', 'Boleto anexado com sucesso!');
+    }
+
+    /**
+     * Entrega o PDF do boleto pela aplicação, em vez de um link direto para
+     * /storage: assim não depende do "php artisan storage:link" e só quem pode
+     * ver a fatura (admin ou o próprio associado) consegue abrir o arquivo.
+     */
+    public function showBoleto(Request $request, Invoice $invoice, InvoiceInstallment $installment)
+    {
+        if ($installment->invoice_id !== $invoice->id) {
+            abort(404);
+        }
+
+        $user    = $request->user();
+        $isAdmin = $user->hasRole('admin') || $user->hasRole('Admin');
+
+        if (!$isAdmin && $invoice->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $disk = Storage::disk('public');
+
+        if (!$installment->boleto_path || !$disk->exists($installment->boleto_path)) {
+            abort(404, 'Boleto não encontrado.');
+        }
+
+        $filename = "boleto-fatura-{$invoice->id}-parcela-{$installment->installment_number}.pdf";
+        $headers  = ['Content-Type' => 'application/pdf'];
+
+        return $request->boolean('download')
+            ? $disk->download($installment->boleto_path, $filename, $headers)
+            : $disk->response($installment->boleto_path, $filename, $headers);
     }
 }

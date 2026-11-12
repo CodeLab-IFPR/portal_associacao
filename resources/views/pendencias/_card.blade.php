@@ -59,7 +59,7 @@
 
                 <div class="d-flex flex-wrap gap-2 mt-3">
                     @if($installment->boleto_path)
-                        <a href="{{ asset('storage/' . $installment->boleto_path) }}"
+                        <a href="{{ route('invoices.installments.boleto.show', [$invoice->id, $installment->id, 'download' => 1]) }}"
                            class="btn btn-outline-primary btn-sm px-3"
                            download>
                             <i class="bi bi-download me-1"></i>Baixar boleto
