@@ -302,6 +302,68 @@ body {
   color: #9ca3af;
 }
 
+/* ── Redefinição de senha (reset-password) ── */
+.login-card__description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+
+.login-form__success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.login-form__input-wrapper--invalid input {
+  border-color: #dc2626;
+}
+
+.login-form__input-wrapper--invalid input:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.login-form__field-error {
+  list-style: none;
+  font-size: 0.8rem;
+  color: #b91c1c;
+}
+
+.login-form__requirements {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.2rem 0.75rem;
+  font-size: 0.8rem;
+  margin-top: 0.1rem;
+}
+
+.login-form__requirements li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #b91c1c;
+  transition: color 0.15s ease-in-out;
+}
+
+.login-form__requirements li.is-valid {
+  color: #15803d;
+}
+
+.login-form__btn--primary:disabled,
+.login-form__btn--primary:disabled:hover {
+  background: #0064d6;
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 @media (max-width: 768px) {
   .login-institutional {
     display: none;
